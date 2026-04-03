@@ -1,0 +1,38 @@
+"use client";
+
+import { SmoothScroll } from "@/components/smooth-scroll";
+import { HeroSection } from "@/components/sections/hero";
+import { TypographySplash } from "@/components/sections/typography-splash";
+import { BrandStatementSection } from "@/components/sections/brand-statement";
+import { RosterSection } from "@/components/sections/roster";
+import { TypeOutlineSection } from "@/components/sections/type-outline";
+import { FeaturedReleaseSection } from "@/components/sections/featured-release";
+import { OutNowSection } from "@/components/sections/out-now";
+import { LiveBridgeSection } from "@/components/sections/live-bridge";
+import { TourSection } from "@/components/sections/tour";
+import { MerchSection } from "@/components/sections/merch";
+import { EditorialSection } from "@/components/sections/editorial";
+import { VerticalReelSection } from "@/components/sections/vertical-reel";
+import { SiteFooter } from "@/components/sections/site-footer";
+
+export function HomeExperience() {
+  return (
+    <SmoothScroll>
+      <main id="main-content" className="bg-bg text-fg">
+        <HeroSection />
+        <TypographySplash />
+        <BrandStatementSection />
+        <RosterSection />
+        <TypeOutlineSection />
+        <FeaturedReleaseSection />
+        <OutNowSection />
+        <LiveBridgeSection />
+        <TourSection />
+        <MerchSection />
+        <EditorialSection />
+        <VerticalReelSection />
+        <SiteFooter />
+      </main>
+    </SmoothScroll>
+  );
+}
