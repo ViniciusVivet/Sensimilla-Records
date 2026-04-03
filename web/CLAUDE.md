@@ -26,14 +26,14 @@ Conteúdo da gravadora já foi parcialmente povoado com dados reais (integrantes
 
 - **Pode agir com autonomia** em implementações, correções, refactors pequenos, instalação de deps quando fizer sentido, rodar `lint`/`build`, e **fazer commit** quando encerrar um bloco de trabalho coerente.
 - **Commits:** preferir **varios commits pequenos e logicos** (evitar um unico commit gigante). Estilo **Conventional Commits**: tipo e escopo em **ingles** (`feat`, `fix`, `docs`, `chore`, `refactor`, `style`, `test`, `ci`, etc.); primeira linha curta (`tipo(escopo opcional): resumo`). Corpo opcional em **portugues tecnico**, **ASCII sem acentos** (ex.: `secao`, `configuracao`, `referencias`). Exemplo de assunto: `feat(web): secao roster com links spotify`.
-- **Push:** **tem permissao para dar push**, mas **avise o humano imediatamente antes** (na mesma resposta, antes de executar o push): confirme branch, o que vai subir e se ha risco (ex.: force push). Nao faca push silencioso.
+- **Push:** **tem permissão para dar push**, mas **avise o humano imediatamente antes** (na mesma resposta, antes de executar o push): confirme branch, o que vai subir e se há risco (ex.: force push). Não faça push silencioso.
 - **Pergunte ao humano** só quando for decisão **importante** ou de **alto impacto técnico**, por exemplo: troca de stack, mudança de arquitetura grande, remoção de features, custos (API paga), segurança sensível, ou quando houver **ambiguidade forte** que mude o produto. Para o resto, escolha o caminho razoável e documente no commit/PR.
 - **Não peça confirmação** para cada arquivo ou linha — evite micro-permissões.
 
 ## Idioma e tom
 
 - Respostas ao utilizador em **português** (preferência do projeto).
-- Codigo e commits seguem as convencoes acima (tipos em ingles; texto descritivo em portugues ASCII quando for corpo de mensagem).
+- Código e commits seguem as convenções acima (tipos em inglês; corpo de mensagem de commit em português técnico ASCII, conforme secção **Commits**).
 
 ## Outros ficheiros úteis
 
