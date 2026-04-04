@@ -1,2 +1,5 @@
 .DS_Store
 Thumbs.db
+
+# configuracoes locais de agentes de IA
+.claude/
