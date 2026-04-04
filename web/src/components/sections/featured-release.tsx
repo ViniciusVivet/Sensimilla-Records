@@ -37,6 +37,21 @@ export function FeaturedReleaseSection() {
               {featuredRelease.description}
             </p>
           </Reveal>
+
+          {featuredRelease.spotifyEmbed && (
+            <Reveal delay={0.16} className="mt-8">
+              <iframe
+                className="w-full rounded-xl"
+                src={`https://open.spotify.com/embed/${featuredRelease.spotifyEmbed}?utm_source=generator&theme=0`}
+                width="100%"
+                height="152"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                title={`Spotify — ${featuredRelease.title}`}
+              />
+            </Reveal>
+          )}
+
           <Reveal delay={0.2} className="mt-10">
             <a
               href={featuredRelease.href}

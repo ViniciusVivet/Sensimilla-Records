@@ -178,6 +178,8 @@ export const featuredRelease = {
   cover: RELEASE.lamaNoCopoCogu,
   cta: "Ouvir no Spotify",
   href: "https://open.spotify.com/search/lama%20no%20copo%20cogu",
+  /** "artist/ID" ou "track/ID" — usado no embed Spotify. */
+  spotifyEmbed: `artist/${selo.spotifyVitrine.id}`,
 };
 
 export const catalogReleases = [
