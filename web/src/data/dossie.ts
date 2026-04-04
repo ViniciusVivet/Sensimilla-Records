@@ -22,7 +22,7 @@ export const selo = {
     handle: "@SensimillaRecords",
     url: "https://www.youtube.com/@SensimillaRecords",
   },
-  /** Spotify do COGU usado como vitrine “ouça a casa” no header (fundador). */
+  /** Spotify do COGU usado como vitrine "ouça a casa" no header (fundador). */
   spotifyVitrine: {
     artista: "COGU",
     url: "https://open.spotify.com/intl-pt/artist/7gIPPDTUeV4vRRLvYPepD4",
@@ -85,6 +85,31 @@ export const imagensSpotifyCdn = {
   c13prod: "https://i.scdn.co/image/ab6761610000e5ebc703fb60699b039ef16be0ab",
 } as const;
 
+/**
+ * Capas reais de releases (CDN Spotify, 640x640).
+ * Fonte: perfis do Spotify dos artistas — conferidas em abr/2026.
+ */
+export const imagensReleaseCdn = {
+  // COGU
+  lamaNoCopoCogu: "https://i.scdn.co/image/ab67616d00001e0290d6694d8077912cb98d4941",
+  crumbleCogu: "https://i.scdn.co/image/ab67616d00001e02f99019c6d55a616ddd0b332a",
+  loucuraCogu: "https://i.scdn.co/image/ab67616d00001e02a76429546204bb67879428e1",
+  /** Collab COGU + Vivet */
+  bet777CoguVivet: "https://i.scdn.co/image/ab67616d00001e0289d27bb29553e79c747742a2",
+  // Cico
+  borderlineBipolarCico: "https://i.scdn.co/image/ab67616d00001e0253f546a832b420f3569e86a5",
+  barbieCico: "https://i.scdn.co/image/ab67616d00001e02207ebf66967f4eea51072141",
+  // Vivet + Bright (collab)
+  casaBombaVivetBright: "https://i.scdn.co/image/ab67616d00001e02e933f8e79208ab17ad074ff5",
+  // Bright + Blade (collab)
+  pretoChiqueBrightBlade: "https://i.scdn.co/image/ab67616d00004851d8afd4b603145de42b08b297",
+  // Guiga MC
+  casualGuiga: "https://i.scdn.co/image/ab67616d00001e02a4a6989ed7221328bfae0b9b",
+  escolhasEpGuiga: "https://i.scdn.co/image/ab67616d00001e0298eeaa775a9c18cd3d9833dd",
+  // C13Prod
+  noPlasticC13: "https://i.scdn.co/image/ab67616d0000485157424c2a138b73eda45fa384",
+} as const;
+
 export const eventos = {
   ofdmSaoPauloIngressos: {
     nome: "OFDM's (São Paulo)",
@@ -93,27 +118,37 @@ export const eventos = {
   },
 } as const;
 
-/** Referências textuais públicas (Spotify, bio, fichas). */
+/** Referências textuais públicas (Spotify, bio, fichas). Verificadas abr/2026. */
 export const referenciasTexto = {
   coguSpotifyBio:
-    "Artista, compositor e fundador da MOB $ensimilla Record's; trap brasileiro; colaboração internacional 270Jet em Alta Voltagem.",
+    "Artista, compositor e fundador da MOB $ensimilla Record's, COGU é uma das vozes emergentes do trap brasileiro. Misturando beats intensos, flows únicos e letras autênticas, ele traduz a essência das ruas para o cenário global.",
+  coguSeguidores: "347 seguidores Spotify · 133 ouvintes mensais (abr/2026)",
+  cicoSpotifyBio:
+    "Natural da efervescente Zona Leste de São Paulo e aos 26 anos, Cico é uma explosão de estilos musicais. Mistura trap, drill, rap, R&B, funk, rock e pop. Lançamentos desde dezembro de 2019. +200k views YouTube · +30k streams Spotify.",
+  cicoSeguidores: "93 seguidores Spotify · 109 ouvintes mensais (abr/2026)",
+  vivetSpotifyBio:
+    "Das ruas sujas do centro de São Paulo, diretamente para o seu sistema nervoso.",
+  brightSpotifyBio:
+    "Bright é um talentoso artista que encontrou seu caminho na cultura hip-hop através da dança há quase uma década. Começou a escrever letras em 2017, com estreia no streaming em 2023. Flow diverso e lirismo único.",
   c13SpotifyBio: "Apenas mais um fazendo umas parada no pc",
-  brightInstagramBio:
-    "The Bright | $ensimilla Records — MC, dancer, flow autêntico (síntese de materiais públicos).",
   pvinicius:
     "Direção de styling ligada ao @sensi.rec; ZL / Itaquera (materiais públicos).",
   producaoOFDM:
     "Em materiais de evento OFDM's aparecem créditos ligados a @sensi.rec e @cogu.sensi (produção / CEO — conferir peça oficial).",
+  podcast:
+    "LOBO ENTREVISTA COGU NA SENSIMILLA RECORDS — ~31min, host: @prosasemnexo. https://creators.spotify.com/pod/profile/prosasemnexo/episodes/LOBO-ENTREVISTA-COGU-NA-SENSIMILLA-RECORDS-e34l4ra",
 } as const;
 
 /** O que ainda falta cruzar com link oficial (não inventar). */
 export const pendencias = [
-  "GB — Instagram / Spotify sem URL confirmada no dossiê (risco de homônimo).",
+  "GB — Instagram / Spotify sem URL confirmada no dossiê (risco de homônimo). Sugestão: verificar @sensi.rec stories/tags no Instagram.",
   "COGU — canal YouTube dedicado além do Topic / selo (se existir, colar URL aqui e em members).",
   "Guiga MC — YouTube Topic ou canal principal a confirmar.",
   "Blade — Instagram confirmado; YouTube além do Topic a confirmar.",
   "Cico — alinhar @cicotv4 (Instagram) com @CicoTV1 (YouTube) se forem o mesmo projeto.",
-  "PVinicius — Spotify do artista/stylist a confirmar.",
+  "PVinicius — Spotify do artista/stylist a confirmar. Conta @pviniciuselias pode ser privada.",
+  "Instagram do selo — pesquisa externa encontrou @sensimilla.art além de @sensi.rec. Confirmar se são a mesma conta ou se um é o handle ativo.",
+  "Alta Voltagem (COGU feat. 270Jet) — capa real do single a confirmar separada do BET777.",
 ] as const;
 
 /** Lista humana para leitura (imprensa / nota de rodapé). */

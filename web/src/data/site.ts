@@ -1,5 +1,6 @@
 import copy from "@/content/copy.json";
 import {
+  imagensReleaseCdn as RELEASE,
   imagensSpotifyCdn as IMG,
   instagramUrls,
   selo,
@@ -62,7 +63,7 @@ export const members: Member[] = [
     id: "cogu",
     name: "COGU",
     role: "Fundador MOB $ensimilla · artista e compositor",
-    bio: "Fundador da MOB $ensimilla Record's; trap com beats intensos e letras diretas. Destaques: Crumble, LOUCURA, Alta Voltagem (feat. internacional 270Jet), LAMA NO COPO.",
+    bio: "Fundador da MOB $ensimilla Record's e uma das vozes emergentes do trap brasileiro. Beats intensos, flows únicos e letras que traduzem a essência das ruas. Destaques: LAMA NO COPO, Crumble, LOUCURA, Alta Voltagem (feat. 270Jet).",
     image: IMG.cogu,
     spotifyUrl: SPOTIFY.cogu,
     instagramUrl: INSTAGRAM.cogu,
@@ -71,7 +72,7 @@ export const members: Member[] = [
     id: "bright",
     name: "Bright",
     role: "MC · dança · Sensimilla",
-    bio: "Flow autêntico e som ligado à performance; faixas como Casa Bomba e Preto Chique.",
+    bio: "Encontrou seu caminho no hip-hop pela dança há quase uma década; começou a escrever letras em 2017 e estreou no streaming em 2023. Flow diverso e lirismo único. Faixas: Casa Bomba, Preto Chique, Tudo Bem.",
     image: IMG.bright,
     spotifyUrl: SPOTIFY.bright,
     youtubeUrl: YOUTUBE.brightTopic,
@@ -81,7 +82,7 @@ export const members: Member[] = [
     id: "blade",
     name: "Blade",
     role: "BLADE OG",
-    bio: "Trap com presença; Preto Chique, Dinheiro de Trap e participação em Nova Era.",
+    bio: "Trap com presença e identidade própria. Preto Chique, Dinheiro de Trap e Street Business no streaming.",
     image: IMG.blade,
     spotifyUrl: SPOTIFY.blade,
     instagramUrl: INSTAGRAM.blade,
@@ -90,7 +91,7 @@ export const members: Member[] = [
     id: "vivet",
     name: "Vivet",
     role: "Artista · criativo digital",
-    bio: "Som e visão híbrida; destaques BET777 e Casa Bomba no streaming.",
+    bio: "Das ruas do centro de São Paulo, diretamente para o seu sistema nervoso. Som e visão híbrida; BET777 e Casa Bomba no streaming.",
     image: IMG.vivet,
     spotifyUrl: SPOTIFY.vivet,
     youtubeUrl: YOUTUBE.vivet,
@@ -99,8 +100,8 @@ export const members: Member[] = [
   {
     id: "cico",
     name: "Cico",
-    role: "Artista",
-    bio: "Lançamentos expressivos: BORDELINE BIPOLAR!, Arrepios!, Barbie e mais.",
+    role: "Artista · ZL",
+    bio: "Natural da ZL de SP, Cico é uma explosão de estilos: trap, drill, R&B, funk, rock. No streaming desde dez/2019 com +200k views no YouTube. Faixas: BORDELINE BIPOLAR!, Arrepios!, Barbie.",
     image: IMG.cico,
     spotifyUrl: SPOTIFY.cico,
     youtubeUrl: YOUTUBE.cico,
@@ -110,7 +111,7 @@ export const members: Member[] = [
     id: "guiga",
     name: "Guiga MC",
     role: "MC",
-    bio: "Casual, Não É Bem Assim, Escolhas e singles da linha Guiga MC.",
+    bio: "Lirismo consistente e catálogo crescente. Casual, Não É Bem Assim, Escolhas e mais singles na linha do rap paulista.",
     image: IMG.guiga,
     spotifyUrl: SPOTIFY.guiga,
     instagramUrl: INSTAGRAM.guiga,
@@ -119,7 +120,7 @@ export const members: Member[] = [
     id: "c13prod",
     name: "C13Prod",
     role: "Produção · c13_prod",
-    bio: "Beatmaker e produtor — Futuro, Surfada na Night, No Plastic e remixes; bio no Spotify: “Apenas mais um fazendo umas parada no pc”.",
+    bio: "\"Apenas mais um fazendo umas parada no pc.\" Beatmaker e produtor do núcleo — Futuro, Surfada na Night, No Plastic e colaborações pela casa.",
     image: IMG.c13prod,
     spotifyUrl: SPOTIFY.c13prod,
     youtubeUrl: YOUTUBE.c13prodTopic,
@@ -129,7 +130,7 @@ export const members: Member[] = [
     id: "pvinicius",
     name: "PVinicius",
     role: "Direção de styling · imagem",
-    bio: "ZL / Itaquera; direção de styling ligada ao @sensi.rec. Spotify a confirmar.",
+    bio: "ZL / Itaquera. Direção de styling e identidade visual ligada ao @sensi.rec.",
     image: null,
     instagramUrl: INSTAGRAM.pvinicius,
   },
@@ -137,7 +138,7 @@ export const members: Member[] = [
     id: "gb",
     name: "GB",
     role: "Integrante",
-    bio: "Parte do núcleo — perfil público (Instagram/Spotify) a confirmar para não cruzar com outro artista.",
+    bio: "Parte do núcleo Sensimilla. Perfil público a confirmar.",
     image: null,
   },
 ];
@@ -174,7 +175,7 @@ export const featuredRelease = {
   subtitle: "COGU · lançamento recente",
   description:
     "Último lançamento em destaque no perfil oficial no Spotify — seguindo a linha de Crumble, LOUCURA e o trap pesado que puxa o movimento da casa.",
-  cover: IMG.cogu,
+  cover: RELEASE.lamaNoCopoCogu,
   cta: "Ouvir no Spotify",
   href: "https://open.spotify.com/search/lama%20no%20copo%20cogu",
 };
@@ -184,31 +185,43 @@ export const catalogReleases = [
     title: "Crumble",
     artist: "COGU ft. Bright",
     meta: "Single · 2026",
-    cover: IMG.cogu,
+    cover: RELEASE.crumbleCogu,
   },
   {
     title: "LOUCURA",
     artist: "COGU",
     meta: "Single · 2026",
-    cover: IMG.cogu,
-  },
-  {
-    title: "Alta Voltagem",
-    artist: "COGU · feat. 270Jet",
-    meta: "Single · 2025",
-    cover: IMG.cogu,
+    cover: RELEASE.loucuraCogu,
   },
   {
     title: "BET777",
-    artist: "Vivet",
+    artist: "COGU · Vivet",
     meta: "Single · 2025",
-    cover: IMG.vivet,
+    cover: RELEASE.bet777CoguVivet,
+  },
+  {
+    title: "Casa Bomba",
+    artist: "Vivet · Bright",
+    meta: "Single · 2024",
+    cover: RELEASE.casaBombaVivetBright,
   },
   {
     title: "BORDELINE BIPOLAR!",
     artist: "Cico",
-    meta: "Streaming",
-    cover: IMG.cico,
+    meta: "Single · 2025",
+    cover: RELEASE.borderlineBipolarCico,
+  },
+  {
+    title: "Preto Chique",
+    artist: "Bright · Blade",
+    meta: "Single · 2024",
+    cover: RELEASE.pretoChiqueBrightBlade,
+  },
+  {
+    title: "Casual",
+    artist: "Guiga MC",
+    meta: "Single · 2025",
+    cover: RELEASE.casualGuiga,
   },
 ];
 
@@ -274,7 +287,7 @@ export const merchProducts = [
   },
 ];
 
-/** Colagem da seção “Visuais” — troque por fotos próprias (ex.: `/media/estudio-1.jpg` em `public/`). */
+/** Colagem da seção "Visuais" — troque por fotos próprias (ex.: `/media/estudio-1.jpg` em `public/`). */
 export type EditorialPhoto = { src: string; alt: string };
 
 export const editorialCollage: EditorialPhoto[] = [
