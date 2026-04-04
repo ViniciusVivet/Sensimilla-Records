@@ -162,7 +162,13 @@ export default function ReferenciasPage() {
             <strong>C13 (Spotify):</strong> {referenciasTexto.c13SpotifyBio}
           </li>
           <li>
-            <strong>Bright:</strong> {referenciasTexto.brightInstagramBio}
+            <strong>Bright (Spotify):</strong> {referenciasTexto.brightSpotifyBio}
+          </li>
+          <li>
+            <strong>Vivet (Spotify):</strong> {referenciasTexto.vivetSpotifyBio}
+          </li>
+          <li>
+            <strong>Cico (Spotify):</strong> {referenciasTexto.cicoSpotifyBio}
           </li>
           <li>
             <strong>PVinicius:</strong> {referenciasTexto.pvinicius}
@@ -170,6 +176,9 @@ export default function ReferenciasPage() {
           <li>
             <strong>OFDM&apos;s / produção:</strong>{" "}
             {referenciasTexto.producaoOFDM}
+          </li>
+          <li>
+            <strong>Podcast:</strong> {referenciasTexto.podcast}
           </li>
         </ul>
       </section>
