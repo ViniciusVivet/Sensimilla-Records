@@ -85,3 +85,28 @@ body {
 .hero-video-wrap video {
   filter: grayscale(100%) contrast(1.08) brightness(0.85);
 }
+
+/* Cursor customizado — crosshair da marca */
+html {
+  cursor: crosshair;
+}
+
+a,
+button,
+[role="button"],
+input[type="submit"],
+select,
+summary {
+  cursor: pointer;
+}
+
+a:hover,
+button:hover {
+  cursor: pointer;
+}
+
+@media (pointer: coarse) {
+  html {
+    cursor: auto;
+  }
+}
