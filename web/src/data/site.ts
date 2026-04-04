@@ -178,9 +178,9 @@ export const featuredRelease = {
     "Último lançamento em destaque no perfil oficial no Spotify — seguindo a linha de Crumble, LOUCURA e o trap pesado que puxa o movimento da casa.",
   cover: RELEASE.lamaNoCopoCogu,
   cta: "Ouvir no Spotify",
-  href: "https://open.spotify.com/search/lama%20no%20copo%20cogu",
-  /** "artist/ID" ou "track/ID" — usado no embed Spotify. */
-  spotifyEmbed: `artist/${selo.spotifyVitrine.id}`,
+  href: "https://open.spotify.com/track/2gU7GSDchp6imuWQNkFZkR",
+  /** "track/ID" ou "artist/ID" — embed Spotify inline. IDs verificados abr/2026. */
+  spotifyEmbed: "track/2gU7GSDchp6imuWQNkFZkR",
 };
 
 export const catalogReleases = [
@@ -189,13 +189,14 @@ export const catalogReleases = [
     artist: "COGU ft. Bright",
     meta: "Single · 2026",
     cover: RELEASE.crumbleCogu,
-    spotifyEmbed: `artist/${spotifyIds.cogu}`,
+    spotifyEmbed: "track/6JF0fIJMzm16RFtYKWUBW",
   },
   {
     title: "LOUCURA",
     artist: "COGU",
     meta: "Single · 2026",
     cover: RELEASE.loucuraCogu,
+    /** ID da faixa nao encontrado no top tracks — usa perfil do artista como fallback. */
     spotifyEmbed: `artist/${spotifyIds.cogu}`,
   },
   {
@@ -203,35 +204,35 @@ export const catalogReleases = [
     artist: "COGU · Vivet",
     meta: "Single · 2025",
     cover: RELEASE.bet777CoguVivet,
-    spotifyEmbed: `artist/${spotifyIds.cogu}`,
+    spotifyEmbed: "track/0NCbITn7TnyuCCmXthgUyz",
   },
   {
     title: "Casa Bomba",
     artist: "Vivet · Bright",
     meta: "Single · 2024",
     cover: RELEASE.casaBombaVivetBright,
-    spotifyEmbed: `artist/${spotifyIds.vivet}`,
+    spotifyEmbed: "track/2DLQxWlg6aILhyjWegjccy",
   },
   {
     title: "BORDELINE BIPOLAR!",
     artist: "Cico",
     meta: "Single · 2025",
     cover: RELEASE.borderlineBipolarCico,
-    spotifyEmbed: `artist/${spotifyIds.cico}`,
+    spotifyEmbed: "track/6Y0rF44x9H3D1JiIUcBAWZ",
   },
   {
     title: "Preto Chique",
     artist: "Bright · Blade",
     meta: "Single · 2024",
     cover: RELEASE.pretoChiqueBrightBlade,
-    spotifyEmbed: `artist/${spotifyIds.bright}`,
+    spotifyEmbed: "track/4kxccevhrhGEkPkhUN6lBW",
   },
   {
     title: "Casual",
     artist: "Guiga MC",
     meta: "Single · 2025",
     cover: RELEASE.casualGuiga,
-    spotifyEmbed: `artist/${spotifyIds.guiga}`,
+    spotifyEmbed: "track/2IaYT5Lv06RuEnjufHwYDO",
   },
 ];
 

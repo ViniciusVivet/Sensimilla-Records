@@ -110,6 +110,29 @@ export const imagensReleaseCdn = {
   noPlasticC13: "https://i.scdn.co/image/ab67616d0000485157424c2a138b73eda45fa384",
 } as const;
 
+/**
+ * IDs de faixas Spotify verificados (abr/2026).
+ * Usar como "track/{id}" no spotifyEmbed das releases.
+ */
+export const trackIds = {
+  lamaNoCopoCogu: "2gU7GSDchp6imuWQNkFZkR",
+  crumbleCogu: "6JF0fIJMzm16RFtYKWUBW",
+  bet777CoguVivet: "0NCbITn7TnyuCCmXthgUyz",
+  casaBombaVivetBright: "2DLQxWlg6aILhyjWegjccy",
+  borderlineBipolarCico: "6Y0rF44x9H3D1JiIUcBAWZ",
+  pretoChiqueBrightBlade: "4kxccevhrhGEkPkhUN6lBW",
+  casualGuiga: "2IaYT5Lv06RuEnjufHwYDO",
+  /** LOUCURA — faixa nao aparece no top tracks do perfil; atualizar quando disponivel. */
+  loucuraCogu: null,
+  // Outras faixas encontradas nos perfis:
+  donosNaNoiteCogu: "7jR0938BdUmsL92C5w4U2s",
+  cheirosaCogu: "6YCeFmTzkCmNB4Ro7q26hz",
+  aBruxaBright: "2kdgk7pMaRNbTHgOwT99cj",
+  barbieCico: "7BRBYfP2lNly0UD2A9Xzom",
+  naoEBemAssimGuiga: "6ofh8AmNnQvT3NcpjgG4yG7",
+  dinheiroDeTrapBlade: "5laNdT6tue5Ok3EnwE0W4i",
+} as const;
+
 export const eventos = {
   ofdmSaoPauloIngressos: {
     nome: "OFDM's (São Paulo)",
