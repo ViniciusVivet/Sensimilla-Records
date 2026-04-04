@@ -4,6 +4,7 @@ import {
   imagensSpotifyCdn as IMG,
   instagramUrls,
   selo,
+  spotifyIds,
   spotifyUrls as SPOTIFY,
   youtubeUrls as YOUTUBE,
 } from "@/data/dossie";
@@ -188,42 +189,49 @@ export const catalogReleases = [
     artist: "COGU ft. Bright",
     meta: "Single · 2026",
     cover: RELEASE.crumbleCogu,
+    spotifyEmbed: `artist/${spotifyIds.cogu}`,
   },
   {
     title: "LOUCURA",
     artist: "COGU",
     meta: "Single · 2026",
     cover: RELEASE.loucuraCogu,
+    spotifyEmbed: `artist/${spotifyIds.cogu}`,
   },
   {
     title: "BET777",
     artist: "COGU · Vivet",
     meta: "Single · 2025",
     cover: RELEASE.bet777CoguVivet,
+    spotifyEmbed: `artist/${spotifyIds.cogu}`,
   },
   {
     title: "Casa Bomba",
     artist: "Vivet · Bright",
     meta: "Single · 2024",
     cover: RELEASE.casaBombaVivetBright,
+    spotifyEmbed: `artist/${spotifyIds.vivet}`,
   },
   {
     title: "BORDELINE BIPOLAR!",
     artist: "Cico",
     meta: "Single · 2025",
     cover: RELEASE.borderlineBipolarCico,
+    spotifyEmbed: `artist/${spotifyIds.cico}`,
   },
   {
     title: "Preto Chique",
     artist: "Bright · Blade",
     meta: "Single · 2024",
     cover: RELEASE.pretoChiqueBrightBlade,
+    spotifyEmbed: `artist/${spotifyIds.bright}`,
   },
   {
     title: "Casual",
     artist: "Guiga MC",
     meta: "Single · 2025",
     cover: RELEASE.casualGuiga,
+    spotifyEmbed: `artist/${spotifyIds.guiga}`,
   },
 ];
 
