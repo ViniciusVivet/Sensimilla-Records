@@ -125,6 +125,40 @@ export function OutNowSection() {
                         loading="lazy"
                         title={`Spotify — ${r.title}`}
                       />
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <a
+                          href={`https://open.spotify.com/${r.spotifyEmbed}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-wider text-muted transition hover:border-accent hover:text-accent"
+                        >
+                          Abrir no Spotify
+                        </a>
+                        <a
+                          href={`https://www.deezer.com/search/${encodeURIComponent(r.title + " " + r.artist)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-wider text-muted transition hover:border-white/40 hover:text-fg"
+                        >
+                          Deezer
+                        </a>
+                        <a
+                          href={`https://music.apple.com/search?term=${encodeURIComponent(r.title + " " + r.artist)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-wider text-muted transition hover:border-white/40 hover:text-fg"
+                        >
+                          Apple Music
+                        </a>
+                        <a
+                          href={`https://music.youtube.com/search?q=${encodeURIComponent(r.title + " " + r.artist)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-wider text-muted transition hover:border-white/40 hover:text-fg"
+                        >
+                          YouTube Music
+                        </a>
+                      </div>
                     </div>
                   )}
                 </article>

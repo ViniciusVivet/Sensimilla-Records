@@ -25,8 +25,9 @@ export function ContactForm() {
     const data = new FormData(e.currentTarget);
     const name = data.get("name");
     const email = data.get("email");
+    const subject = data.get("subject");
     const message = data.get("message");
-    console.info("[Contato — mock]", { name, email, message });
+    console.info("[Contato — mock]", { name, email, subject, message });
     setStatus("sent");
   }
 
@@ -48,6 +49,23 @@ export function ContactForm() {
           autoComplete="name"
           className="mt-2 w-full rounded-xl border border-white/15 bg-bg/80 px-4 py-3 text-fg outline-none ring-accent/40 transition focus:border-accent focus:ring-2"
         />
+      </div>
+      <div>
+        <label htmlFor="subject" className="block text-xs uppercase tracking-wider text-muted">
+          Motivo
+        </label>
+        <select
+          id="subject"
+          name="subject"
+          required
+          className="mt-2 w-full rounded-xl border border-white/15 bg-bg/80 px-4 py-3 text-fg outline-none ring-accent/40 transition focus:border-accent focus:ring-2"
+        >
+          <option value="">Selecione...</option>
+          <option value="booking">Booking / Shows</option>
+          <option value="imprensa">Imprensa / Press</option>
+          <option value="collab">Collab / Parceria</option>
+          <option value="geral">Geral</option>
+        </select>
       </div>
       <div>
         <label htmlFor="email" className="block text-xs uppercase tracking-wider text-muted">

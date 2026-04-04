@@ -24,6 +24,7 @@ export const socialLinks = [
   { name: "Instagram", href: selo.instagram.url },
   { name: "Spotify", href: selo.spotifyVitrine.url },
   { name: "YouTube", href: selo.youtube.url },
+  { name: "Deezer", href: "https://www.deezer.com/search/Sensimilla%20Records" },
 ] as const;
 
 export const heroTagline = copy.tagline;
@@ -180,6 +181,12 @@ export const featuredRelease = {
   href: "https://open.spotify.com/track/2gU7GSDchp6imuWQNkFZkR",
   /** "track/ID" ou "artist/ID" — embed Spotify inline. IDs verificados abr/2026. */
   spotifyEmbed: "track/2gU7GSDchp6imuWQNkFZkR",
+  platforms: [
+    { name: "Spotify", href: "https://open.spotify.com/track/2gU7GSDchp6imuWQNkFZkR" },
+    { name: "Deezer", href: "https://www.deezer.com/search/COGU%20LAMA%20NO%20COPO" },
+    { name: "YouTube Music", href: "https://music.youtube.com/search?q=COGU+LAMA+NO+COPO" },
+    { name: "Apple Music", href: "https://music.apple.com/search?term=COGU+LAMA+NO+COPO" },
+  ],
 };
 
 export const catalogReleases = [

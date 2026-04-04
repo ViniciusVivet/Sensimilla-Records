@@ -53,12 +53,26 @@ export function FeaturedReleaseSection() {
           )}
 
           <Reveal delay={0.2} className="mt-10">
-            <a
-              href={featuredRelease.href}
-              className="inline-flex rounded-full bg-bg px-8 py-4 text-sm font-semibold uppercase tracking-wider text-fg transition hover:bg-panel hover:text-accent"
-            >
-              {featuredRelease.cta}
-            </a>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href={featuredRelease.href}
+                className="inline-flex rounded-full bg-bg px-8 py-4 text-sm font-semibold uppercase tracking-wider text-fg transition hover:bg-panel hover:text-accent"
+              >
+                {featuredRelease.cta}
+              </a>
+              {"platforms" in featuredRelease &&
+                featuredRelease.platforms.slice(1).map((p) => (
+                  <a
+                    key={p.name}
+                    href={p.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex rounded-full border border-bg/30 px-5 py-4 text-xs uppercase tracking-wider text-bg/70 transition hover:border-bg/60 hover:text-bg"
+                  >
+                    {p.name}
+                  </a>
+                ))}
+            </div>
           </Reveal>
         </div>
       </div>
