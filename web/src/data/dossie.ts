@@ -108,6 +108,10 @@ export const imagensReleaseCdn = {
   escolhasEpGuiga: "https://i.scdn.co/image/ab67616d00001e0298eeaa775a9c18cd3d9833dd",
   // C13Prod
   noPlasticC13: "https://i.scdn.co/image/ab67616d0000485157424c2a138b73eda45fa384",
+  // Bright
+  aBruxaBright: "https://i.scdn.co/image/ab67616d00004851f7b3206a0ae71ebcb6b8daef",
+  // Blade
+  dinheiroDeTrapBlade: "https://i.scdn.co/image/ab67616d0000485100603ca8f3a7f254a4ef094a",
 } as const;
 
 /**
@@ -122,8 +126,7 @@ export const trackIds = {
   borderlineBipolarCico: "6Y0rF44x9H3D1JiIUcBAWZ",
   pretoChiqueBrightBlade: "4kxccevhrhGEkPkhUN6lBW",
   casualGuiga: "2IaYT5Lv06RuEnjufHwYDO",
-  /** LOUCURA — faixa nao aparece no top tracks do perfil; atualizar quando disponivel. */
-  loucuraCogu: null,
+  loucuraCogu: "0UcwY1LLirUKinHDq1FKjo",
   // Outras faixas encontradas nos perfis:
   donosNaNoiteCogu: "7jR0938BdUmsL92C5w4U2s",
   cheirosaCogu: "6YCeFmTzkCmNB4Ro7q26hz",

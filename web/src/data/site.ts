@@ -4,7 +4,6 @@ import {
   imagensSpotifyCdn as IMG,
   instagramUrls,
   selo,
-  spotifyIds,
   spotifyUrls as SPOTIFY,
   youtubeUrls as YOUTUBE,
 } from "@/data/dossie";
@@ -196,8 +195,7 @@ export const catalogReleases = [
     artist: "COGU",
     meta: "Single · 2026",
     cover: RELEASE.loucuraCogu,
-    /** ID da faixa nao encontrado no top tracks — usa perfil do artista como fallback. */
-    spotifyEmbed: `artist/${spotifyIds.cogu}`,
+    spotifyEmbed: "track/0UcwY1LLirUKinHDq1FKjo",
   },
   {
     title: "BET777",
@@ -233,6 +231,27 @@ export const catalogReleases = [
     meta: "Single · 2025",
     cover: RELEASE.casualGuiga,
     spotifyEmbed: "track/2IaYT5Lv06RuEnjufHwYDO",
+  },
+  {
+    title: "Barbie",
+    artist: "Cico",
+    meta: "Single · 2024",
+    cover: RELEASE.barbieCico,
+    spotifyEmbed: "track/7BRBYfP2lNly0UD2A9Xzom",
+  },
+  {
+    title: "A Bruxa",
+    artist: "Bright",
+    meta: "Single · 2023",
+    cover: RELEASE.aBruxaBright,
+    spotifyEmbed: "track/2kdgk7pMaRNbTHgOwT99cj",
+  },
+  {
+    title: "Dinheiro de Trap",
+    artist: "Blade",
+    meta: "Single · 2023",
+    cover: RELEASE.dinheiroDeTrapBlade,
+    spotifyEmbed: "track/5laNdT6tue5Ok3EnwE0W4i",
   },
 ];
 

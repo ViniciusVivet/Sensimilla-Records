@@ -134,13 +134,6 @@ export function OutNowSection() {
         </ul>
       </div>
 
-      <button
-        type="button"
-        className="fixed bottom-8 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-bg/90 text-lg text-fg shadow-lg backdrop-blur-md transition hover:border-accent hover:text-accent md:hidden"
-        aria-label="Rolar"
-      >
-        ↓
-      </button>
     </section>
   );
 }
