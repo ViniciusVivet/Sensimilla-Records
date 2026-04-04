@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 export function OutNowSection() {
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -53,8 +54,7 @@ export function OutNowSection() {
           <div>
             <h2 className="font-display text-5xl md:text-7xl">Out Now</h2>
             <p className="mt-2 max-w-sm text-sm text-muted">
-              Lançamentos recentes do catálogo — dub, eletrônica orgânica e
-              experimentação.
+              Lançamentos recentes do catálogo — rap, trap e o som da Zona Leste.
             </p>
           </div>
           <button
@@ -67,35 +67,70 @@ export function OutNowSection() {
         </div>
 
         <ul className="mt-14 space-y-4">
-          {catalogReleases.map((r) => (
-            <li key={r.title} data-release-row>
-              <article className="group flex gap-4 rounded-2xl border border-white/10 bg-panel/80 p-4 transition hover:border-accent/30 md:gap-8 md:p-5">
-                <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl md:h-28 md:w-28">
-                  <Image
-                    src={r.cover}
-                    alt={r.title}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-105"
-                    sizes="112px"
-                  />
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  <h3 className="font-display text-2xl text-fg md:text-3xl">
-                    {r.title}
-                  </h3>
-                  <p className="text-sm text-muted">{r.artist}</p>
-                  <p className="mt-1 text-xs uppercase tracking-wider text-muted/80">
-                    {r.meta}
-                  </p>
-                </div>
-                <div className="hidden items-center md:flex">
-                  <span className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-wider text-fg/80 transition group-hover:border-accent group-hover:text-accent">
-                    Play
-                  </span>
-                </div>
-              </article>
-            </li>
-          ))}
+          {catalogReleases.map((r, i) => {
+            const isExpanded = expandedIndex === i;
+            return (
+              <li key={r.title} data-release-row>
+                <article
+                  className={`group rounded-2xl border bg-panel/80 transition ${
+                    isExpanded
+                      ? "border-accent/40"
+                      : "border-white/10 hover:border-accent/30"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                    className="flex w-full gap-4 p-4 text-left md:gap-8 md:p-5"
+                  >
+                    <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl md:h-28 md:w-28">
+                      <Image
+                        src={r.cover}
+                        alt={r.title}
+                        fill
+                        className="object-cover transition duration-500 group-hover:scale-105"
+                        sizes="112px"
+                      />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col justify-center">
+                      <h3 className="font-display text-2xl text-fg md:text-3xl">
+                        {r.title}
+                      </h3>
+                      <p className="text-sm text-muted">{r.artist}</p>
+                      <p className="mt-1 text-xs uppercase tracking-wider text-muted/80">
+                        {r.meta}
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      <span
+                        className={`rounded-full border px-4 py-2 text-xs uppercase tracking-wider transition ${
+                          isExpanded
+                            ? "border-accent bg-accent/10 text-accent"
+                            : "border-white/20 text-fg/80 group-hover:border-accent group-hover:text-accent"
+                        }`}
+                      >
+                        {isExpanded ? "✕" : "▶"}
+                      </span>
+                    </div>
+                  </button>
+
+                  {isExpanded && r.spotifyEmbed && (
+                    <div className="px-4 pb-4 md:px-5 md:pb-5">
+                      <iframe
+                        className="w-full rounded-xl"
+                        src={`https://open.spotify.com/embed/${r.spotifyEmbed}?utm_source=generator&theme=0`}
+                        width="100%"
+                        height="152"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                        title={`Spotify — ${r.title}`}
+                      />
+                    </div>
+                  )}
+                </article>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
