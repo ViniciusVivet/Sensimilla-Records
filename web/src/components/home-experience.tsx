@@ -11,6 +11,7 @@ import { OutNowSection } from "@/components/sections/out-now";
 import { LiveBridgeSection } from "@/components/sections/live-bridge";
 import { TourSection } from "@/components/sections/tour";
 import { MerchSection } from "@/components/sections/merch";
+import { YoutubeHubSection } from "@/components/sections/youtube-hub";
 import { EditorialSection } from "@/components/sections/editorial";
 import { VerticalReelSection } from "@/components/sections/vertical-reel";
 import { SiteFooter } from "@/components/sections/site-footer";
@@ -29,6 +30,7 @@ export function HomeExperience() {
         <LiveBridgeSection />
         <TourSection />
         <MerchSection />
+        <YoutubeHubSection />
         <EditorialSection />
         <VerticalReelSection />
         <SiteFooter />

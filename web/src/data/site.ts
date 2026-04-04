@@ -16,6 +16,7 @@ export const navPills = [
   { id: "catalog", label: "Out Now", href: "#out-now" },
   { id: "tour", label: "Tour", href: "#tour" },
   { id: "merch", label: "Merch", href: "#merch" },
+  { id: "youtube", label: "YouTube", href: "#youtube" },
   { id: "editorial", label: "Visuais", href: "#visuais" },
 ] as const;
 
@@ -343,6 +344,7 @@ export const footerLinks = [
   { label: "Início", href: "/" },
   { label: "Shows", href: "/#tour" },
   { label: "Discografia", href: "/#out-now" },
+  { label: "YouTube", href: "/#youtube" },
   { label: "Equipe", href: "/#equipe" },
   { label: "Merch", href: "/#merch" },
   { label: "Imprensa", href: "/#" },
