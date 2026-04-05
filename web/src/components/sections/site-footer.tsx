@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { socialLinks, footerLinks } from "@/data/site";
 
 function SocialIcon({ name }: { name: string }) {
@@ -40,14 +41,31 @@ function SocialIcon({ name }: { name: string }) {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/10 bg-black px-6 py-16 md:px-12 md:py-20">
-      <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-        <p className="font-display text-4xl tracking-wide text-accent md:text-5xl">
-          SENSIMILLA
-        </p>
-        <p className="mt-1 text-xs uppercase tracking-[0.4em] text-muted">
-          Records
-        </p>
+    <footer className="relative overflow-hidden border-t border-white/10 bg-black px-6 py-16 md:px-12 md:py-20">
+      {/* Banner de fundo */}
+      <div className="pointer-events-none absolute inset-0">
+        <Image
+          src="/banner-sensi.jpg"
+          alt=""
+          fill
+          className="object-cover opacity-15"
+          sizes="100vw"
+          priority={false}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
+      </div>
+
+      <div className="relative mx-auto flex max-w-4xl flex-col items-center text-center">
+        {/* Logo real */}
+        <div className="relative h-20 w-20 md:h-24 md:w-24">
+          <Image
+            src="/logo-sensi.jpg"
+            alt="Sensimilla Records"
+            fill
+            className="rounded-full object-cover"
+            sizes="96px"
+          />
+        </div>
 
         <nav
           className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-fg/70"

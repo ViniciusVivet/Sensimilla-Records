@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 export function SiteShell({
@@ -18,9 +19,9 @@ export function SiteShell({
           >
             ← Início
           </Link>
-          <span className="font-display text-lg tracking-wide text-accent">
-            Sensimilla
-          </span>
+          <div className="relative h-8 w-8 overflow-hidden rounded-full">
+            <Image src="/logo-sensi.jpg" alt="Sensimilla Records" fill className="object-cover" sizes="32px" />
+          </div>
         </div>
       </header>
       <main id="main-content" className="mx-auto max-w-3xl px-6 py-12 md:px-10 md:py-16">

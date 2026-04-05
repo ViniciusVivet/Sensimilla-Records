@@ -57,16 +57,16 @@ export function RosterSection() {
     <section
       ref={root}
       id="equipe"
-      className="bg-fg px-6 py-24 text-bg md:px-12 md:py-32"
+      className="bg-bg px-6 py-24 text-fg md:px-12 md:py-32"
     >
       <div className="mx-auto max-w-6xl">
-        <p className="text-xs uppercase tracking-[0.3em] text-bg/45">
+        <p className="text-xs uppercase tracking-[0.3em] text-muted">
           {roster.eyebrow}
         </p>
         <h2 className="font-display mt-3 max-w-3xl text-4xl md:text-6xl">
           {roster.title}
         </h2>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-bg/55">
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
           Quem está por trás dos lançamentos, do som e da cena.
         </p>
 
@@ -78,9 +78,9 @@ export function RosterSection() {
                 key={a.id}
                 data-roster-card
                 data-index={i}
-                className={`group relative overflow-hidden rounded-2xl ${
+                className={`group relative overflow-hidden rounded-2xl bg-zinc-900 ${
                   isFeatured
-                    ? "ring-2 ring-accent/80 ring-offset-2 ring-offset-fg sm:col-span-2 sm:row-span-1 lg:col-span-1 xl:col-span-2 xl:row-span-2"
+                    ? "ring-2 ring-accent/80 ring-offset-2 ring-offset-bg sm:col-span-2 sm:row-span-1 lg:col-span-1 xl:col-span-2 xl:row-span-2"
                     : "opacity-90 md:opacity-85 md:transition md:duration-500 md:hover:opacity-100"
                 }`}
               >
