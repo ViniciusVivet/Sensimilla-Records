@@ -104,18 +104,18 @@ export function RosterSection() {
                       }
                     />
                   ) : (
-                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
-                      <span className="font-display text-5xl text-bg/25 md:text-6xl">
+                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950">
+                      <span className="font-display text-5xl text-white/25 md:text-6xl">
                         ?
                       </span>
-                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-bg/40">
+                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-white/40">
                         Vaga reservada
                       </span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 space-y-2 p-4 md:p-5">
+                <div className="absolute bottom-0 left-0 right-0 space-y-2 bg-gradient-to-t from-black/90 to-transparent px-4 pb-4 pt-12 md:px-5 md:pb-5 md:pt-16">
                   <div>
                     <h3 className="font-display text-2xl text-white md:text-3xl">
                       {a.name}
