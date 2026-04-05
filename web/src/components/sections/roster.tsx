@@ -115,7 +115,7 @@ export function RosterSection() {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 space-y-2 bg-gradient-to-t from-black/90 to-transparent px-4 pb-4 pt-12 md:px-5 md:pb-5 md:pt-16">
+                <div className="absolute bottom-0 left-0 right-0 space-y-2 p-4 md:p-5">
                   <div>
                     <h3 className="font-display text-2xl text-white md:text-3xl">
                       {a.name}
