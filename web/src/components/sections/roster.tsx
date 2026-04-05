@@ -78,10 +78,10 @@ export function RosterSection() {
                 key={a.id}
                 data-roster-card
                 data-index={i}
-                className={`group relative overflow-hidden rounded-2xl bg-zinc-900 ${
+                className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-panel ${
                   isFeatured
                     ? "ring-2 ring-accent/80 ring-offset-2 ring-offset-bg sm:col-span-2 sm:row-span-1 lg:col-span-1 xl:col-span-2 xl:row-span-2"
-                    : "opacity-90 md:opacity-85 md:transition md:duration-500 md:hover:opacity-100"
+                    : "transition duration-500 hover:border-white/25"
                 }`}
               >
                 <div
@@ -104,11 +104,11 @@ export function RosterSection() {
                       }
                     />
                   ) : (
-                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-zinc-800 via-zinc-900 to-zinc-950">
-                      <span className="font-display text-5xl text-white/25 md:text-6xl">
+                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-accent/5 via-panel to-panel">
+                      <span className="font-display text-5xl text-accent/30 md:text-6xl">
                         ?
                       </span>
-                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-white/40">
+                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-muted/60">
                         Vaga reservada
                       </span>
                     </div>
