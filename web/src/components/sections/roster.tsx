@@ -70,8 +70,8 @@ export function RosterSection() {
               <article
                 key={a.id}
                 data-roster-card
-                className={`group overflow-hidden rounded-2xl border border-white/10 bg-panel transition hover:border-white/25 ${
-                  isFeatured ? "col-span-2 row-span-2 sm:col-span-1 sm:row-span-1" : ""
+                className={`group overflow-hidden rounded-2xl border border-white/15 bg-zinc-800 transition hover:border-accent/40 ${
+                  isFeatured ? "col-span-2 sm:col-span-1" : ""
                 }`}
               >
                 {/* Imagem */}
@@ -85,8 +85,8 @@ export function RosterSection() {
                       sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-panel">
-                      <span className="font-display text-4xl text-muted/40">?</span>
+                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
+                      <span className="font-display text-4xl text-muted/60">?</span>
                     </div>
                   )}
                 </div>
