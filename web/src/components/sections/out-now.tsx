@@ -1,18 +1,19 @@
 "use client";
 
-import { useRef, useLayoutEffect, useState } from "react";
+import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { catalogReleases } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
+import { useMiniPlayer } from "@/components/mini-player-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function OutNowSection() {
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const { currentIndex, open, close } = useMiniPlayer();
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -57,30 +58,23 @@ export function OutNowSection() {
               Lançamentos recentes do catálogo — rap, trap e o som da Zona Leste.
             </p>
           </div>
-          <button
-            type="button"
-            className="hidden h-14 w-14 shrink-0 rounded-full border border-white/15 text-xs uppercase tracking-wider text-muted transition hover:border-accent hover:text-accent md:flex md:items-center md:justify-center"
-            aria-label="Ver mais lançamentos"
-          >
-            →
-          </button>
         </div>
 
         <ul className="mt-14 space-y-4">
           {catalogReleases.map((r, i) => {
-            const isExpanded = expandedIndex === i;
+            const isActive = currentIndex === i;
             return (
               <li key={r.title} data-release-row>
                 <article
                   className={`group rounded-2xl border bg-panel/80 transition ${
-                    isExpanded
+                    isActive
                       ? "border-accent/40"
                       : "border-white/10 hover:border-accent/30"
                   }`}
                 >
                   <button
                     type="button"
-                    onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                    onClick={() => (isActive ? close() : open(i))}
                     className="flex w-full gap-4 p-4 text-left md:gap-8 md:p-5"
                   >
                     <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl md:h-28 md:w-28">
@@ -104,28 +98,23 @@ export function OutNowSection() {
                     <div className="flex items-center">
                       <span
                         className={`rounded-full border px-4 py-2 text-xs uppercase tracking-wider transition ${
-                          isExpanded
+                          isActive
                             ? "border-accent bg-accent/10 text-accent"
                             : "border-white/20 text-fg/80 group-hover:border-accent group-hover:text-accent"
                         }`}
                       >
-                        {isExpanded ? "✕" : "▶"}
+                        {isActive ? "✕" : "▶"}
                       </span>
                     </div>
                   </button>
 
-                  {isExpanded && r.spotifyEmbed && (
+                  {/* Links de plataformas — sempre visíveis ao expandir */}
+                  {isActive && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
-                      <iframe
-                        className="w-full rounded-xl"
-                        src={`https://open.spotify.com/embed/${r.spotifyEmbed}?utm_source=generator&theme=0`}
-                        width="100%"
-                        height="152"
-                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        loading="lazy"
-                        title={`Spotify — ${r.title}`}
-                      />
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <p className="mb-3 text-xs text-muted">
+                        ▶ Tocando no mini player — arraste-o para qualquer canto da tela
+                      </p>
+                      <div className="flex flex-wrap gap-2">
                         <a
                           href={`https://open.spotify.com/${r.spotifyEmbed}`}
                           target="_blank"
@@ -167,7 +156,6 @@ export function OutNowSection() {
           })}
         </ul>
       </div>
-
     </section>
   );
 }
