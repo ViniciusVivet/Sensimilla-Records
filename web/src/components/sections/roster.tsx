@@ -21,24 +21,30 @@ export function RosterSection() {
   useLayoutEffect(() => {
     const section = root.current;
     if (!section) return;
+
     const cards = section.querySelectorAll<HTMLElement>("[data-roster-card]");
 
     if (reducedMotion) {
-      gsap.set(cards, { opacity: 1, y: 0 });
+      gsap.set(cards, { opacity: 1, x: 0, y: 0 });
       return;
     }
 
     const ctx = gsap.context(() => {
       gsap.from(cards, {
         opacity: 0,
-        y: 40,
-        duration: 0.9,
-        stagger: 0.07,
+        y: 48,
+        x: (_i, el) => {
+          const idx = Number(el.getAttribute("data-index") ?? 0);
+          if (idx === featuredIndex) return 0;
+          return idx < featuredIndex ? -28 : 28;
+        },
+        duration: 0.95,
+        stagger: 0.06,
         ease: "power3.out",
         scrollTrigger: {
           trigger: section,
           start: "top 75%",
-          toggleActions: "play none none none",
+          toggleActions: "play none none reverse",
         },
       });
     }, section);
@@ -50,7 +56,7 @@ export function RosterSection() {
     <section
       ref={root}
       id="equipe"
-      className="bg-bg px-6 py-24 text-fg md:px-12 md:py-32"
+      className="bg-panel px-6 py-24 text-fg md:px-12 md:py-32"
     >
       <div className="mx-auto max-w-6xl">
         <p className="text-xs uppercase tracking-[0.3em] text-muted">
@@ -63,54 +69,78 @@ export function RosterSection() {
           Quem está por trás dos lançamentos, do som e da cena.
         </p>
 
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {roster.members.map((a, i) => {
             const isFeatured = i === featuredIndex;
             return (
               <article
                 key={a.id}
                 data-roster-card
-                className={`group overflow-hidden rounded-2xl border border-white/15 bg-zinc-800 transition hover:border-accent/40 ${
-                  isFeatured ? "col-span-2 sm:col-span-1" : ""
+                data-index={i}
+                className={`group relative overflow-hidden rounded-2xl border border-white/10 ${
+                  isFeatured
+                    ? "ring-2 ring-accent/60 ring-offset-2 ring-offset-panel sm:col-span-2 lg:col-span-1 xl:col-span-2 xl:row-span-2"
+                    : "opacity-90 transition duration-500 hover:opacity-100"
                 }`}
               >
-                {/* Imagem */}
-                <div className={`relative w-full overflow-hidden ${isFeatured ? "aspect-[3/4]" : "aspect-[3/4]"}`}>
+                <div
+                  className={`relative w-full overflow-hidden ${
+                    isFeatured
+                      ? "aspect-[4/3] min-h-[280px] xl:aspect-auto xl:min-h-[min(520px,55vh)]"
+                      : "aspect-[3/4]"
+                  }`}
+                >
                   {a.image ? (
                     <Image
                       src={a.image}
                       alt={a.name}
                       fill
-                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                      sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+                      className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                      sizes={
+                        isFeatured
+                          ? "(max-width:1280px) 100vw, 50vw"
+                          : "(max-width:640px) 100vw, (max-width:1024px) 50vw, 25vw"
+                      }
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
-                      <span className="font-display text-4xl text-muted/60">?</span>
+                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
+                      <span className="font-display text-5xl text-fg/25 md:text-6xl">
+                        ?
+                      </span>
+                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-fg/40">
+                        Em breve
+                      </span>
                     </div>
                   )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 </div>
 
-                {/* Texto abaixo da imagem */}
-                <div className="p-3 md:p-4">
-                  <h3 className="font-display text-lg text-fg md:text-xl">
-                    {a.name}
-                  </h3>
-                  {a.role && (
-                    <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted line-clamp-1">
-                      {a.role}
-                    </p>
-                  )}
-                  {(a.spotifyUrl || a.instagramUrl || a.youtubeUrl) && (
-                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                <div className="absolute bottom-0 left-0 right-0 space-y-2 p-4 md:p-5">
+                  <div>
+                    <h3 className="font-display text-2xl text-white md:text-3xl">
+                      {a.name}
+                    </h3>
+                    {a.role && (
+                      <p className="mt-1 text-xs uppercase tracking-wider text-white/60">
+                        {a.role}
+                      </p>
+                    )}
+                    {a.bio && (
+                      <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-white/55">
+                        {a.bio}
+                      </p>
+                    )}
+                  </div>
+                  {(a.spotifyUrl || a.youtubeUrl || a.instagramUrl) && (
+                    <div className="flex flex-wrap gap-x-4 gap-y-2">
                       {a.spotifyUrl && (
                         <a
                           href={a.spotifyUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] font-medium uppercase tracking-wider text-accent hover:underline"
+                          className="inline-flex text-xs font-medium uppercase tracking-wider text-accent transition hover:text-white"
                         >
-                          Spotify
+                          Spotify →
                         </a>
                       )}
                       {a.instagramUrl && (
@@ -118,9 +148,9 @@ export function RosterSection() {
                           href={a.instagramUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] font-medium uppercase tracking-wider text-rose-300/80 hover:underline"
+                          className="inline-flex text-xs font-medium uppercase tracking-wider text-rose-300/90 transition hover:text-rose-100"
                         >
-                          Insta
+                          Instagram →
                         </a>
                       )}
                       {a.youtubeUrl && (
@@ -128,9 +158,9 @@ export function RosterSection() {
                           href={a.youtubeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] font-medium uppercase tracking-wider text-muted hover:text-fg hover:underline"
+                          className="inline-flex text-xs font-medium uppercase tracking-wider text-white/70 transition hover:text-white"
                         >
-                          YouTube
+                          YouTube →
                         </a>
                       )}
                     </div>
