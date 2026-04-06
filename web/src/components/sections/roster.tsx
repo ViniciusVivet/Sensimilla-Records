@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useState, useCallback } from "react";
+import { useRef, useMemo, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { roster, type Member } from "@/data/site";
 
@@ -89,9 +89,56 @@ function MemberModal({
   );
 }
 
+function useDragScroll(ref: React.RefObject<HTMLDivElement | null>) {
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const hasMoved = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const onDown = (e: MouseEvent) => {
+      isDragging.current = true;
+      hasMoved.current = false;
+      startX.current = e.pageX - el.offsetLeft;
+      scrollLeft.current = el.scrollLeft;
+      el.style.cursor = "grabbing";
+    };
+
+    const onMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = x - startX.current;
+      if (Math.abs(walk) > 5) hasMoved.current = true;
+      el.scrollLeft = scrollLeft.current - walk;
+    };
+
+    const onUp = () => {
+      isDragging.current = false;
+      el.style.cursor = "";
+    };
+
+    el.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+
+    return () => {
+      el.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [ref]);
+
+  return hasMoved;
+}
+
 export function RosterSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const hasDragged = useDragScroll(scrollRef);
 
   const featuredIndex = useMemo(() => {
     const i = roster.members.findIndex((m) => m.id === roster.featuredMemberId);
@@ -121,6 +168,14 @@ export function RosterSection() {
     [scroll, selectedMember],
   );
 
+  const handleCardClick = useCallback(
+    (member: Member) => {
+      if (hasDragged.current) return;
+      setSelectedMember(member);
+    },
+    [hasDragged],
+  );
+
   return (
     <section
       id="equipe"
@@ -140,12 +195,12 @@ export function RosterSection() {
 
       {/* Carrossel com setas laterais */}
       <div className="relative mt-14">
-        {/* Seta esquerda */}
+        {/* Seta esquerda — posicionada depois dos pills de navegacao */}
         <button
           type="button"
           onClick={() => scroll("left")}
           aria-label="Anterior"
-          className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent md:flex"
+          className="absolute left-[140px] top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent lg:flex"
         >
           ‹
         </button>
@@ -164,7 +219,7 @@ export function RosterSection() {
           ref={scrollRef}
           tabIndex={0}
           onKeyDown={handleKeyDown}
-          className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 outline-none md:px-12 scrollbar-hide"
+          className="flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 outline-none active:cursor-grabbing md:px-12 scrollbar-hide"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {roster.members.map((a, i) => {
@@ -172,13 +227,13 @@ export function RosterSection() {
             return (
               <article
                 key={a.id}
-                className={`group relative shrink-0 snap-start overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer ${
+                className={`group relative shrink-0 snap-start overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer select-none ${
                   isFeatured
                     ? "border-accent/40 ring-1 ring-accent/30"
                     : "border-white/10"
                 }`}
                 style={{ width: "min(280px, 72vw)" }}
-                onClick={() => setSelectedMember(a)}
+                onClick={() => handleCardClick(a)}
               >
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
                   {a.image ? (
@@ -186,8 +241,9 @@ export function RosterSection() {
                       src={a.image}
                       alt={a.name}
                       fill
-                      className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                      className="pointer-events-none object-cover transition duration-700 group-hover:scale-[1.03]"
                       sizes="280px"
+                      draggable={false}
                     />
                   ) : (
                     <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
@@ -225,7 +281,7 @@ export function RosterSection() {
         </div>
       </div>
 
-      {/* Modal de detalhe do membro — overlay sobre a seção */}
+      {/* Modal de detalhe do membro */}
       {selectedMember && (
         <MemberModal
           member={selectedMember}
