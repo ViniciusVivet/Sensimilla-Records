@@ -145,7 +145,7 @@ export function RosterSection() {
           type="button"
           onClick={() => scroll("left")}
           aria-label="Anterior"
-          className="absolute left-2 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm h-10 w-10 text-white/50 transition hover:bg-black/60 hover:text-accent md:flex"
+          className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent md:flex"
         >
           ‹
         </button>
@@ -155,7 +155,7 @@ export function RosterSection() {
           type="button"
           onClick={() => scroll("right")}
           aria-label="Próximo"
-          className="absolute right-2 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm h-10 w-10 text-white/50 transition hover:bg-black/60 hover:text-accent md:flex"
+          className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent md:flex"
         >
           ›
         </button>
