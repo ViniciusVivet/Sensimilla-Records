@@ -1,60 +1,17 @@
 "use client";
 
-import { useRef, useLayoutEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { roster } from "@/data/site";
-import { useReducedMotion } from "@/components/reduced-motion-provider";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function RosterSection() {
-  const root = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-
   const featuredIndex = useMemo(() => {
     const i = roster.members.findIndex((m) => m.id === roster.featuredMemberId);
     return i >= 0 ? i : 0;
   }, []);
 
-  useLayoutEffect(() => {
-    const section = root.current;
-    if (!section) return;
-
-    const cards = section.querySelectorAll<HTMLElement>("[data-roster-card]");
-
-    if (reducedMotion) {
-      gsap.set(cards, { opacity: 1, x: 0, y: 0 });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.from(cards, {
-        opacity: 0,
-        y: 48,
-        x: (_i, el) => {
-          const idx = Number(el.getAttribute("data-index") ?? 0);
-          if (idx === featuredIndex) return 0;
-          return idx < featuredIndex ? -28 : 28;
-        },
-        duration: 0.95,
-        stagger: 0.06,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 75%",
-          toggleActions: "play none none reverse",
-        },
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, [featuredIndex, reducedMotion]);
-
   return (
     <section
-      ref={root}
       id="equipe"
       className="bg-panel px-6 py-24 text-fg md:px-12 md:py-32"
     >
@@ -69,18 +26,16 @@ export function RosterSection() {
           Quem está por trás dos lançamentos, do som e da cena.
         </p>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {roster.members.map((a, i) => {
             const isFeatured = i === featuredIndex;
             return (
               <article
                 key={a.id}
-                data-roster-card
-                data-index={i}
-                className={`group relative overflow-hidden rounded-2xl border transition duration-500 hover:opacity-100 ${
+                className={`group relative overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] ${
                   isFeatured
                     ? "border-accent/40 ring-1 ring-accent/30"
-                    : "border-white/10 opacity-90"
+                    : "border-white/10"
                 }`}
               >
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
@@ -105,32 +60,32 @@ export function RosterSection() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 space-y-2 p-4 md:p-5">
+                <div className="absolute bottom-0 left-0 right-0 space-y-1.5 p-3 md:p-4">
                   <div>
-                    <h3 className="font-display text-2xl text-white md:text-3xl">
+                    <h3 className="font-display text-xl text-white md:text-2xl">
                       {a.name}
                     </h3>
                     {a.role && (
-                      <p className="mt-1 text-xs uppercase tracking-wider text-white/60">
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/60 line-clamp-1">
                         {a.role}
                       </p>
                     )}
                     {a.bio && (
-                      <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-white/55">
+                      <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-white/50 md:line-clamp-3">
                         {a.bio}
                       </p>
                     )}
                   </div>
                   {(a.spotifyUrl || a.youtubeUrl || a.instagramUrl) && (
-                    <div className="flex flex-wrap gap-x-4 gap-y-2">
+                    <div className="flex flex-wrap gap-x-3 gap-y-1">
                       {a.spotifyUrl && (
                         <a
                           href={a.spotifyUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex text-xs font-medium uppercase tracking-wider text-accent transition hover:text-white"
+                          className="text-[10px] font-medium uppercase tracking-wider text-accent transition hover:text-white"
                         >
-                          Spotify →
+                          Spotify
                         </a>
                       )}
                       {a.instagramUrl && (
@@ -138,9 +93,9 @@ export function RosterSection() {
                           href={a.instagramUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex text-xs font-medium uppercase tracking-wider text-rose-300/90 transition hover:text-rose-100"
+                          className="text-[10px] font-medium uppercase tracking-wider text-rose-300/80 transition hover:text-rose-100"
                         >
-                          Instagram →
+                          Insta
                         </a>
                       )}
                       {a.youtubeUrl && (
@@ -148,9 +103,9 @@ export function RosterSection() {
                           href={a.youtubeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex text-xs font-medium uppercase tracking-wider text-white/70 transition hover:text-white"
+                          className="text-[10px] font-medium uppercase tracking-wider text-white/60 transition hover:text-white"
                         >
-                          YouTube →
+                          YouTube
                         </a>
                       )}
                     </div>
