@@ -1,156 +1,237 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useCallback } from "react";
 import Image from "next/image";
-import { roster } from "@/data/site";
+import { roster, type Member } from "@/data/site";
+
+function MemberModal({
+  member,
+  onClose,
+}: {
+  member: Member;
+  onClose: () => void;
+}) {
+  return (
+    <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/85 backdrop-blur-sm">
+      <div className="relative mx-auto flex w-full max-w-2xl flex-col items-center gap-6 px-6 py-10 md:flex-row md:items-start md:gap-10">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fechar"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
+        >
+          ✕
+        </button>
+
+        {member.image && (
+          <div className="relative h-56 w-44 shrink-0 overflow-hidden rounded-2xl md:h-72 md:w-56">
+            <Image
+              src={member.image}
+              alt={member.name}
+              fill
+              className="object-cover"
+              sizes="224px"
+            />
+          </div>
+        )}
+
+        <div className="text-center md:text-left">
+          <h3 className="font-display text-3xl text-white md:text-4xl">
+            {member.name}
+          </h3>
+          {member.role && (
+            <p className="mt-1 text-xs uppercase tracking-wider text-white/50">
+              {member.role}
+            </p>
+          )}
+          {member.bio && (
+            <p className="mt-4 text-sm leading-relaxed text-white/70">
+              {member.bio}
+            </p>
+          )}
+          {(member.spotifyUrl || member.instagramUrl || member.youtubeUrl) && (
+            <div className="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
+              {member.spotifyUrl && (
+                <a
+                  href={member.spotifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-accent/40 px-4 py-2 text-xs font-medium uppercase tracking-wider text-accent transition hover:bg-accent/10"
+                >
+                  Spotify →
+                </a>
+              )}
+              {member.instagramUrl && (
+                <a
+                  href={member.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-rose-300/30 px-4 py-2 text-xs font-medium uppercase tracking-wider text-rose-300/80 transition hover:bg-rose-300/10"
+                >
+                  Instagram →
+                </a>
+              )}
+              {member.youtubeUrl && (
+                <a
+                  href={member.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-white/20 px-4 py-2 text-xs font-medium uppercase tracking-wider text-white/60 transition hover:bg-white/10"
+                >
+                  YouTube →
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function RosterSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
 
   const featuredIndex = useMemo(() => {
     const i = roster.members.findIndex((m) => m.id === roster.featuredMemberId);
     return i >= 0 ? i : 0;
   }, []);
 
-  const scroll = (dir: "left" | "right") => {
+  const scroll = useCallback((dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
     const card = el.querySelector("article");
     const step = card ? card.offsetWidth + 16 : 300;
     el.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" });
-  };
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        scroll("left");
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        scroll("right");
+      } else if (e.key === "Escape" && selectedMember) {
+        setSelectedMember(null);
+      }
+    },
+    [scroll, selectedMember],
+  );
 
   return (
     <section
       id="equipe"
-      className="bg-panel py-24 text-fg md:py-32"
+      className="relative bg-panel py-24 text-fg md:py-32"
     >
       <div className="mx-auto max-w-6xl px-6 md:px-12">
         <p className="text-xs uppercase tracking-[0.3em] text-muted">
           {roster.eyebrow}
         </p>
-        <div className="mt-3 flex items-end justify-between gap-4">
-          <h2 className="font-display max-w-3xl text-4xl md:text-6xl">
-            {roster.title}
-          </h2>
-          <div className="hidden gap-2 md:flex">
-            <button
-              type="button"
-              onClick={() => scroll("left")}
-              aria-label="Anterior"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-muted transition hover:border-accent hover:text-accent"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              onClick={() => scroll("right")}
-              aria-label="Próximo"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-muted transition hover:border-accent hover:text-accent"
-            >
-              →
-            </button>
-          </div>
-        </div>
+        <h2 className="font-display mt-3 max-w-3xl text-4xl md:text-6xl">
+          {roster.title}
+        </h2>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
           Quem está por trás dos lançamentos, do som e da cena.
         </p>
       </div>
 
-      <div
-        ref={scrollRef}
-        className="mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 md:px-12 scrollbar-hide"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        {roster.members.map((a, i) => {
-          const isFeatured = i === featuredIndex;
-          return (
-            <article
-              key={a.id}
-              className={`group relative shrink-0 snap-start overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] ${
-                isFeatured
-                  ? "border-accent/40 ring-1 ring-accent/30"
-                  : "border-white/10"
-              }`}
-              style={{ width: "min(280px, 72vw)" }}
-            >
-              <div className="relative aspect-[3/4] w-full overflow-hidden">
-                {a.image ? (
-                  <Image
-                    src={a.image}
-                    alt={a.name}
-                    fill
-                    className="object-cover transition duration-700 group-hover:scale-[1.03]"
-                    sizes="280px"
-                  />
-                ) : (
-                  <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
-                    <span className="font-display text-5xl text-fg/25 md:text-6xl">
-                      ?
-                    </span>
-                    <span className="mt-2 text-xs uppercase tracking-[0.25em] text-fg/40">
-                      Em breve
-                    </span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-              </div>
+      {/* Carrossel com setas laterais */}
+      <div className="relative mt-14">
+        {/* Seta esquerda */}
+        <button
+          type="button"
+          onClick={() => scroll("left")}
+          aria-label="Anterior"
+          className="absolute left-2 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm h-10 w-10 text-white/50 transition hover:bg-black/60 hover:text-accent md:flex"
+        >
+          ‹
+        </button>
 
-              <div className="absolute bottom-0 left-0 right-0 space-y-1.5 p-3 md:p-4">
-                <div>
-                  <h3 className="font-display text-xl text-white md:text-2xl">
-                    {a.name}
-                  </h3>
-                  {a.role && (
-                    <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/60 line-clamp-1">
-                      {a.role}
-                    </p>
+        {/* Seta direita */}
+        <button
+          type="button"
+          onClick={() => scroll("right")}
+          aria-label="Próximo"
+          className="absolute right-2 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm h-10 w-10 text-white/50 transition hover:bg-black/60 hover:text-accent md:flex"
+        >
+          ›
+        </button>
+
+        <div
+          ref={scrollRef}
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 outline-none md:px-12 scrollbar-hide"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
+          {roster.members.map((a, i) => {
+            const isFeatured = i === featuredIndex;
+            return (
+              <article
+                key={a.id}
+                className={`group relative shrink-0 snap-start overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer ${
+                  isFeatured
+                    ? "border-accent/40 ring-1 ring-accent/30"
+                    : "border-white/10"
+                }`}
+                style={{ width: "min(280px, 72vw)" }}
+                onClick={() => setSelectedMember(a)}
+              >
+                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                  {a.image ? (
+                    <Image
+                      src={a.image}
+                      alt={a.name}
+                      fill
+                      className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                      sizes="280px"
+                    />
+                  ) : (
+                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
+                      <span className="font-display text-5xl text-fg/25 md:text-6xl">
+                        ?
+                      </span>
+                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-fg/40">
+                        Em breve
+                      </span>
+                    </div>
                   )}
-                  {a.bio && (
-                    <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-white/50 md:line-clamp-3">
-                      {a.bio}
-                    </p>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 </div>
-                {(a.spotifyUrl || a.youtubeUrl || a.instagramUrl) && (
-                  <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    {a.spotifyUrl && (
-                      <a
-                        href={a.spotifyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[10px] font-medium uppercase tracking-wider text-accent transition hover:text-white"
-                      >
-                        Spotify
-                      </a>
+
+                <div className="absolute bottom-0 left-0 right-0 space-y-1.5 p-3 md:p-4">
+                  <div>
+                    <h3 className="font-display text-xl text-white md:text-2xl">
+                      {a.name}
+                    </h3>
+                    {a.role && (
+                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/60 line-clamp-1">
+                        {a.role}
+                      </p>
                     )}
-                    {a.instagramUrl && (
-                      <a
-                        href={a.instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[10px] font-medium uppercase tracking-wider text-rose-300/80 transition hover:text-rose-100"
-                      >
-                        Insta
-                      </a>
-                    )}
-                    {a.youtubeUrl && (
-                      <a
-                        href={a.youtubeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[10px] font-medium uppercase tracking-wider text-white/60 transition hover:text-white"
-                      >
-                        YouTube
-                      </a>
+                    {a.bio && (
+                      <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-white/50 md:line-clamp-3">
+                        {a.bio}
+                      </p>
                     )}
                   </div>
-                )}
-              </div>
-            </article>
-          );
-        })}
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
+
+      {/* Modal de detalhe do membro — overlay sobre a seção */}
+      {selectedMember && (
+        <MemberModal
+          member={selectedMember}
+          onClose={() => setSelectedMember(null)}
+        />
+      )}
     </section>
   );
 }
