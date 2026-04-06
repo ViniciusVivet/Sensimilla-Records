@@ -128,21 +128,22 @@ export const members: Member[] = [
     youtubeUrl: YOUTUBE.c13prodTopic,
     instagramUrl: INSTAGRAM.c13prod,
   },
-  {
-    id: "pvinicius",
-    name: "PVinicius",
-    role: "Direção de styling · imagem",
-    bio: "ZL / Itaquera. Direção de styling e identidade visual ligada ao @sensi.rec.",
-    image: null,
-    instagramUrl: INSTAGRAM.pvinicius,
-  },
-  {
-    id: "gb",
-    name: "GB",
-    role: "Integrante",
-    bio: "Parte do núcleo Sensimilla. Perfil público a confirmar.",
-    image: null,
-  },
+  // PVinicius e GB temporariamente removidos — reincluir quando tiver foto/perfil.
+  // {
+  //   id: "pvinicius",
+  //   name: "PVinicius",
+  //   role: "Direção de styling · imagem",
+  //   bio: "ZL / Itaquera. Direção de styling e identidade visual ligada ao @sensi.rec.",
+  //   image: null,
+  //   instagramUrl: INSTAGRAM.pvinicius,
+  // },
+  // {
+  //   id: "gb",
+  //   name: "GB",
+  //   role: "Integrante",
+  //   bio: "Parte do núcleo Sensimilla. Perfil público a confirmar.",
+  //   image: null,
+  // },
 ];
 
 export function getMemberById(id: string): Member | undefined {

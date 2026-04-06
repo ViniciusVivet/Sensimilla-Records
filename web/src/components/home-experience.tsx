@@ -24,11 +24,11 @@ export function HomeExperience() {
         <TypographySplash />
         <BrandStatementSection />
         <RosterSection />
+        <TourSection />
         <TypeOutlineSection />
         <FeaturedReleaseSection />
         <OutNowSection />
         <LiveBridgeSection />
-        <TourSection />
         <MerchSection />
         <YoutubeHubSection />
         <EditorialSection />
