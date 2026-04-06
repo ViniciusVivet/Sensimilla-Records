@@ -110,3 +110,12 @@ button:hover {
     cursor: auto;
   }
 }
+
+/* Esconde scrollbar nativa mantendo scroll por arraste */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
