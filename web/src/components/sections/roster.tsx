@@ -77,30 +77,20 @@ export function RosterSection() {
                 key={a.id}
                 data-roster-card
                 data-index={i}
-                className={`group relative overflow-hidden rounded-2xl border border-white/10 ${
+                className={`group relative overflow-hidden rounded-2xl border transition duration-500 hover:opacity-100 ${
                   isFeatured
-                    ? "ring-2 ring-accent/60 ring-offset-2 ring-offset-panel sm:col-span-2 lg:col-span-1 xl:col-span-2 xl:row-span-2"
-                    : "opacity-90 transition duration-500 hover:opacity-100"
+                    ? "border-accent/40 ring-1 ring-accent/30"
+                    : "border-white/10 opacity-90"
                 }`}
               >
-                <div
-                  className={`relative w-full overflow-hidden ${
-                    isFeatured
-                      ? "aspect-[4/3] min-h-[280px] xl:aspect-auto xl:min-h-[min(520px,55vh)]"
-                      : "aspect-[3/4]"
-                  }`}
-                >
+                <div className="relative aspect-[3/4] w-full overflow-hidden">
                   {a.image ? (
                     <Image
                       src={a.image}
                       alt={a.name}
                       fill
                       className="object-cover transition duration-700 group-hover:scale-[1.03]"
-                      sizes={
-                        isFeatured
-                          ? "(max-width:1280px) 100vw, 50vw"
-                          : "(max-width:640px) 100vw, (max-width:1024px) 50vw, 25vw"
-                      }
+                      sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
                     />
                   ) : (
                     <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
