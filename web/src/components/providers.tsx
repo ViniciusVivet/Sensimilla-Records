@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
 function AutoplayOnMount() {
   const { open } = useMiniPlayer();
   useEffect(() => {
-    open(0);
+    open(1);
   }, [open]);
   return null;
 }
