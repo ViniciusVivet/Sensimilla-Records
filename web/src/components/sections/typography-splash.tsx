@@ -47,7 +47,7 @@ export function TypographySplash() {
   return (
     <div
       ref={wrap}
-      className="relative flex min-h-[70dvh] items-center justify-center overflow-hidden bg-black py-20"
+      className="relative flex min-h-[35dvh] items-center justify-center overflow-hidden bg-black py-10"
       aria-hidden
     >
       <div

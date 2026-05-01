@@ -197,20 +197,8 @@ export function HeroSection() {
         </p>
 
         {/* Scroll indicator */}
-        <div className="mt-8 flex flex-col items-center gap-2" aria-hidden>
-          <span className="text-[8px] uppercase tracking-[0.45em] text-muted/40">Scroll</span>
-          <div className="sensi-scroll-line" />
-        </div>
-      </div>
-
-      {/* Marquee */}
-      <div className="sensi-marquee-wrap relative z-20 border-t border-white/8 py-2.5">
-        <div className="sensi-marquee">
-          {[0, 1].map((n) => (
-            <span key={n} className="font-display mr-12 text-xs uppercase tracking-[0.3em] text-muted/40">
-              SENSIMILLA RECORDS&nbsp;&nbsp;·&nbsp;&nbsp;É A SEN$I&nbsp;&nbsp;·&nbsp;&nbsp;TRAP&nbsp;&nbsp;·&nbsp;&nbsp;ZL&nbsp;&nbsp;·&nbsp;&nbsp;SP&nbsp;&nbsp;·&nbsp;&nbsp;MOB&nbsp;&nbsp;·&nbsp;&nbsp;UNDERGROUND&nbsp;&nbsp;·&nbsp;&nbsp;
-            </span>
-          ))}
+        <div className="mt-10 flex flex-col items-center gap-1" aria-hidden>
+          <div className="sensi-scroll-arrow" />
         </div>
       </div>
 

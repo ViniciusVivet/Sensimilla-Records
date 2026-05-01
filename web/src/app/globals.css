@@ -102,39 +102,24 @@ body {
   100% { background-position:   0px   0px; }
 }
 
-/* Hero — marquee inferior */
-.sensi-marquee-wrap {
-  overflow: hidden;
-  white-space: nowrap;
+/* Hero — seta de scroll */
+.sensi-scroll-arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 1.5px solid rgba(200, 242, 74, 0.5);
+  border-bottom: 1.5px solid rgba(200, 242, 74, 0.5);
+  transform: rotate(45deg);
+  animation: arrowBounce 1.4s ease-in-out infinite;
 }
 
-.sensi-marquee {
-  display: inline-flex;
-  animation: marqueeScroll 22s linear infinite;
-}
-
-@keyframes marqueeScroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-/* Hero — scroll indicator */
-.sensi-scroll-line {
-  width: 1px;
-  height: 36px;
-  background: linear-gradient(to bottom, rgba(200, 242, 74, 0.6), transparent);
-  animation: scrollPulse 1.6s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.4; transform: scaleY(1);    }
-  50%       { opacity: 1;   transform: scaleY(0.65); }
+@keyframes arrowBounce {
+  0%, 100% { opacity: 0.3; transform: rotate(45deg) translateY(-4px); }
+  50%       { opacity: 0.9; transform: rotate(45deg) translateY(4px);  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sensi-hero-grain  { animation: none; }
-  .sensi-marquee     { animation: none; }
-  .sensi-scroll-line { animation: none; opacity: 0.5; }
+  .sensi-scroll-arrow { animation: none; opacity: 0.5; }
 }
 
 /* Hero — fumaça de fundo */
