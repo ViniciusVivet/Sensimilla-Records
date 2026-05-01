@@ -15,10 +15,12 @@ import { YoutubeHubSection } from "@/components/sections/youtube-hub";
 import { EditorialSection } from "@/components/sections/editorial";
 import { VerticalReelSection } from "@/components/sections/vertical-reel";
 import { SiteFooter } from "@/components/sections/site-footer";
+import { NavPills } from "@/components/nav-pills";
 
 export function HomeExperience() {
   return (
     <SmoothScroll>
+      <NavPills />
       <main id="main-content" className="bg-bg text-fg">
         <HeroSection />
         <TypographySplash />

@@ -5,7 +5,6 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  navPills,
   socialLinks,
   heroSpotlight,
   heroTagline,
@@ -165,22 +164,6 @@ export function HeroSection() {
         </div>
       </header>
 
-      <aside className="pointer-events-none fixed left-0 top-1/2 z-30 hidden -translate-y-1/2 md:pointer-events-auto md:block md:pl-6">
-        <nav
-          className="flex flex-col gap-2"
-          aria-label="Seções"
-        >
-          {navPills.map((item) => (
-            <a
-              key={item.id}
-              href={item.href}
-              className="rounded-full border border-white/15 bg-black/50 px-4 py-2 text-xs font-medium uppercase tracking-wider text-fg/90 backdrop-blur-sm transition hover:border-accent/50 hover:text-accent"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      </aside>
 
       <div
         ref={logoRef}
