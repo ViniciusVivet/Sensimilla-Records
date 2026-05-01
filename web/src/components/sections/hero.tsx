@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
+  navPills,
   socialLinks,
   heroTagline,
 } from "@/data/site";
