@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   socialLinks,
-  heroSpotlight,
   heroTagline,
 } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
@@ -145,23 +144,41 @@ export function HeroSection() {
           ))}
         </nav>
 
-        <div className="flex max-w-[140px] flex-col gap-2 rounded-2xl border border-white/10 bg-black/40 p-3 backdrop-blur-md md:max-w-[180px]">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl">
+        <a
+          href="https://www.youtube.com/@SensimillaRecords"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex max-w-[150px] flex-col gap-2 rounded-2xl border border-white/10 bg-black/40 p-3 backdrop-blur-md transition hover:border-white/25 md:max-w-[190px]"
+        >
+          {/* Banner / thumbnail */}
+          <div className="relative aspect-video w-full overflow-hidden rounded-xl">
             <Image
-              src={heroSpotlight.image}
-              alt={heroSpotlight.name}
+              src="/banner-sensi.jpg"
+              alt="Sensimilla Records no YouTube"
               fill
-              className="object-cover"
-              sizes="180px"
+              className="object-cover transition duration-500 group-hover:scale-105"
+              sizes="190px"
             />
+            {/* Ícone play centralizado */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/60 backdrop-blur-sm">
+                <svg className="h-3.5 w-3.5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </div>
+            </div>
           </div>
+          {/* Info */}
           <div>
-            <p className="font-display text-lg leading-none text-accent">
-              {heroSpotlight.name}
+            <p className="font-display text-sm leading-none text-white">
+              Sensimilla Records
             </p>
-            <p className="mt-1 text-xs text-muted">{heroSpotlight.role}</p>
+            <p className="mt-1 text-[10px] text-muted">@SensimillaRecords · YouTube</p>
           </div>
-        </div>
+          <span className="text-center text-[9px] uppercase tracking-[0.25em] text-accent/70 transition group-hover:text-accent">
+            Ver canal →
+          </span>
+        </a>
       </header>
 
 
