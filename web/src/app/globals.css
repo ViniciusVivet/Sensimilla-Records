@@ -82,40 +82,20 @@ body {
   }
 }
 
-/* Hero — alternância preto/branco do fundo e do logo */
-.sensi-bg-flash {
-  animation: sensiBgFlash 2s linear infinite;
+/* Hero — logo respirando suave */
+.sensi-hero-logo {
+  opacity: 0.12;
+  animation: sensiBreathe 5s ease-in-out infinite;
+  will-change: opacity, transform;
 }
 
-@keyframes sensiBgFlash {
-  0%,   49.9% { background-color: #000; }
-  50%,  100%  { background-color: #fff; }
-}
-
-.sensi-logo-white-ver {
-  opacity: 0.75;
-  animation: sensiLogoWhiteVer 2s linear infinite;
-}
-
-@keyframes sensiLogoWhiteVer {
-  0%,   49.9% { opacity: 0.75; }
-  50%,  100%  { opacity: 0; }
-}
-
-.sensi-logo-black-ver {
-  opacity: 0;
-  animation: sensiLogoBlackVer 2s linear infinite;
-}
-
-@keyframes sensiLogoBlackVer {
-  0%,   49.9% { opacity: 0; }
-  50%,  100%  { opacity: 0.85; }
+@keyframes sensiBreathe {
+  0%, 100% { opacity: 0.12; transform: scale(1);    }
+  50%       { opacity: 0.32; transform: scale(1.02); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sensi-bg-flash       { animation: none; background-color: #000; }
-  .sensi-logo-white-ver { animation: none; opacity: 0.75; }
-  .sensi-logo-black-ver { animation: none; opacity: 0; }
+  .sensi-hero-logo { animation: none; opacity: 0.18; }
 }
 
 /* Cursor customizado — crosshair da marca */
