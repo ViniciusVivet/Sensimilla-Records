@@ -82,52 +82,40 @@ body {
   }
 }
 
-/* Hero — logo flicker/glitch effect */
-.sensi-hero-logo {
-  opacity: 0.14;
-  filter: grayscale(1) brightness(0.32);
-  animation: sensiFlicker 4.2s infinite ease-in-out;
-  will-change: opacity, filter, transform;
+/* Hero — alternância preto/branco do fundo e do logo */
+.sensi-bg-flash {
+  animation: sensiBgFlash 2s linear infinite;
 }
 
-@keyframes sensiFlicker {
-  0%, 100% {
-    opacity: 0.14;
-    filter: grayscale(1) brightness(0.32) blur(0px);
-    transform: translateX(0) scale(1);
-  }
-  34% {
-    opacity: 0.22;
-    filter: grayscale(1) brightness(0.55) blur(0px);
-  }
-  39% {
-    opacity: 0.85;
-    filter: grayscale(1) brightness(1.55) drop-shadow(0 0 18px rgba(190, 255, 50, 0.25));
-    transform: translateX(-1px) scale(1.01);
-  }
-  42% {
-    opacity: 0.35;
-    filter: grayscale(1) brightness(0.5) blur(0.5px);
-    transform: translateX(2px) scale(1);
-  }
-  46% {
-    opacity: 1;
-    filter: grayscale(1) brightness(1.8) drop-shadow(0 0 24px rgba(255, 255, 255, 0.35));
-    transform: translateX(0) scale(1.015);
-  }
-  52% {
-    opacity: 0.2;
-    filter: grayscale(1) brightness(0.4);
-    transform: translateX(0) scale(1);
-  }
+@keyframes sensiBgFlash {
+  0%,   49.9% { background-color: #000; }
+  50%,  100%  { background-color: #fff; }
+}
+
+.sensi-logo-white-ver {
+  opacity: 0.75;
+  animation: sensiLogoWhiteVer 2s linear infinite;
+}
+
+@keyframes sensiLogoWhiteVer {
+  0%,   49.9% { opacity: 0.75; }
+  50%,  100%  { opacity: 0; }
+}
+
+.sensi-logo-black-ver {
+  opacity: 0;
+  animation: sensiLogoBlackVer 2s linear infinite;
+}
+
+@keyframes sensiLogoBlackVer {
+  0%,   49.9% { opacity: 0; }
+  50%,  100%  { opacity: 0.85; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sensi-hero-logo {
-    animation: none;
-    opacity: 0.18;
-    filter: grayscale(1) brightness(0.45);
-  }
+  .sensi-bg-flash       { animation: none; background-color: #000; }
+  .sensi-logo-white-ver { animation: none; opacity: 0.75; }
+  .sensi-logo-black-ver { animation: none; opacity: 0; }
 }
 
 /* Cursor customizado — crosshair da marca */
