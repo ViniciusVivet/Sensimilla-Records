@@ -62,6 +62,13 @@ const INSTAGRAM = {
  */
 export const members: Member[] = [
   {
+    id: "kon",
+    name: "Kon",
+    role: "Diretor Executivo · Diretor Artístico · Sócio",
+    bio: "A mente por trás da Sensimilla Records. Lidera a produtora do conceito à execução — direção artística, audiovisual e estratégia de marca. Com olhar de rua e visão de mercado, assina não só os bastidores mas também a faixa 'Eu Fiz Um Desejo' ao lado de COGU, Ryan Janooba e MIB77.",
+    image: "/fotos/kon-lado.jpg",
+  },
+  {
     id: "cogu",
     name: "COGU",
     role: "Fundador MOB $ensimilla · artista e compositor",
@@ -192,6 +199,7 @@ export const featuredRelease = {
 };
 
 export const catalogReleases = [
+  // TODO: adicionar "Eu Fiz Um Desejo" (Kon · COGU · Ryan Janooba · MIB77) quando tiver o ID do Spotify
   {
     title: "Crumble",
     artist: "COGU ft. Bright",

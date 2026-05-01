@@ -134,6 +134,8 @@ export const trackIds = {
   barbieCico: "7BRBYfP2lNly0UD2A9Xzom",
   naoEBemAssimGuiga: "6ofh8AmNnQvT3NcpjgG4yG7",
   dinheiroDeTrapBlade: "5laNdT6tue5Ok3EnwE0W4i",
+  // TODO: confirmar ID do Spotify — "Eu Fiz Um Desejo" (Kon, COGU, Ryan Janooba, MIB77)
+  // euFizUmDesejoKon: "???",
 } as const;
 
 export const eventos = {
