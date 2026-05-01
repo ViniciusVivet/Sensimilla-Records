@@ -87,7 +87,7 @@ export function HeroSection() {
     <section
       ref={root}
       id="inicio"
-      className="relative min-h-[100dvh] overflow-hidden bg-black"
+      className="relative min-h-[75dvh] overflow-hidden bg-black"
     >
       <div className="hero-video-wrap pointer-events-none absolute inset-0">
         {/* Fumaça */}
@@ -182,7 +182,7 @@ export function HeroSection() {
 
       <div
         ref={logoRef}
-        className="relative z-10 flex min-h-[55dvh] flex-col items-center justify-end pb-16 pt-32 md:min-h-[60dvh] md:pb-24"
+        className="relative z-10 flex min-h-[40dvh] flex-col items-center justify-end pb-12 pt-24 md:min-h-[45dvh] md:pb-16"
       >
         <p className="mb-2 text-center text-[10px] uppercase tracking-[0.4em] text-muted">
           {heroTagline} · Gravadora
