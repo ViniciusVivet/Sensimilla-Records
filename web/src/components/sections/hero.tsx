@@ -8,8 +8,6 @@ import {
   navPills,
   socialLinks,
   heroSpotlight,
-  heroVideoSrc,
-  heroVideoPoster,
   heroTagline,
 } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
@@ -92,18 +90,16 @@ export function HeroSection() {
       className="relative min-h-[100dvh] overflow-hidden bg-black"
     >
       <div className="hero-video-wrap pointer-events-none absolute inset-0">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          src={heroVideoSrc}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster={heroVideoPoster}
+        <Image
+          src="/logo-sensi.jpg"
+          alt=""
+          fill
+          className="object-contain opacity-25"
+          sizes="100vw"
+          priority
           aria-hidden
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
       </div>
 
       <header className="relative z-20 flex items-start justify-between px-4 pt-4 md:px-8 md:pt-6">
