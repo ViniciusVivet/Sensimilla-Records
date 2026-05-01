@@ -91,7 +91,7 @@ export function HeroSection() {
     >
       <div className="hero-video-wrap pointer-events-none absolute inset-0">
         <Image
-          src="/logos/sensimilla-logo-white.png"
+          src="/logo-sensi.png"
           alt=""
           fill
           className="object-contain sensi-hero-logo"
