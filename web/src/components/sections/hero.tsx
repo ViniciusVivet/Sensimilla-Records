@@ -90,6 +90,29 @@ export function HeroSection() {
       className="relative min-h-[100dvh] overflow-hidden bg-black"
     >
       <div className="hero-video-wrap pointer-events-none absolute inset-0">
+        {/* Fumaça */}
+        {([
+          { w: 520, h: 420, l: "8%",   t: "55%", blur: 90,  dur: "13s", delay: "0s"   },
+          { w: 400, h: 360, l: "45%",  t: "60%", blur: 110, dur: "17s", delay: "4s"   },
+          { w: 580, h: 480, l: "68%",  t: "45%", blur: 95,  dur: "20s", delay: "8s"   },
+          { w: 360, h: 300, l: "25%",  t: "65%", blur: 75,  dur: "15s", delay: "2s"   },
+          { w: 440, h: 380, l: "-4%",  t: "50%", blur: 100, dur: "18s", delay: "10s"  },
+        ] as const).map((p, i) => (
+          <div
+            key={i}
+            className="sensi-smoke-puff"
+            style={{
+              width: p.w,
+              height: p.h,
+              left: p.l,
+              top: p.t,
+              filter: `blur(${p.blur}px)`,
+              ["--smoke-dur" as string]: p.dur,
+              animationDelay: p.delay,
+            }}
+          />
+        ))}
+
         <Image
           src="/logo-sensi.png"
           alt=""

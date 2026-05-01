@@ -82,6 +82,27 @@ body {
   }
 }
 
+/* Hero — fumaça de fundo */
+.sensi-smoke-puff {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.13) 0%, transparent 65%);
+  pointer-events: none;
+  animation: smokeRise var(--smoke-dur, 14s) ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes smokeRise {
+  0%   { opacity: 0;    transform: translateY(30px)   scale(0.85); }
+  18%  { opacity: 1; }
+  75%  { opacity: 0.45; }
+  100% { opacity: 0;    transform: translateY(-32vh)  scale(1.55); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sensi-smoke-puff { animation: none; opacity: 0; }
+}
+
 /* Hero — logo respirando suave */
 .sensi-hero-logo {
   opacity: 0.12;
