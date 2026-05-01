@@ -123,6 +123,8 @@ export function HeroSection() {
           aria-hidden
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
+        {/* Grain */}
+        <div className="sensi-hero-grain" aria-hidden />
       </div>
 
       <header className="relative z-20 flex items-start justify-between px-4 pt-4 md:px-8 md:pt-6">
@@ -184,15 +186,32 @@ export function HeroSection() {
         ref={logoRef}
         className="relative z-10 flex min-h-[40dvh] flex-col items-center justify-end pb-12 pt-24 md:min-h-[45dvh] md:pb-16"
       >
-        <p className="mb-2 text-center text-[10px] uppercase tracking-[0.4em] text-muted">
+        <p className="mb-3 text-center text-[9px] uppercase tracking-[0.45em] text-muted/60">
           {heroTagline} · Gravadora
         </p>
-        <h1 className="font-display text-center text-5xl leading-[0.9] text-accent drop-shadow-[0_0_40px_rgba(200,242,74,0.25)] sm:text-7xl md:text-8xl lg:text-9xl">
+        <h1 className="font-display text-center text-[18vw] leading-[0.85] text-accent drop-shadow-[0_0_60px_rgba(200,242,74,0.3)] sm:text-[17vw]">
           SENSIMILLA
         </h1>
-        <p className="font-display mt-2 text-2xl tracking-[0.35em] text-fg/80 md:text-3xl">
+        <p className="font-display mt-1 text-center text-[6vw] tracking-[0.5em] text-fg/70 sm:text-[4vw]">
           RECORDS
         </p>
+
+        {/* Scroll indicator */}
+        <div className="mt-8 flex flex-col items-center gap-2" aria-hidden>
+          <span className="text-[8px] uppercase tracking-[0.45em] text-muted/40">Scroll</span>
+          <div className="sensi-scroll-line" />
+        </div>
+      </div>
+
+      {/* Marquee */}
+      <div className="sensi-marquee-wrap relative z-20 border-t border-white/8 py-2.5">
+        <div className="sensi-marquee">
+          {[0, 1].map((n) => (
+            <span key={n} className="font-display mr-12 text-xs uppercase tracking-[0.3em] text-muted/40">
+              SENSIMILLA RECORDS&nbsp;&nbsp;·&nbsp;&nbsp;É A SEN$I&nbsp;&nbsp;·&nbsp;&nbsp;TRAP&nbsp;&nbsp;·&nbsp;&nbsp;ZL&nbsp;&nbsp;·&nbsp;&nbsp;SP&nbsp;&nbsp;·&nbsp;&nbsp;MOB&nbsp;&nbsp;·&nbsp;&nbsp;UNDERGROUND&nbsp;&nbsp;·&nbsp;&nbsp;
+            </span>
+          ))}
+        </div>
       </div>
 
       <nav
