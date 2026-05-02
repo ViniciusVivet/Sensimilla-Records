@@ -316,28 +316,19 @@ export const tourDates: TourDate[] = [
 
 export const merchProducts = [
   {
-    name: "Fone Reference",
-    tag: "Áudio",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop",
+    name: "Balaclava",
+    tag: "Acessório",
+    image: "/merch/balaclava.png",
   },
   {
-    name: "Earbuds Field",
-    tag: "Wireless",
-    image:
-      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&h=500&fit=crop",
+    name: "Calça",
+    tag: "Bottom",
+    image: "/merch/calca.png",
   },
   {
-    name: "Speaker Cabin",
-    tag: "Som",
-    image:
-      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e2?w=500&h=500&fit=crop",
-  },
-  {
-    name: "Cap Sensimilla",
-    tag: "Wear",
-    image:
-      "https://images.unsplash.com/photo-1521369909029-2afed882baee?w=500&h=500&fit=crop",
+    name: "Regata",
+    tag: "Top",
+    image: "/merch/regata.png",
   },
 ];
 

@@ -65,20 +65,20 @@ export function MerchSection() {
           WAAW
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">
           {merchProducts.map((p) => (
             <article
               key={p.name}
               data-merch-item
               className="group flex flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition hover:border-accent/50"
             >
-              <div className="relative aspect-square overflow-hidden rounded-xl">
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-white/5">
                 <Image
                   src={p.image}
                   alt={p.name}
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  sizes="(max-width:768px) 50vw, 25vw"
+                  className="object-contain p-3 transition duration-500 group-hover:scale-105"
+                  sizes="(max-width:768px) 50vw, 33vw"
                 />
               </div>
               <p className="mt-3 text-xs uppercase tracking-wider text-fg/50">
