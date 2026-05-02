@@ -42,6 +42,8 @@ export type Member = {
   spotifyUrl?: string;
   youtubeUrl?: string;
   instagramUrl?: string;
+  /** ID de um vídeo do YouTube para embed no modal (ex: "dQw4w9WgXcQ"). */
+  youtubeVideoId?: string;
   /** Uma linha para o site (bio curta). */
   bio?: string;
 };
@@ -76,6 +78,7 @@ export const members: Member[] = [
     image: IMG.cogu,
     spotifyUrl: SPOTIFY.cogu,
     instagramUrl: INSTAGRAM.cogu,
+    youtubeVideoId: "iv7MXFYxWMI", // LOUCURA ft. DAZDIH — Sensimilla Records
   },
   {
     id: "bright",
@@ -115,6 +118,7 @@ export const members: Member[] = [
     spotifyUrl: SPOTIFY.cico,
     youtubeUrl: YOUTUBE.cico,
     instagramUrl: INSTAGRAM.cico,
+    youtubeVideoId: "BTN2ewZr2VQ", // Arrepios! — Cico
   },
   {
     id: "guiga",

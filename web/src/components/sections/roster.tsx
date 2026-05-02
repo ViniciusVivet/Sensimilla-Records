@@ -12,78 +12,113 @@ function MemberModal({
   onClose: () => void;
 }) {
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/85 backdrop-blur-sm">
-      <div className="relative mx-auto flex w-full max-w-2xl flex-col items-center gap-6 px-6 py-10 md:flex-row md:items-start md:gap-10">
+    <div
+      className="absolute inset-0 z-20 flex items-start justify-center overflow-y-auto bg-black/90 backdrop-blur-md"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="relative mx-auto w-full max-w-2xl px-4 py-10 md:px-8">
+        {/* Fechar */}
         <button
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-sm text-white/60 transition hover:bg-white/10 hover:text-white"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm text-white/50 transition hover:border-white/40 hover:text-white"
         >
           ✕
         </button>
 
-        {member.image && (
-          <div className="relative h-56 w-44 shrink-0 overflow-hidden rounded-2xl md:h-72 md:w-56">
-            <Image
-              src={member.image}
-              alt={member.name}
-              fill
-              className="object-cover"
-              sizes="224px"
+        {/* Cabeçalho: foto + nome */}
+        <div className="flex items-end gap-5">
+          {member.image && (
+            <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-2xl shadow-lg md:h-32 md:w-24">
+              <Image
+                src={member.image}
+                alt={member.name}
+                fill
+                className="object-cover"
+                sizes="96px"
+              />
+            </div>
+          )}
+          <div>
+            <h3 className="font-display text-4xl text-white md:text-5xl">
+              {member.name}
+            </h3>
+            {member.role && (
+              <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-white/40">
+                {member.role}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Bio */}
+        {member.bio && (
+          <p className="mt-5 text-sm leading-relaxed text-white/65 md:text-base">
+            {member.bio}
+          </p>
+        )}
+
+        {/* Embed YouTube */}
+        {member.youtubeVideoId && (
+          <div className="mt-6 overflow-hidden rounded-2xl" style={{ paddingBottom: "56.25%", position: "relative" }}>
+            <iframe
+              src={`https://www.youtube.com/embed/${member.youtubeVideoId}`}
+              title={`${member.name} no YouTube`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full border-0"
+              loading="lazy"
             />
           </div>
         )}
 
-        <div className="text-center md:text-left">
-          <h3 className="font-display text-3xl text-white md:text-4xl">
-            {member.name}
-          </h3>
-          {member.role && (
-            <p className="mt-1 text-xs uppercase tracking-wider text-white/50">
-              {member.role}
-            </p>
-          )}
-          {member.bio && (
-            <p className="mt-4 text-sm leading-relaxed text-white/70">
-              {member.bio}
-            </p>
-          )}
-          {(member.spotifyUrl || member.instagramUrl || member.youtubeUrl) && (
-            <div className="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
-              {member.spotifyUrl && (
-                <a
-                  href={member.spotifyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-accent/40 px-4 py-2 text-xs font-medium uppercase tracking-wider text-accent transition hover:bg-accent/10"
-                >
-                  Spotify →
-                </a>
-              )}
-              {member.instagramUrl && (
-                <a
-                  href={member.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-rose-300/30 px-4 py-2 text-xs font-medium uppercase tracking-wider text-rose-300/80 transition hover:bg-rose-300/10"
-                >
-                  Instagram →
-                </a>
-              )}
-              {member.youtubeUrl && (
-                <a
-                  href={member.youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-white/20 px-4 py-2 text-xs font-medium uppercase tracking-wider text-white/60 transition hover:bg-white/10"
-                >
-                  YouTube →
-                </a>
-              )}
-            </div>
-          )}
-        </div>
+        {/* Redes sociais */}
+        {(member.spotifyUrl || member.instagramUrl || member.youtubeUrl) && (
+          <div className="mt-6 flex flex-wrap gap-3">
+            {member.spotifyUrl && (
+              <a
+                href={member.spotifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 rounded-2xl bg-[#1DB954]/15 px-5 py-3 text-sm font-semibold text-[#1DB954] ring-1 ring-[#1DB954]/30 transition hover:bg-[#1DB954]/25 hover:ring-[#1DB954]/60"
+              >
+                <svg className="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                </svg>
+                Spotify
+              </a>
+            )}
+            {member.instagramUrl && (
+              <a
+                href={member.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 rounded-2xl bg-gradient-to-br from-[#833ab4]/15 via-[#fd1d1d]/10 to-[#fcb045]/10 px-5 py-3 text-sm font-semibold text-[#f77737] ring-1 ring-[#f77737]/25 transition hover:ring-[#f77737]/50 hover:from-[#833ab4]/25 hover:to-[#fcb045]/20"
+              >
+                <svg className="h-4 w-4 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24" aria-hidden>
+                  <rect x="3" y="3" width="18" height="18" rx="5" strokeWidth="1.8"/>
+                  <circle cx="12" cy="12" r="4" strokeWidth="1.8"/>
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+                </svg>
+                Instagram
+              </a>
+            )}
+            {member.youtubeUrl && (
+              <a
+                href={member.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 rounded-2xl bg-[#FF0000]/10 px-5 py-3 text-sm font-semibold text-[#FF4444] ring-1 ring-[#FF0000]/25 transition hover:bg-[#FF0000]/20 hover:ring-[#FF0000]/50"
+              >
+                <svg className="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                YouTube
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
