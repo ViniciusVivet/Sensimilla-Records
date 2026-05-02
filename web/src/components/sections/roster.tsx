@@ -235,7 +235,7 @@ export function RosterSection() {
           type="button"
           onClick={() => scroll("left")}
           aria-label="Anterior"
-          className="absolute left-[200px] top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent lg:flex lg:left-[248px]"
+          className="absolute left-[148px] top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent lg:flex lg:left-[156px]"
         >
           ‹
         </button>
@@ -251,7 +251,7 @@ export function RosterSection() {
         </button>
 
         {/* Recuo no wrapper (nao no overflow-x): evita snap/scroll anchoring resetarem scrollLeft quando imagens carregam ou ScrollTrigger refresca */}
-        <div className="pl-6 pr-6 md:pl-[240px] lg:pl-[280px] md:pr-12">
+        <div className="pl-6 pr-6 md:pl-[154px] lg:pl-[162px] md:pr-12">
           <div
             ref={scrollRef}
             tabIndex={0}
