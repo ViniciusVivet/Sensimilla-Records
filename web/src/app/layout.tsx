@@ -123,7 +123,7 @@ export default function RootLayout({
       <body className="min-h-full bg-bg font-[family-name:var(--font-dm)] text-fg">
         <a
           href="#main-content"
-          className="absolute left-0 top-0 z-[200] rounded-md bg-accent px-4 py-3 text-sm text-bg focus:left-[max(1rem,env(safe-area-inset-left))] focus:top-[max(1rem,env(safe-area-inset-top))]"
+          className="fixed left-[-9999px] top-0 z-[200] whitespace-nowrap rounded-md bg-accent px-4 py-3 text-sm text-bg outline-none ring-2 ring-transparent transition-[left,top] focus:left-[max(1rem,env(safe-area-inset-left))] focus:top-[max(1rem,env(safe-area-inset-top))] focus:ring-bg/90"
         >
           Pular para o conteúdo
         </a>
