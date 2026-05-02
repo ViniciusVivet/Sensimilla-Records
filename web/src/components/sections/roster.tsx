@@ -254,7 +254,7 @@ export function RosterSection() {
           ref={scrollRef}
           tabIndex={0}
           onKeyDown={handleKeyDown}
-          className="flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 outline-none active:cursor-grabbing md:px-12 scrollbar-hide"
+          className="flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 outline-none active:cursor-grabbing md:pl-[160px] md:pr-12 scrollbar-hide"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {/* Spacer para nao sobrepor os nav pills fixos da esquerda */}
