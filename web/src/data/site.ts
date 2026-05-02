@@ -108,6 +108,7 @@ export const members: Member[] = [
     spotifyUrl: SPOTIFY.vivet,
     youtubeUrl: YOUTUBE.vivet,
     instagramUrl: INSTAGRAM.vivet,
+    youtubeVideoId: "LZLoDqvMw3s", // Vivet
   },
   {
     id: "cico",
@@ -118,7 +119,7 @@ export const members: Member[] = [
     spotifyUrl: SPOTIFY.cico,
     youtubeUrl: YOUTUBE.cico,
     instagramUrl: INSTAGRAM.cico,
-    youtubeVideoId: "BTN2ewZr2VQ", // Arrepios! — Cico
+    youtubeVideoId: "RPEXKKE4nb0", // Cico
   },
   {
     id: "guiga",
