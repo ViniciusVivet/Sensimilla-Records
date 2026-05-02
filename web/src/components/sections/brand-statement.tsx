@@ -4,10 +4,10 @@ import { Reveal } from "@/components/reveal";
 import { manifesto, members, catalogReleases } from "@/data/site";
 
 const stats = [
-  { value: `${members.length}`, label: "Artistas" },
+  { value: `${members.length}`, label: "Artistas no selo" },
   { value: `${catalogReleases.length}+`, label: "Releases" },
   { value: "100k+", label: "Streams combinados" },
-  { value: "ZL · SP", label: "Zona Leste" },
+  { value: "Estúdio", label: "Próprio · ZL SP" },
 ];
 
 export function BrandStatementSection() {
