@@ -32,11 +32,11 @@ export function HomeExperience() {
         <FeaturedReleaseSection />
         <OutNowSection />
         <LiveBridgeSection />
+        <ServicosTeaserSection />
         <MerchSection />
         <YoutubeHubSection />
         <EditorialSection />
         <VerticalReelSection />
-        <ServicosTeaserSection />
         <SiteFooter />
       </main>
     </SmoothScroll>

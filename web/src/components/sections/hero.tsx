@@ -128,21 +128,29 @@ export function HeroSection() {
 
       <header className="relative z-20 flex items-start justify-between px-4 pt-4 md:px-8 md:pt-6">
         <nav
-          className="flex gap-4 text-muted"
+          className="flex flex-col gap-3 text-muted"
           aria-label="Redes sociais"
         >
-          {socialLinks.map((s) => (
-            <a
-              key={s.name}
-              href={s.href}
-              className="transition-colors hover:text-accent"
-              aria-label={s.name}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <SocialIcon name={s.name} />
-            </a>
-          ))}
+          <div className="flex gap-4">
+            {socialLinks.map((s) => (
+              <a
+                key={s.name}
+                href={s.href}
+                className="transition-colors hover:text-accent"
+                aria-label={s.name}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SocialIcon name={s.name} />
+              </a>
+            ))}
+          </div>
+          <a
+            href="/servicos"
+            className="self-start rounded-full border border-accent/60 bg-accent/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-sm transition hover:bg-accent hover:text-bg"
+          >
+            Serviços &amp; Preços →
+          </a>
         </nav>
 
         <a
