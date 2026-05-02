@@ -6,8 +6,8 @@ import { manifesto, members, catalogReleases } from "@/data/site";
 const stats = [
   { value: `${members.length}`, label: "Artistas" },
   { value: `${catalogReleases.length}+`, label: "Releases" },
-  { value: "ZL", label: "Zona Leste SP" },
-  { value: "2024", label: "Fundação" },
+  { value: "100k+", label: "Streams combinados" },
+  { value: "ZL · SP", label: "Zona Leste" },
 ];
 
 export function BrandStatementSection() {
