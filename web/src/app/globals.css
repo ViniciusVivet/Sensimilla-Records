@@ -58,6 +58,31 @@ body {
   color: var(--fg);
   font-family: var(--font-dm), system-ui, sans-serif;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Grain global — textura de filme sutil */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation: grainGlobal 0.5s steps(1) infinite;
+}
+
+@keyframes grainGlobal {
+  0%   { background-position:   0px   0px; }
+  25%  { background-position: -40px -25px; }
+  50%  { background-position:  25px -40px; }
+  75%  { background-position: -15px  35px; }
+  100% { background-position:   0px   0px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
 }
 
 ::selection {
