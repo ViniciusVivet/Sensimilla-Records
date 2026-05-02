@@ -20,7 +20,7 @@ export function SiteShell({
             ← Início
           </Link>
           <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <Image src="/logo-sensi.jpg" alt="Sensimilla Records" fill className="object-cover" sizes="32px" />
+            <Image src="/logo-sensi.png" alt="Sensimilla Records" fill className="object-cover" sizes="32px" />
           </div>
         </div>
       </header>

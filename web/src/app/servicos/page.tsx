@@ -242,7 +242,7 @@ export default function ServicosPage() {
             </Link>
             <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/10">
               <Image
-                src="/logo-sensi.jpg"
+                src="/logo-sensi.png"
                 alt="Sensimilla Records"
                 fill
                 className="object-cover"

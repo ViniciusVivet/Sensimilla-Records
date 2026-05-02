@@ -27,7 +27,7 @@ export default function ImprensaPage() {
           </Link>
           <div className="relative h-8 w-8 overflow-hidden rounded-full">
             <Image
-              src="/logo-sensi.jpg"
+              src="/logo-sensi.png"
               alt="Sensimilla Records"
               fill
               className="object-cover"

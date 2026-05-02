@@ -59,7 +59,7 @@ export function SiteFooter() {
         {/* Logo real */}
         <div className="relative h-20 w-20 md:h-24 md:w-24">
           <Image
-            src="/logo-sensi.jpg"
+            src="/logo-sensi.png"
             alt="Sensimilla Records"
             fill
             className="rounded-full object-cover"
