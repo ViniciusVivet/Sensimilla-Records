@@ -1,7 +1,14 @@
 "use client";
 
 import { Reveal } from "@/components/reveal";
-import { manifesto } from "@/data/site";
+import { manifesto, members, catalogReleases } from "@/data/site";
+
+const stats = [
+  { value: `${members.length}`, label: "Artistas" },
+  { value: `${catalogReleases.length}+`, label: "Releases" },
+  { value: "ZL", label: "Zona Leste SP" },
+  { value: "2024", label: "Fundação" },
+];
 
 export function BrandStatementSection() {
   return (
@@ -20,10 +27,25 @@ export function BrandStatementSection() {
             {manifesto.line}
           </p>
         </Reveal>
-        <Reveal delay={0.2} className="mt-8 max-w-lg text-sm leading-relaxed text-bg/55 md:text-base">
+
+        {/* Social proof */}
+        <Reveal delay={0.2} className="mt-10 grid w-full max-w-lg grid-cols-2 gap-4 sm:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="flex flex-col items-center">
+              <span className="font-display text-3xl text-bg md:text-4xl">
+                {s.value}
+              </span>
+              <span className="mt-1 text-[10px] uppercase tracking-[0.2em] text-bg/50">
+                {s.label}
+              </span>
+            </div>
+          ))}
+        </Reveal>
+
+        <Reveal delay={0.25} className="mt-8 max-w-lg text-sm leading-relaxed text-bg/55 md:text-base">
           {manifesto.stats}
         </Reveal>
-        <Reveal delay={0.28} className="mt-10">
+        <Reveal delay={0.3} className="mt-10">
           <span className="text-xs uppercase tracking-[0.35em] text-bg/50">
             @sensi.rec · manifesto
           </span>
