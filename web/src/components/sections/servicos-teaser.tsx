@@ -22,8 +22,9 @@ export function ServicosTeaserSection() {
             GRAVE COM A GENTE
           </h2>
           <p className="relative mx-auto mt-5 max-w-lg text-sm text-fg/65 leading-relaxed md:text-base">
-            Gravação, mix & master, vídeos verticais e campanhas audiovisuais.
-            Planos para artistas, marcas e criadores.
+            A mesma estrutura que produz os lançamentos do selo — aberta pra você.
+            Gravação, mix & master, clipes cinematográficos, distribuição digital,
+            Content ID e estratégia de lançamento.
           </p>
           <div className="relative mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
