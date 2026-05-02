@@ -4,15 +4,23 @@ import { useRef, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
-import { youtubeUrls, selo } from "@/data/dossie";
+import { selo } from "@/data/dossie";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const artistChannels = [
-  { name: "Vivet", url: youtubeUrls.vivet },
-  { name: "Cico", url: youtubeUrls.cico },
-  { name: "Bright", url: youtubeUrls.brightTopic },
-  { name: "C13Prod", url: youtubeUrls.c13prodTopic },
+const videos = [
+  {
+    id: "C9Eyy_hnxvs",
+    title: "COGU FT. 270Jet — Alta Voltagem",
+  },
+  {
+    id: "iv7MXFYxWMI",
+    title: "LOUCURA — COGU FT. DAZDIH",
+  },
+  {
+    id: "8N117Oo5KmE",
+    title: "Festa Da SEN$I",
+  },
 ];
 
 export function YoutubeHubSection() {
@@ -29,7 +37,7 @@ export function YoutubeHubSection() {
         opacity: 0,
         y: 40,
         duration: 0.8,
-        stagger: 0.1,
+        stagger: 0.12,
         ease: "power3.out",
         scrollTrigger: {
           trigger: section,
@@ -57,11 +65,10 @@ export function YoutubeHubSection() {
             </p>
             <h2 className="font-display mt-2 text-5xl md:text-7xl">YouTube</h2>
             <p className="mt-3 max-w-sm text-sm text-muted">
-              Clipes, bastidores e lançamentos do selo no canal oficial.
+              Clipes e lançamentos do selo — direto do canal oficial.
             </p>
           </div>
           <a
-            data-yt-card
             href={selo.youtube.url}
             target="_blank"
             rel="noopener noreferrer"
@@ -72,35 +79,32 @@ export function YoutubeHubSection() {
           </a>
         </div>
 
-        {/* Artist channels grid */}
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {artistChannels.map((ch) => (
-            <a
-              key={ch.name}
-              data-yt-card
-              href={ch.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-bg/60 p-6 transition hover:border-red-500/40 hover:bg-bg/80"
-            >
-              <span className="text-2xl text-red-500 transition group-hover:scale-110">
-                ▶
-              </span>
-              <span className="text-sm font-semibold text-fg">{ch.name}</span>
-              <span className="text-xs text-muted">Canal</span>
-            </a>
+        {/* Video embeds */}
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {videos.map((v) => (
+            <div key={v.id} data-yt-card className="flex flex-col gap-3">
+              <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${v.id}`}
+                  title={v.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                />
+              </div>
+              <p className="text-sm font-medium text-fg/80 leading-snug">{v.title}</p>
+            </div>
           ))}
         </div>
 
-        {/* Selo channel embed prompt */}
+        {/* Subscribe bar */}
         <div
           data-yt-card
-          className="mt-8 flex items-center justify-between rounded-2xl border border-white/10 bg-bg/40 px-6 py-5"
+          className="mt-10 flex items-center justify-between rounded-2xl border border-white/10 bg-bg/40 px-6 py-5"
         >
           <div>
-            <p className="text-sm font-semibold text-fg">
-              {selo.youtube.handle}
-            </p>
+            <p className="text-sm font-semibold text-fg">{selo.youtube.handle}</p>
             <p className="mt-1 text-xs text-muted">
               Inscreva-se para acompanhar todos os lançamentos
             </p>
