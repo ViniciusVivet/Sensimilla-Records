@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bebas_Neue, DM_Sans } from "next/font/google";
 import { AppProviders } from "@/components/providers";
 import { LgpdBanner } from "@/components/lgpd-banner";
+import { WhatsAppFab } from "@/components/whatsapp-fab";
 import { getSiteUrl } from "@/lib/site-config";
 import "./globals.css";
 
@@ -126,6 +127,7 @@ export default function RootLayout({
           Pular para o conteúdo
         </a>
         <AppProviders>{children}</AppProviders>
+        <WhatsAppFab />
         <LgpdBanner />
       </body>
     </html>
