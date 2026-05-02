@@ -63,7 +63,7 @@ function MemberModal({
         {member.youtubeVideoId && (
           <div className="mt-6 overflow-hidden rounded-2xl" style={{ paddingBottom: "56.25%", position: "relative" }}>
             <iframe
-              src={`https://www.youtube.com/embed/${member.youtubeVideoId}`}
+              src={`https://www.youtube.com/embed/${member.youtubeVideoId}?autoplay=1&rel=0`}
               title={`${member.name} no YouTube`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
