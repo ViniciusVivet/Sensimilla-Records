@@ -72,7 +72,7 @@ export function MerchSection() {
               data-merch-item
               className="group flex flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition hover:border-accent/50"
             >
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-white/5">
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-black/40">
                 <Image
                   src={p.image}
                   alt={p.name}

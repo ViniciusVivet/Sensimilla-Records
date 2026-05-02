@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
 function AutoplayOnMount() {
   const { open } = useMiniPlayer();
   useEffect(() => {
-    open(1);
+    open(2); // LOUCURA (indice atualizado apos adicao de Eu Fiz Um Desejo no indice 0)
   }, [open]);
   return null;
 }
