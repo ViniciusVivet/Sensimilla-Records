@@ -305,16 +305,19 @@ export const merchProducts = [
   {
     name: "Balaclava",
     tag: "Acessório",
+    price: "R$ 120",
     image: "/merch/balaclava.png",
   },
   {
     name: "Calça",
     tag: "Bottom",
+    price: "R$ 280",
     image: "/merch/calca.png",
   },
   {
     name: "Regata",
     tag: "Top",
+    price: "R$ 160",
     image: "/merch/regata.png",
   },
 ];

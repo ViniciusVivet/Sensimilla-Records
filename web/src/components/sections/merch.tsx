@@ -32,7 +32,7 @@ export function MerchSection() {
               key={p.name}
               className="group flex flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition hover:border-accent/50"
             >
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-[#e8e4dc]">
+              <div className="relative aspect-square overflow-hidden rounded-xl">
                 <Image
                   src={p.image}
                   alt={p.name}
@@ -41,10 +41,15 @@ export function MerchSection() {
                   sizes="(max-width:768px) 50vw, 33vw"
                 />
               </div>
-              <p className="mt-3 text-xs uppercase tracking-wider text-fg/50">
-                {p.tag}
-              </p>
-              <h3 className="font-display text-xl">{p.name}</h3>
+              <div className="mt-3 flex items-baseline justify-between gap-2">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-fg/50">
+                    {p.tag}
+                  </p>
+                  <h3 className="font-display text-xl">{p.name}</h3>
+                </div>
+                <span className="font-display text-lg text-accent">{p.price}</span>
+              </div>
             </article>
           ))}
         </div>
