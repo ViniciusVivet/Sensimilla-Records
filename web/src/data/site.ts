@@ -243,11 +243,11 @@ export const catalogReleases = [
     spotifyEmbed: "track/2DLQxWlg6aILhyjWegjccy",
   },
   {
-    title: "BORDELINE BIPOLAR!",
+    title: "Barbie",
     artist: "Cico",
-    meta: "Single · 2025",
-    cover: RELEASE.borderlineBipolarCico,
-    spotifyEmbed: "track/6Y0rF44x9H3D1JiIUcBAWZ",
+    meta: "Single · 2024",
+    cover: RELEASE.barbieCico,
+    spotifyEmbed: "track/7BRBYfP2lNly0UD2A9Xzom",
   },
   {
     title: "Preto Chique",
