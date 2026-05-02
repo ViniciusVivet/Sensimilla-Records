@@ -64,6 +64,7 @@ export const instagramUrls = {
   guiga: "https://www.instagram.com/guigamc/",
   /** Produção — alinhado ao @c13_prod citado em materiais do selo. */
   c13prod: "https://www.instagram.com/c13_prod/",
+  kon: "https://www.instagram.com/pontokon.br/",
 } as const;
 
 export const youtubeUrls = {
@@ -112,6 +113,8 @@ export const imagensReleaseCdn = {
   aBruxaBright: "https://i.scdn.co/image/ab67616d00004851f7b3206a0ae71ebcb6b8daef",
   // Blade
   dinheiroDeTrapBlade: "https://i.scdn.co/image/ab67616d0000485100603ca8f3a7f254a4ef094a",
+  // Kon
+  euFizUmDesejoKon: "https://i.scdn.co/image/ab67616d00001e02469a478cbc32ad3485d3a239",
 } as const;
 
 /**
@@ -134,8 +137,7 @@ export const trackIds = {
   barbieCico: "7BRBYfP2lNly0UD2A9Xzom",
   naoEBemAssimGuiga: "6ofh8AmNnQvT3NcpjgG4yG7",
   dinheiroDeTrapBlade: "5laNdT6tue5Ok3EnwE0W4i",
-  // TODO: confirmar ID do Spotify — "Eu Fiz Um Desejo" (Kon, COGU, Ryan Janooba, MIB77)
-  // euFizUmDesejoKon: "???",
+  euFizUmDesejoKon: "5Zxr2eziPt1J6h3SXFabSR",
 } as const;
 
 export const eventos = {

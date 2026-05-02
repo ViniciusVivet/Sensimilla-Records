@@ -57,6 +57,7 @@ const INSTAGRAM = {
   cico: instagramUrls.cico,
   guiga: instagramUrls.guiga,
   c13prod: instagramUrls.c13prod,
+  kon: instagramUrls.kon,
 } as const;
 
 /**
@@ -69,6 +70,8 @@ export const members: Member[] = [
     role: "Diretor Executivo · Diretor Artístico · Sócio",
     bio: "A mente por trás da Sensimilla Records. Lidera a produtora do conceito à execução — direção artística, audiovisual e estratégia de marca. Com olhar de rua e visão de mercado, assina não só os bastidores mas também a faixa 'Eu Fiz Um Desejo' ao lado de COGU, Ryan Janooba e MIB77.",
     image: "/fotos/kon-lado.jpg",
+    spotifyUrl: "https://open.spotify.com/intl-pt/artist/3qfMvNYy7I6QX7s5mVYmOP",
+    instagramUrl: INSTAGRAM.kon,
   },
   {
     id: "cogu",
@@ -204,7 +207,13 @@ export const featuredRelease = {
 };
 
 export const catalogReleases = [
-  // TODO: adicionar "Eu Fiz Um Desejo" (Kon · COGU · Ryan Janooba · MIB77) quando tiver o ID do Spotify
+  {
+    title: "Eu Fiz Um Desejo",
+    artist: "Kon · COGU · Ryan Janooba · MIB77",
+    meta: "Single · 2024",
+    cover: RELEASE.euFizUmDesejoKon,
+    spotifyEmbed: "track/5Zxr2eziPt1J6h3SXFabSR",
+  },
   {
     title: "Crumble",
     artist: "COGU ft. Bright",
@@ -253,13 +262,6 @@ export const catalogReleases = [
     meta: "Single · 2025",
     cover: RELEASE.casualGuiga,
     spotifyEmbed: "track/2IaYT5Lv06RuEnjufHwYDO",
-  },
-  {
-    title: "Barbie",
-    artist: "Cico",
-    meta: "Single · 2024",
-    cover: RELEASE.barbieCico,
-    spotifyEmbed: "track/7BRBYfP2lNly0UD2A9Xzom",
   },
   {
     title: "A Bruxa",
