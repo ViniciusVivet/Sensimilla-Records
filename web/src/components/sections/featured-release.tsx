@@ -40,6 +40,7 @@ export function FeaturedReleaseSection() {
 
           {featuredRelease.spotifyEmbed && (
             <Reveal delay={0.16} className="mt-8">
+              <div className="max-w-full overflow-hidden rounded-xl">
               <iframe
                 className="w-full rounded-xl"
                 src={`https://open.spotify.com/embed/${featuredRelease.spotifyEmbed}?utm_source=generator&theme=0`}
@@ -49,6 +50,7 @@ export function FeaturedReleaseSection() {
                 loading="lazy"
                 title={`Spotify — ${featuredRelease.title}`}
               />
+              </div>
             </Reveal>
           )}
 

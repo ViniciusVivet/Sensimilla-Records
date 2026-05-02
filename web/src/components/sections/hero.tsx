@@ -126,17 +126,17 @@ export function HeroSection() {
         <div className="sensi-hero-grain" aria-hidden />
       </div>
 
-      <header className="relative z-20 flex items-start justify-between px-4 pt-4 md:px-8 md:pt-6">
+      <header className="relative z-20 flex items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-8 md:pt-6">
         <nav
           className="flex flex-col gap-3 text-muted"
           aria-label="Redes sociais"
         >
-          <div className="flex gap-4">
+          <div className="flex gap-1 sm:gap-4">
             {socialLinks.map((s) => (
               <a
                 key={s.name}
                 href={s.href}
-                className="transition-colors hover:text-accent"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-white/5 hover:text-accent"
                 aria-label={s.name}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -147,7 +147,7 @@ export function HeroSection() {
           </div>
           <a
             href="/servicos"
-            className="self-start rounded-full border border-accent/60 bg-accent/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-sm transition hover:bg-accent hover:text-bg"
+            className="inline-flex min-h-11 max-w-full items-center justify-center self-start rounded-full border border-accent/60 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-sm transition hover:bg-accent hover:text-bg"
           >
             Serviços &amp; Preços →
           </a>
@@ -212,14 +212,14 @@ export function HeroSection() {
       </div>
 
       <nav
-        className="relative z-20 flex gap-2 overflow-x-auto px-4 pb-6 md:hidden"
+        className="relative z-20 -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-4 pb-6 pt-1 scrollbar-hide [touch-action:pan-x] md:hidden"
         aria-label="Seções"
       >
         {navPills.map((item) => (
           <a
             key={item.id}
             href={item.href}
-            className="shrink-0 rounded-full border border-white/15 bg-black/60 px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-fg/90 backdrop-blur-sm"
+            className="snap-start shrink-0 rounded-full border border-white/15 bg-black/60 px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-fg/90 backdrop-blur-sm min-h-[44px] flex items-center"
           >
             {item.label}
           </a>

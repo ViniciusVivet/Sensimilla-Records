@@ -7,8 +7,14 @@ import { useMiniPlayer } from "@/components/mini-player-context";
 type Corner = "bl" | "br";
 
 const cornerStyle: Record<Corner, React.CSSProperties> = {
-  bl: { bottom: 24, left: 20 },
-  br: { bottom: 24, right: 20 },
+  bl: {
+    bottom: "max(1.5rem, env(safe-area-inset-bottom, 0px))",
+    left: "max(1rem, env(safe-area-inset-left, 0px))",
+  },
+  br: {
+    bottom: "max(1.5rem, env(safe-area-inset-bottom, 0px))",
+    right: "max(1rem, env(safe-area-inset-right, 0px))",
+  },
 };
 
 export function MiniPlayer() {
@@ -121,7 +127,7 @@ export function MiniPlayer() {
               type="button"
               onClick={() => setMinimized(false)}
               aria-label="Expandir player"
-              className="flex h-7 w-7 items-center justify-center rounded-full text-xs text-accent transition hover:bg-accent/15"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xs text-accent transition hover:bg-accent/15"
             >
               ▴
             </button>
@@ -129,7 +135,7 @@ export function MiniPlayer() {
               type="button"
               onClick={close}
               aria-label="Fechar"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] text-muted/50 transition hover:bg-red-500/20 hover:text-red-400"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-[10px] text-muted/50 transition hover:bg-red-500/20 hover:text-red-400"
             >
               ✕
             </button>
@@ -143,7 +149,7 @@ export function MiniPlayer() {
     <div
       ref={playerRef}
       style={{ ...posStyle, transition: dragPos ? "none" : "all 0.3s cubic-bezier(0.16,1,0.3,1)" }}
-      className="z-[120] w-[320px] sm:w-[360px]"
+      className="z-[120] w-[calc(100vw-1.25rem)] max-w-[360px] sm:w-[360px]"
     >
       <div className="overflow-hidden rounded-2xl border border-white/15 bg-panel shadow-2xl shadow-black/60">
         <div
@@ -156,7 +162,7 @@ export function MiniPlayer() {
               type="button"
               onClick={prev}
               aria-label="Anterior"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-muted transition hover:bg-white/10 hover:text-fg"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xs text-muted transition hover:bg-white/10 hover:text-fg"
             >
               ‹
             </button>
@@ -164,7 +170,7 @@ export function MiniPlayer() {
               type="button"
               onClick={next}
               aria-label="Próxima"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-muted transition hover:bg-white/10 hover:text-fg"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xs text-muted transition hover:bg-white/10 hover:text-fg"
             >
               ›
             </button>
@@ -174,7 +180,7 @@ export function MiniPlayer() {
               type="button"
               onClick={() => setMinimized(true)}
               aria-label="Minimizar player"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-muted transition hover:bg-white/10 hover:text-fg"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xs text-muted transition hover:bg-white/10 hover:text-fg"
             >
               ▾
             </button>
@@ -182,7 +188,7 @@ export function MiniPlayer() {
               type="button"
               onClick={close}
               aria-label="Fechar player"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-xs text-muted/60 transition hover:bg-red-500/20 hover:text-red-400"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-xs text-muted/60 transition hover:bg-red-500/20 hover:text-red-400"
             >
               ✕
             </button>

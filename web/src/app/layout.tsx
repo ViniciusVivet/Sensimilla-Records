@@ -72,6 +72,7 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0a",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 const jsonLd = {
@@ -122,7 +123,7 @@ export default function RootLayout({
       <body className="min-h-full bg-bg font-[family-name:var(--font-dm)] text-fg">
         <a
           href="#main-content"
-          className="absolute left-[-9999px] top-0 z-[200] rounded-md bg-accent px-4 py-2 text-sm text-bg focus:left-4 focus:top-4"
+          className="absolute left-0 top-0 z-[200] rounded-md bg-accent px-4 py-3 text-sm text-bg focus:left-[max(1rem,env(safe-area-inset-left))] focus:top-[max(1rem,env(safe-area-inset-top))]"
         >
           Pular para o conteúdo
         </a>

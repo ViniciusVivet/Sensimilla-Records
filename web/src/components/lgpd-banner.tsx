@@ -43,7 +43,7 @@ export function LgpdBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="Aviso de cookies"
-      className="fixed bottom-0 left-0 right-0 z-[150] border-t border-white/10 bg-panel/95 px-6 py-5 backdrop-blur-md md:bottom-6 md:left-6 md:right-auto md:max-w-sm md:rounded-2xl md:border"
+      className="fixed bottom-0 left-0 right-0 z-[150] border-t border-white/10 bg-panel/95 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 backdrop-blur-md md:bottom-6 md:left-6 md:right-auto md:max-w-sm md:rounded-2xl md:border md:pb-5"
     >
       <p className="text-sm leading-relaxed text-fg/80">
         Usamos cookies para melhorar sua experiência. Confira nossa{" "}
@@ -55,18 +55,18 @@ export function LgpdBanner() {
         </a>
         .
       </p>
-      <div className="mt-4 flex gap-3">
+      <div className="mt-4 flex flex-wrap gap-3">
         <button
           type="button"
           onClick={accept}
-          className="rounded-full bg-accent px-5 py-2 text-xs font-semibold uppercase tracking-wider text-bg transition hover:opacity-90"
+          className="min-h-11 min-w-[7rem] rounded-full bg-accent px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-bg transition hover:opacity-90"
         >
           Aceitar
         </button>
         <button
           type="button"
           onClick={decline}
-          className="rounded-full border border-white/20 px-5 py-2 text-xs uppercase tracking-wider text-muted transition hover:border-white/40 hover:text-fg"
+          className="min-h-11 min-w-[7rem] rounded-full border border-white/20 px-5 py-2.5 text-xs uppercase tracking-wider text-muted transition hover:border-white/40 hover:text-fg"
         >
           Recusar
         </button>

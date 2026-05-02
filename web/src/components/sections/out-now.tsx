@@ -75,7 +75,7 @@ export function OutNowSection() {
                   <button
                     type="button"
                     onClick={() => (isActive ? close() : open(i))}
-                    className="flex w-full gap-4 p-4 text-left md:gap-8 md:p-5"
+                    className="flex min-h-[72px] w-full gap-4 p-4 text-left md:min-h-0 md:gap-8 md:p-5"
                   >
                     <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl md:h-28 md:w-28">
                       <Image
@@ -97,7 +97,7 @@ export function OutNowSection() {
                     </div>
                     <div className="flex items-center">
                       <span
-                        className={`rounded-full border px-4 py-2 text-xs uppercase tracking-wider transition ${
+                        className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 text-xs uppercase tracking-wider transition ${
                           isActive
                             ? "border-accent bg-accent/10 text-accent"
                             : "border-white/20 text-fg/80 group-hover:border-accent group-hover:text-accent"

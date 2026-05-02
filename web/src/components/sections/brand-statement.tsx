@@ -23,13 +23,13 @@ export function BrandStatementSection() {
           </p>
         </Reveal>
         <Reveal delay={0.15} className="mt-8 md:mt-12">
-          <p className="max-w-xl text-lg leading-relaxed text-bg/80 md:text-xl">
+          <p className="max-w-xl text-base leading-relaxed text-bg/80 sm:text-lg md:text-xl">
             {manifesto.line}
           </p>
         </Reveal>
 
         {/* Social proof */}
-        <Reveal delay={0.2} className="mt-10 grid w-full max-w-lg grid-cols-2 gap-4 sm:grid-cols-4">
+        <Reveal delay={0.2} className="mt-10 grid w-full max-w-lg grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-y-4">
           {stats.map((s) => (
             <div key={s.label} className="flex flex-col items-center">
               <span className="font-display text-3xl text-bg md:text-4xl">

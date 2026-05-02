@@ -22,7 +22,10 @@ export function HomeExperience() {
   return (
     <SmoothScroll>
       <NavPills />
-      <main id="main-content" className="bg-bg text-fg">
+      <main
+        id="main-content"
+        className="bg-bg text-fg pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-0"
+      >
         <HeroSection />
         <TypographySplash />
         <BrandStatementSection />

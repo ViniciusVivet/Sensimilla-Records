@@ -75,20 +75,20 @@ export function SiteFooter() {
             <a
               key={l.label}
               href={l.href}
-              className="transition hover:text-accent"
+              className="inline-flex min-h-11 items-center rounded-md px-2 py-1.5 transition hover:text-accent"
             >
               {l.label}
             </a>
           ))}
         </nav>
 
-        <div className="mt-10 flex gap-6 text-muted">
+        <div className="mt-10 flex gap-2 sm:gap-6 text-muted">
           {socialLinks.map((s) => (
             <a
               key={s.name}
               href={s.href}
               aria-label={s.name}
-              className="transition hover:text-accent"
+              className="flex h-11 w-11 items-center justify-center rounded-full transition hover:bg-white/5 hover:text-accent"
               target="_blank"
               rel="noopener noreferrer"
             >

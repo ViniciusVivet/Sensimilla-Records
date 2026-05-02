@@ -56,11 +56,11 @@ function MemberModal({
       role="dialog"
       aria-modal="false"
       aria-labelledby="member-modal-title"
-      className="absolute inset-0 z-20 overflow-y-auto bg-black/90 backdrop-blur-md outline-none"
+      className="absolute inset-0 z-20 overflow-y-auto overscroll-y-contain bg-black/90 backdrop-blur-md outline-none"
       onClick={onClose}
     >
       <div
-        className="flex min-h-full w-full items-center justify-center px-4 py-16 md:px-6 md:py-20"
+        className="flex min-h-full w-full items-center justify-center px-3 py-[max(4rem,env(safe-area-inset-top))] pb-[max(4rem,env(safe-area-inset-bottom))] md:px-6 md:py-20"
         onClick={onClose}
       >
         <div
@@ -349,7 +349,7 @@ export function RosterSection() {
             ref={scrollRef}
             tabIndex={0}
             onKeyDown={handleKeyDown}
-            className="flex cursor-grab snap-x snap-proximity gap-4 overflow-x-auto pb-4 outline-none active:cursor-grabbing scrollbar-hide"
+            className="flex cursor-grab snap-x snap-proximity gap-4 overflow-x-auto pb-4 outline-none active:cursor-grabbing scrollbar-hide touch-pan-x"
             style={{
               WebkitOverflowScrolling: "touch",
               overflowAnchor: "none",

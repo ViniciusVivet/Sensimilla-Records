@@ -42,25 +42,25 @@ function MerchModal({
 
   return (
     <div
-      className="fixed inset-0 z-[150] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      className="fixed inset-0 z-[150] flex max-h-[100dvh] items-center justify-center overflow-y-auto overscroll-y-contain bg-black/90 px-3 py-6 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md px-4"
+        className="relative w-full max-w-md px-1 pb-[max(1rem,env(safe-area-inset-bottom))] pt-8 sm:px-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Setas */}
         <button
           type="button"
           onClick={prev}
-          className="absolute -left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-lg text-white/60 transition hover:border-accent hover:text-accent md:-left-14"
+          className="absolute left-1 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-lg text-white/80 transition hover:border-accent hover:text-accent sm:-left-3 md:-left-14"
         >
           ‹
         </button>
         <button
           type="button"
           onClick={next}
-          className="absolute -right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-lg text-white/60 transition hover:border-accent hover:text-accent md:-right-14"
+          className="absolute right-1 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-lg text-white/80 transition hover:border-accent hover:text-accent sm:-right-3 md:-right-14"
         >
           ›
         </button>
@@ -69,7 +69,7 @@ function MerchModal({
         <button
           type="button"
           onClick={onClose}
-          className="absolute -right-2 -top-12 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-sm text-white/60 transition hover:text-white md:-right-10 md:-top-2"
+          className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-black/70 text-base text-white/80 transition hover:text-white sm:-right-2 sm:-top-2 md:-right-10 md:top-2"
         >
           ✕
         </button>
@@ -143,7 +143,7 @@ export function MerchSection() {
             {merchProducts.map((p, i) => (
               <article
                 key={p.name}
-                className="group flex cursor-pointer flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition hover:border-accent/50"
+                className="group flex cursor-pointer flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition active:scale-[0.99] hover:border-accent/50"
                 onClick={() => setModalIndex(i)}
               >
                 <div className="relative aspect-square overflow-hidden rounded-xl">
