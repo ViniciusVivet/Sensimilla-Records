@@ -235,7 +235,7 @@ export function RosterSection() {
           type="button"
           onClick={() => scroll("left")}
           aria-label="Anterior"
-          className="absolute left-[140px] top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent lg:flex"
+          className="absolute left-[200px] top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent lg:flex lg:left-[248px]"
         >
           ‹
         </button>
@@ -250,19 +250,22 @@ export function RosterSection() {
           ›
         </button>
 
-        <div
-          ref={scrollRef}
-          tabIndex={0}
-          onKeyDown={handleKeyDown}
-          className="flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-4 outline-none active:cursor-grabbing md:pl-[160px] md:pr-12 scrollbar-hide"
-          style={{ WebkitOverflowScrolling: "touch" }}
-        >
-          {/* Spacer para nao sobrepor os nav pills fixos da esquerda */}
-          <div className="hidden shrink-0 md:block md:w-36" aria-hidden />
-          {roster.members.map((a, i) => {
-            const isFeatured = i === featuredIndex;
-            return (
-              <article
+        {/* Recuo no wrapper (nao no overflow-x): evita snap/scroll anchoring resetarem scrollLeft quando imagens carregam ou ScrollTrigger refresca */}
+        <div className="pl-6 pr-6 md:pl-[240px] lg:pl-[280px] md:pr-12">
+          <div
+            ref={scrollRef}
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+            className="flex cursor-grab snap-x snap-proximity gap-4 overflow-x-auto pb-4 outline-none active:cursor-grabbing scrollbar-hide"
+            style={{
+              WebkitOverflowScrolling: "touch",
+              overflowAnchor: "none",
+            }}
+          >
+            {roster.members.map((a, i) => {
+              const isFeatured = i === featuredIndex;
+              return (
+                <article
                 key={a.id}
                 className={`group relative shrink-0 snap-start overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer select-none ${
                   isFeatured
@@ -313,8 +316,9 @@ export function RosterSection() {
                   </div>
                 </div>
               </article>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
