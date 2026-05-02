@@ -12,8 +12,6 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteUrl}/servicos` },
 };
 
-// ─── dados de planos ────────────────────────────────────────────────────────
-
 const artistPlans = [
   {
     tag: "SENSI START",
@@ -117,15 +115,18 @@ const avulso = [
 const formatos = [
   {
     name: "SENSI CYPHER",
+    emoji: "🎤",
     desc: "Formato de cypher exclusivo do selo — vários artistas, uma faixa, uma estética unificada. Visibilidade cruzada para todos os envolvidos.",
   },
   {
     name: "SENSI SESSION",
+    emoji: "🎬",
     desc: "Sessão gravada ao vivo no estúdio, com captação em vídeo. Conteúdo autêntico e de alto valor para redes sociais.",
   },
   {
     name: "MEGA SESH",
-    desc: "Gravação em formato de evento — múltiplos artistas, um dia inteiro de produção, conteúdo para semanas. O maior pacote coletivo da casa.",
+    emoji: "⚡",
+    desc: "Gravação em formato de evento — múltiplos artistas, um dia inteiro de produção, conteúdo para semanas.",
   },
 ];
 
@@ -148,8 +149,6 @@ const diferenciais = [
   },
 ];
 
-// ─── sub-componentes ─────────────────────────────────────────────────────────
-
 function PlanCard({
   tag,
   highlight,
@@ -161,10 +160,10 @@ function PlanCard({
 }: (typeof artistPlans)[number]) {
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border p-6 ${
+      className={`group relative flex flex-col rounded-3xl border p-6 transition-all duration-500 hover:scale-[1.02] md:p-8 ${
         highlight
-          ? "border-accent bg-accent/5 shadow-[0_0_40px_rgba(200,242,74,0.08)]"
-          : "border-white/10 bg-white/[0.03]"
+          ? "border-accent/50 bg-accent/[0.06] shadow-[0_0_60px_rgba(200,242,74,0.08)]"
+          : "border-white/10 bg-white/[0.02] hover:border-white/20"
       }`}
     >
       {badge && (
@@ -177,225 +176,235 @@ function PlanCard({
       >
         {tag}
       </p>
-      <p className="font-display mt-3 text-3xl text-white">{price}</p>
-      <p className="text-xs text-muted mt-0.5">{period}</p>
-      <p className="mt-4 text-sm text-fg/70 leading-relaxed">{description}</p>
-      <ul className="mt-5 space-y-2 flex-1">
+      <p className="font-display mt-4 text-4xl text-white">{price}</p>
+      <p className="mt-1 text-xs text-muted">{period}</p>
+      <p className="mt-5 text-sm text-fg/65 leading-relaxed">{description}</p>
+      <ul className="mt-6 flex-1 space-y-2.5">
         {features.map((f) => (
-          <li key={f} className="flex items-start gap-2 text-sm text-fg/85">
-            <span className="mt-0.5 text-accent shrink-0">✓</span>
+          <li key={f} className="flex items-start gap-2.5 text-sm text-fg/80">
+            <span className="mt-0.5 shrink-0 text-accent">✓</span>
             {f}
           </li>
         ))}
       </ul>
       <a
-        href="https://wa.me/5511918540870?text=Oi%2C%20vim%20pelo%20site%20da%20Sensimilla%20e%20quero%20saber%20mais%20sobre%20o%20plano%20"
+        href={`https://wa.me/5511918540870?text=${encodeURIComponent(`Oi, vim pelo site da Sensimilla e quero saber mais sobre o plano ${tag}`)}`}
         target="_blank"
         rel="noopener noreferrer"
-        className={`mt-6 block rounded-full py-2.5 text-center text-sm font-semibold tracking-wider transition ${
+        className={`mt-8 block rounded-full py-3 text-center text-sm font-semibold uppercase tracking-wider transition ${
           highlight
-            ? "bg-accent text-bg hover:bg-accent/90"
+            ? "bg-accent text-bg hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(200,242,74,0.2)]"
             : "border border-white/20 text-fg hover:border-accent/50 hover:text-accent"
         }`}
       >
-        Quero esse plano
+        Quero esse plano →
       </a>
     </div>
   );
 }
 
-// ─── página ──────────────────────────────────────────────────────────────────
+function SectionDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <p className="text-[10px] uppercase tracking-[0.4em] text-muted/60">
+        {label}
+      </p>
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+    </div>
+  );
+}
 
 export default function ServicosPage() {
   return (
     <div className="relative min-h-full bg-bg text-fg">
-      {/* nav simples */}
-      <header className="border-b border-white/10 px-6 py-4 md:px-10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
-          <Link
-            href="/"
-            className="text-sm font-medium text-muted transition hover:text-accent"
-          >
-            ← Início
-          </Link>
-          <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <Image
-              src="/logo-sensi.jpg"
-              alt="Sensimilla Records"
-              fill
-              className="object-cover"
-              sizes="32px"
-            />
+      {/* Hero */}
+      <div className="relative overflow-hidden border-b border-white/5">
+        <div className="pointer-events-none absolute inset-0">
+          <Image
+            src="/banner-sensi.jpg"
+            alt=""
+            fill
+            className="object-cover opacity-10"
+            sizes="100vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-bg/60 via-bg/90 to-bg" />
+        </div>
+
+        <header className="relative px-6 pt-6 md:px-10">
+          <div className="mx-auto flex max-w-6xl items-center justify-between">
+            <Link
+              href="/"
+              className="text-sm text-muted transition hover:text-accent"
+            >
+              ← Início
+            </Link>
+            <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/10">
+              <Image
+                src="/logo-sensi.jpg"
+                alt="Sensimilla Records"
+                fill
+                className="object-cover"
+                sizes="40px"
+              />
+            </div>
+          </div>
+        </header>
+
+        <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-24 text-center md:px-10 md:pt-32">
+          <p className="font-display text-sm tracking-[0.4em] text-accent/70">
+            SENSIMILLA RECORDS
+          </p>
+          <h1 className="font-display mt-4 text-[clamp(3rem,10vw,7rem)] leading-[0.9] text-white">
+            TRABALHE
+            <br />
+            COM A SENSI
+          </h1>
+          <p className="mx-auto mt-6 max-w-xl text-base text-fg/60 leading-relaxed md:text-lg">
+            Do estúdio até o feed — gravação, produção, audiovisual e estratégia.
+            Tudo dentro do ecossistema do selo.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <a
+              href="https://wa.me/5511918540870?text=Oi%2C%20vim%20pelo%20site%20e%20quero%20saber%20sobre%20os%20servicos"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(200,242,74,0.15)]"
+            >
+              Falar no WhatsApp
+            </a>
+            <a
+              href="#planos"
+              className="rounded-full border border-white/15 px-8 py-3 text-sm text-fg/70 transition hover:border-accent/40 hover:text-accent"
+            >
+              Ver planos ↓
+            </a>
           </div>
         </div>
-      </header>
+      </div>
 
-      <main id="main-content" className="mx-auto max-w-6xl px-6 pb-24 pt-16 md:px-10">
+      <main id="planos" className="mx-auto max-w-6xl px-6 pb-24 pt-20 md:px-10">
 
-        {/* ── HERO TEXTO ── */}
-        <section className="text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-accent/80 mb-4">
-            Sensimilla Records · Serviços
-          </p>
-          <h1 className="font-display text-[14vw] leading-none text-white sm:text-[10vw] md:text-[8vw] lg:text-[96px]">
-            TRABALHE<br className="hidden sm:block" /> COM A SENSI
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base text-fg/70 leading-relaxed md:text-lg">
-            Gravação, produção musical, audiovisual e estratégia de conteúdo.
-            Do estúdio até o feed — tudo dentro do ecossistema do selo.
-          </p>
-        </section>
+        {/* Para Artistas */}
+        <SectionDivider label="Para artistas" />
+        <h2 className="font-display mt-6 text-center text-4xl text-white md:text-5xl">
+          ESCALA + RECORRÊNCIA
+        </h2>
+        <p className="mt-2 text-center text-sm text-fg/50">
+          Planos mensais e por projeto para quem quer crescer consistente.
+        </p>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {artistPlans.map((plan) => (
+            <PlanCard key={plan.tag} {...plan} />
+          ))}
+        </div>
 
-        {/* ── PARA ARTISTAS ── */}
-        <section className="mt-24">
-          <div className="mb-2 flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <p className="text-xs uppercase tracking-[0.3em] text-muted">
-              Para artistas
-            </p>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <h2 className="font-display text-center text-4xl text-white mt-2 md:text-5xl">
-            ESCALA + RECORRÊNCIA
-          </h2>
-          <p className="text-center text-sm text-fg/60 mt-2">
-            Planos mensais e por projeto para quem quer crescer de forma consistente.
-          </p>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {artistPlans.map((plan) => (
-              <PlanCard key={plan.tag} {...plan} />
-            ))}
-          </div>
-        </section>
-
-        {/* ── PARA MARCAS & CRIADORES ── */}
-        <section className="mt-24">
-          <div className="mb-2 flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <p className="text-xs uppercase tracking-[0.3em] text-muted">
-              Para marcas &amp; criadores
-            </p>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <h2 className="font-display text-center text-4xl text-white mt-2 md:text-5xl">
+        {/* Para Marcas */}
+        <div className="mt-28">
+          <SectionDivider label="Para marcas & criadores" />
+          <h2 className="font-display mt-6 text-center text-4xl text-white md:text-5xl">
             ÁUDIO · VÍDEO · DIGITAL
           </h2>
-          <p className="text-center text-sm text-fg/60 mt-2">
-            Conteúdo de qualidade de gravadora para marcas que querem se comunicar de verdade.
+          <p className="mt-2 text-center text-sm text-fg/50">
+            Conteúdo com qualidade de gravadora para quem quer se comunicar de verdade.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {brandPlans.map((plan) => (
               <PlanCard key={plan.tag} {...plan} />
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* ── FORMATOS EXCLUSIVOS ── */}
-        <section className="mt-24">
-          <div className="mb-2 flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <p className="text-xs uppercase tracking-[0.3em] text-muted">
-              Formatos exclusivos
-            </p>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <h2 className="font-display text-center text-4xl text-white mt-2 md:text-5xl">
+        {/* Formatos exclusivos */}
+        <div className="mt-28">
+          <SectionDivider label="Formatos exclusivos" />
+          <h2 className="font-display mt-6 text-center text-4xl text-white md:text-5xl">
             PRODUTOS ORIGINAIS
           </h2>
           <div className="mt-10 grid gap-6 md:grid-cols-3">
             {formatos.map((f) => (
               <div
                 key={f.name}
-                className="rounded-2xl border border-white/10 bg-white/[0.02] p-6"
+                className="group rounded-3xl border border-white/10 bg-white/[0.02] p-6 transition hover:border-accent/30 md:p-8"
               >
-                <p className="font-display text-xl text-accent tracking-wider">
+                <span className="text-3xl">{f.emoji}</span>
+                <p className="font-display mt-3 text-xl tracking-wider text-accent">
                   {f.name}
                 </p>
-                <p className="mt-3 text-sm text-fg/70 leading-relaxed">
+                <p className="mt-3 text-sm text-fg/60 leading-relaxed">
                   {f.desc}
                 </p>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* ── TABELA AVULSA ── */}
-        <section className="mt-24">
-          <div className="mb-2 flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <p className="text-xs uppercase tracking-[0.3em] text-muted">
-              Serviços avulsos
-            </p>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <h2 className="font-display text-center text-4xl text-white mt-2 md:text-5xl">
-            SEM PACOTE?<br className="hidden sm:block" /> SEM PROBLEMA.
+        {/* Avulsos */}
+        <div className="mt-28">
+          <SectionDivider label="Serviços avulsos" />
+          <h2 className="font-display mt-6 text-center text-4xl text-white md:text-5xl">
+            SEM PACOTE? SEM PROBLEMA.
           </h2>
-          <div className="mt-10 mx-auto max-w-xl">
-            <div className="rounded-2xl border border-white/10 divide-y divide-white/10 overflow-hidden">
+          <div className="mx-auto mt-10 max-w-xl">
+            <div className="overflow-hidden rounded-3xl border border-white/10 divide-y divide-white/5">
               {avulso.map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-center justify-between px-6 py-4"
+                  className="flex items-center justify-between px-6 py-5 transition hover:bg-white/[0.02]"
                 >
-                  <span className="text-sm text-fg/80">{item.label}</span>
-                  <span className="font-display text-lg text-accent">
+                  <span className="text-sm text-fg/75">{item.label}</span>
+                  <span className="font-display text-xl text-accent">
                     {item.price}
                   </span>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-center text-xs text-muted">
+            <p className="mt-4 text-center text-xs text-muted/50">
               Valores sujeitos a ajuste conforme escopo. Consulte antes de fechar.
             </p>
           </div>
-        </section>
+        </div>
 
-        {/* ── DIFERENCIAIS ── */}
-        <section className="mt-24">
-          <div className="mb-2 flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <p className="text-xs uppercase tracking-[0.3em] text-muted">
-              Por que a Sensimilla
-            </p>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <h2 className="font-display text-center text-4xl text-white mt-2 md:text-5xl">
+        {/* Diferenciais */}
+        <div className="mt-28">
+          <SectionDivider label="Por que a Sensimilla" />
+          <h2 className="font-display mt-6 text-center text-4xl text-white md:text-5xl">
             NOSSO DIFERENCIAL
           </h2>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          <div className="mt-10 grid gap-8 sm:grid-cols-2">
             {diferenciais.map((d) => (
               <div key={d.title} className="flex gap-4">
-                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-accent" />
+                <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />
                 <div>
                   <p className="font-semibold text-white">{d.title}</p>
-                  <p className="mt-1 text-sm text-fg/65 leading-relaxed">
+                  <p className="mt-1.5 text-sm text-fg/55 leading-relaxed">
                     {d.desc}
                   </p>
                 </div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* ── CTA FINAL ── */}
-        <section className="mt-24 rounded-3xl border border-accent/20 bg-accent/[0.04] px-6 py-14 text-center">
-          <p className="text-xs uppercase tracking-[0.4em] text-accent/80">
+        {/* CTA final */}
+        <div className="mt-28 overflow-hidden rounded-3xl border border-accent/20 bg-gradient-to-br from-accent/[0.06] to-transparent px-6 py-16 text-center md:px-12">
+          <p className="font-display text-sm tracking-[0.4em] text-accent/70">
             Contato comercial
           </p>
           <h2 className="font-display mt-4 text-5xl text-white md:text-6xl">
             BORA FECHAR?
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-sm text-fg/70 leading-relaxed">
-            Manda um Whats para o Sensi Comercial ou chama no Instagram.
+          <p className="mx-auto mt-5 max-w-md text-sm text-fg/60 leading-relaxed">
+            Manda um Whats pro Sensi Comercial ou chama no Instagram.
             Respondemos rápido e sem enrolação.
           </p>
-          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <a
               href="https://wa.me/5511918540870?text=Oi%2C%20vim%20pelo%20site%20da%20Sensimilla%20Records%20e%20quero%20saber%20mais%20sobre%20os%20servicos"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:bg-accent/90"
+              className="rounded-full bg-accent px-10 py-3.5 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(200,242,74,0.15)]"
             >
               WhatsApp · (11) 91854-0870
             </a>
@@ -403,12 +412,12 @@ export default function ServicosPage() {
               href="https://www.instagram.com/sensi.rec/"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-white/20 px-8 py-3 text-sm font-medium text-fg transition hover:border-accent/50 hover:text-accent"
+              className="rounded-full border border-white/15 px-10 py-3.5 text-sm text-fg/70 transition hover:border-accent/40 hover:text-accent"
             >
               @sensi.rec no Instagram
             </a>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
