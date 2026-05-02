@@ -298,20 +298,7 @@ export const tourDates: TourDate[] = [
     ticketUrl:
       "https://moonz.com.br/event/ofdm-s-sao-palo/Rp7Uqg95h/Msvsz7bF0",
   },
-  {
-    month: "—",
-    day: "?",
-    city: "Próximas datas",
-    venue: "Em anúncio",
-    note: "Acompanhe @sensi.rec para lineup e cidades",
-  },
-  {
-    month: "—",
-    day: "?",
-    city: "Shows & festivais",
-    venue: "Sensimilla no palco",
-    note: "Imprensa e booking pelo contato do site",
-  },
+  // Placeholders removidos — adicionar eventos reais conforme confirmados.
 ];
 
 export const merchProducts = [
@@ -355,7 +342,7 @@ export const footerLinks = [
   { label: "Equipe", href: "/#equipe" },
   { label: "Merch", href: "/#merch" },
   { label: "Serviços", href: "/servicos" },
-  { label: "Imprensa", href: "/#" },
+  { label: "Imprensa", href: "/imprensa" },
   { label: "Contato", href: "/contato" },
   { label: "Referências", href: "/referencias" },
   { label: "Privacidade", href: "/privacidade" },
