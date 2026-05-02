@@ -1,50 +1,11 @@
 "use client";
 
-import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { merchProducts } from "@/data/site";
-import { useReducedMotion } from "@/components/reduced-motion-provider";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function MerchSection() {
-  const root = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-
-  useLayoutEffect(() => {
-    const section = root.current;
-    if (!section) return;
-
-    const items = section.querySelectorAll<HTMLElement>("[data-merch-item]");
-
-    if (reducedMotion) {
-      gsap.set(items, { opacity: 1, y: 0 });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.from(items, {
-        opacity: 0,
-        y: 50,
-        duration: 0.9,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 72%",
-          toggleActions: "play none none reverse",
-        },
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, [reducedMotion]);
-
   return (
     <section
-      ref={root}
       id="merch"
       className="bg-lime-field px-6 py-24 text-fg md:px-12 md:py-32"
     >
@@ -69,10 +30,9 @@ export function MerchSection() {
           {merchProducts.map((p) => (
             <article
               key={p.name}
-              data-merch-item
               className="group flex flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition hover:border-accent/50"
             >
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-black/40">
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-[#e8e4dc]">
                 <Image
                   src={p.image}
                   alt={p.name}
