@@ -356,6 +356,7 @@ export const footerLinks = [
   { label: "YouTube", href: "/#youtube" },
   { label: "Equipe", href: "/#equipe" },
   { label: "Merch", href: "/#merch" },
+  { label: "Serviços", href: "/servicos" },
   { label: "Imprensa", href: "/#" },
   { label: "Contato", href: "/contato" },
   { label: "Referências", href: "/referencias" },
