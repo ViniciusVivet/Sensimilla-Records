@@ -52,7 +52,9 @@ const artistPlans = [
     features: [
       "Produção musical completa",
       "Mix & master profissional",
-      "1 vídeo profissional (clipe ou visual)",
+      "Clipe cinematográfico",
+      "Distribuição digital (todas as plataformas)",
+      "Content ID e monetização",
       "Planejamento de lançamento",
       "Identidade visual do release",
     ],
@@ -363,6 +365,47 @@ export default function ServicosPage() {
             <p className="mt-4 text-center text-xs text-muted/50">
               Valores sujeitos a ajuste conforme escopo. Consulte antes de fechar.
             </p>
+          </div>
+        </div>
+
+        {/* Modelos de parceria — do PDF apresentação artista */}
+        <div className="mt-28">
+          <SectionDivider label="Para artistas que querem ir além" />
+          <h2 className="font-display mt-6 text-center text-4xl text-white md:text-5xl">
+            MODELOS DE PARCERIA
+          </h2>
+          <p className="mt-2 text-center text-sm text-fg/50">
+            Além de serviços avulsos, trabalhamos com modelos de longo prazo para construção de carreira.
+          </p>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {[
+              {
+                title: "Pacote completo de lançamento",
+                desc: "Produção, clipe, distribuição, Content ID e estratégia — tudo num único pacote fechado.",
+              },
+              {
+                title: "Participação em projetos oficiais",
+                desc: "Entre no lineup de SENSI CYPHER, SENSI SESSION ou MEGA SESH com visibilidade cruzada do selo.",
+              },
+              {
+                title: "Gestão artística com divisão de royalties",
+                desc: "Investimos na sua carreira e crescemos juntos. Modelo de parceria com split de receita.",
+              },
+              {
+                title: "Contratos de médio prazo",
+                desc: "Construção de marca consistente com acompanhamento contínuo — posicionamento, lançamentos e presença digital.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 transition hover:border-accent/30 md:p-8"
+              >
+                <p className="font-semibold text-white">{item.title}</p>
+                <p className="mt-2 text-sm text-fg/55 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
