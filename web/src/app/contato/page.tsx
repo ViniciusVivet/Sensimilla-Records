@@ -8,8 +8,14 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   title: "Contato",
   description:
-    "Fale com a Sensimilla Records — shows, imprensa, parcerias e demais assuntos.",
+    "Contato Sensimilla Records — mensagens, shows, imprensa e parcerias. Site oficial do selo Sensimilla sensi.rec.",
   alternates: { canonical: `${siteUrl}/contato` },
+  openGraph: {
+    url: `${siteUrl}/contato`,
+    title: "Contato · Sensimilla Records",
+    description: "Fale com o selo Sensimilla Records (sensi.rec).",
+    siteName: "Sensimilla Records",
+  },
 };
 
 export default function ContatoPage() {

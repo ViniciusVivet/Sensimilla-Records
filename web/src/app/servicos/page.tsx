@@ -8,8 +8,16 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   title: "Serviços",
   description:
-    "Gravação, produção musical, vídeos e conteúdo digital. Conheça os planos da Sensimilla Records para artistas, marcas e criadores.",
+    "Serviços Sensimilla Records: gravação, produção musical, vídeos e conteúdo digital. Planos para artistas e marcas — selo Sensimilla sensi.rec.",
   alternates: { canonical: `${siteUrl}/servicos` },
+  openGraph: {
+    type: "website",
+    url: `${siteUrl}/servicos`,
+    title: "Serviços · Sensimilla Records — estúdio e produção",
+    description:
+      "Planos e serviços do selo Sensimilla Records (SP): gravação, produção e pacotes para artistas.",
+    siteName: "Sensimilla Records",
+  },
 };
 
 const artistPlans = [

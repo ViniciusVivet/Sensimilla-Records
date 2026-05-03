@@ -4,6 +4,7 @@ import { AppProviders } from "@/components/providers";
 import { LgpdBanner } from "@/components/lgpd-banner";
 import { WhatsAppFab } from "@/components/whatsapp-fab";
 import { getSiteUrl } from "@/lib/site-config";
+import { buildRootJsonLd } from "@/lib/seo-jsonld";
 import "./globals.css";
 
 const bebas = Bebas_Neue({
@@ -21,16 +22,26 @@ const dmSans = DM_Sans({
 
 const siteUrl = getSiteUrl();
 
+const siteVerificationGoogle =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: "Sensimilla Records",
   title: {
     default: "Sensimilla Records",
     template: "%s · Sensimilla Records",
   },
   description:
-    "Sensimilla Records (@sensi.rec) — selo de rap/trap da ZL com COGU, Bright, Vivet, Blade, Cico, Guiga MC e o núcleo criativo. É A SEN$I.",
+    "Site oficial Sensimilla Records (@sensi.rec / sensi rec). Selo de rap e trap da Zona Leste — COGU, Bright, Vivet, Blade e mais. Também conhecido como Sensimilla ou Mob Sensimilla.",
   keywords: [
     "Sensimilla Records",
+    "Sensimilla",
+    "sensimilla",
+    "sensi rec",
+    "sensi.rec",
+    "Mob Sensimilla",
+    "MOB Sensimilla",
     "gravadora independente",
     "rap",
     "trap",
@@ -38,34 +49,48 @@ export const metadata: Metadata = {
     "Zona Leste",
     "São Paulo",
     "COGU",
-    "sensi.rec",
     "Brasil",
   ],
-  authors: [{ name: "Sensimilla Records" }],
+  authors: [{ name: "Sensimilla Records", url: siteUrl }],
   creator: "Sensimilla Records",
+  publisher: "Sensimilla Records",
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: siteUrl,
     siteName: "Sensimilla Records",
-    title: "Sensimilla Records",
+    title: "Sensimilla Records — selo rap & trap · Zona Leste SP",
     description:
-      "Selo independente da ZL — rap, trap, produção e estética. @sensi.rec",
+      "Sensimilla Records (sensi.rec): selo independente de rap e trap em São Paulo. Equipe, lançamentos e merch.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sensimilla Records",
+    title: "Sensimilla Records — sensi.rec",
     description:
-      "Selo independente da ZL — rap, trap, produção e estética. @sensi.rec",
+      "Selo independente da ZL — rap, trap, produção e estética. Site oficial Sensimilla.",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
   alternates: {
     canonical: siteUrl,
   },
   category: "music",
+  ...(siteVerificationGoogle
+    ? {
+        verification: {
+          google: siteVerificationGoogle,
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {
@@ -75,14 +100,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "MusicGroup",
+const musicGroupJsonLd = {
   name: "Sensimilla Records",
   alternateName: ["MOB $ensimilla Record's", "sensi.rec"],
   description:
     "Selo independente de rap e trap da Zona Leste de Sao Paulo. Fundado por COGU, reune artistas como Bright, Vivet, Blade, Cico, Guiga MC e C13Prod.",
-  url: siteUrl,
   genre: ["Rap", "Trap", "Hip-Hop"],
   foundingLocation: {
     "@type": "Place",
@@ -103,6 +125,8 @@ const jsonLd = {
     { "@type": "Person", name: "C13Prod", url: "https://open.spotify.com/intl-pt/artist/3ccYe7lAn2pmfqJ46kCLCX" },
   ],
 };
+
+const jsonLd = buildRootJsonLd(musicGroupJsonLd);
 
 export default function RootLayout({
   children,

@@ -10,8 +10,15 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   title: "Imprensa",
   description:
-    "Press kit da Sensimilla Records — bio, integrantes, links oficiais e contato para imprensa.",
+    "Press kit Sensimilla Records — bio oficial do selo Sensimilla, integrantes, links sensi.rec e contato para imprensa.",
   alternates: { canonical: `${siteUrl}/imprensa` },
+  openGraph: {
+    url: `${siteUrl}/imprensa`,
+    title: "Imprensa · Sensimilla Records — press kit",
+    description:
+      "Kit de imprensa do selo Sensimilla Records: bio, fotos, redes e contato.",
+    siteName: "Sensimilla Records",
+  },
 };
 
 export default function ImprensaPage() {
