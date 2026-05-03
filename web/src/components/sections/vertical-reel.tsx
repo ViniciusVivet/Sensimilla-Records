@@ -4,7 +4,9 @@ import { Reveal } from "@/components/reveal";
 
 const REEL_VIDEO_ID = "C9Eyy_hnxvs";
 
-export function VerticalReelSection() {
+export function VerticalReelSection({ videoId = REEL_VIDEO_ID }: { videoId?: string }) {
+  const activeVideoId = videoId || REEL_VIDEO_ID;
+
   return (
     <section className="bg-bg px-6 py-24 md:py-32">
       <div className="mx-auto flex max-w-4xl flex-col items-center">
@@ -23,7 +25,7 @@ export function VerticalReelSection() {
             style={{ maxHeight: "min(70dvh, 560px)" }}
           >
             <iframe
-              src={`https://www.youtube.com/embed/${REEL_VIDEO_ID}?autoplay=0&modestbranding=1&rel=0`}
+              src={`https://www.youtube.com/embed/${activeVideoId}?autoplay=0&modestbranding=1&rel=0`}
               className="h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

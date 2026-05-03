@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
 import { selo } from "@/data/dossie";
+import type { CmsVideo } from "@/lib/cms-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,9 +24,10 @@ const videos = [
   },
 ];
 
-export function YoutubeHubSection() {
+export function YoutubeHubSection({ videos: cmsVideos }: { videos?: CmsVideo[] }) {
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
+  const items = cmsVideos?.length ? cmsVideos : videos;
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -81,7 +83,7 @@ export function YoutubeHubSection() {
 
         {/* Video embeds */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {videos.map((v) => (
+          {items.map((v) => (
             <div key={v.id} data-yt-card className="flex flex-col gap-3">
               <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: "56.25%" }}>
                 <iframe

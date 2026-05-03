@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { merchProducts } from "@/data/site";
+import type { CmsMerchProduct } from "@/lib/cms-types";
 
 const WA_NUMBER = "5511918540870";
 
@@ -13,21 +14,23 @@ function buildWhatsAppUrl(productName: string, price: string) {
 
 function MerchModal({
   startIndex,
+  products,
   onClose,
 }: {
   startIndex: number;
+  products: CmsMerchProduct[];
   onClose: () => void;
 }) {
   const [idx, setIdx] = useState(startIndex);
-  const product = merchProducts[idx];
+  const product = products[idx];
 
   const prev = useCallback(
-    () => setIdx((i) => (i - 1 + merchProducts.length) % merchProducts.length),
-    [],
+    () => setIdx((i) => (i - 1 + products.length) % products.length),
+    [products.length],
   );
   const next = useCallback(
-    () => setIdx((i) => (i + 1) % merchProducts.length),
-    [],
+    () => setIdx((i) => (i + 1) % products.length),
+    [products.length],
   );
 
   useEffect(() => {
@@ -105,7 +108,7 @@ function MerchModal({
             Comprar →
           </a>
           <p className="mt-3 text-xs text-white/30">
-            {idx + 1} / {merchProducts.length}
+            {idx + 1} / {products.length}
           </p>
         </div>
       </div>
@@ -113,8 +116,13 @@ function MerchModal({
   );
 }
 
-export function MerchSection() {
+export function MerchSection({
+  products = merchProducts,
+}: {
+  products?: CmsMerchProduct[];
+}) {
   const [modalIndex, setModalIndex] = useState<number | null>(null);
+  const items = products.length ? products : merchProducts;
 
   return (
     <>
@@ -140,7 +148,7 @@ export function MerchSection() {
           </div>
 
           <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">
-            {merchProducts.map((p, i) => (
+            {items.map((p, i) => (
               <article
                 key={p.name}
                 className="group flex cursor-pointer flex-col rounded-2xl border border-fg/10 bg-black/15 p-4 transition active:scale-[0.99] hover:border-accent/50"
@@ -178,6 +186,7 @@ export function MerchSection() {
       {modalIndex !== null && (
         <MerchModal
           startIndex={modalIndex}
+          products={items}
           onClose={() => setModalIndex(null)}
         />
       )}

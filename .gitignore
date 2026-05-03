@@ -1,5 +1,6 @@
 .DS_Store
 Thumbs.db
+node_modules/
 
 # configuracoes locais de agentes de IA
 .claude/

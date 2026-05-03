@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { socialLinks, footerLinks } from "@/data/site";
+import type { CmsMediaSettings, CmsSocialLink } from "@/lib/cms-types";
 
 function SocialIcon({ name }: { name: string }) {
   const common = "h-5 w-5";
@@ -39,13 +40,23 @@ function SocialIcon({ name }: { name: string }) {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({
+  socialLinks: cmsSocialLinks = socialLinks,
+  media = {},
+}: {
+  socialLinks?: readonly CmsSocialLink[];
+  media?: CmsMediaSettings;
+}) {
+  const links = cmsSocialLinks.length ? cmsSocialLinks : socialLinks;
+  const bannerSrc = media.footerBanner || media.bannerImage || "/banner-sensi.jpg";
+  const logoSrc = media.heroLogo || "/logo-sensi.png";
+
   return (
     <footer className="relative overflow-hidden border-t border-white/10 bg-black px-6 py-16 md:px-12 md:py-20">
       {/* Banner de fundo */}
       <div className="pointer-events-none absolute inset-0">
         <Image
-          src="/banner-sensi.jpg"
+          src={bannerSrc}
           alt=""
           fill
           className="object-cover opacity-15"
@@ -59,7 +70,7 @@ export function SiteFooter() {
         {/* Logo real */}
         <div className="relative h-20 w-20 md:h-24 md:w-24">
           <Image
-            src="/logo-sensi.png"
+            src={logoSrc}
             alt="Sensimilla Records"
             fill
             className="rounded-full object-cover"
@@ -83,7 +94,7 @@ export function SiteFooter() {
         </nav>
 
         <div className="mt-10 flex gap-2 sm:gap-6 text-muted">
-          {socialLinks.map((s) => (
+          {links.map((s) => (
             <a
               key={s.name}
               href={s.href}

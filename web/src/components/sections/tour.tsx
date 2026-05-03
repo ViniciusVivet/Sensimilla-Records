@@ -2,8 +2,11 @@
 
 import { Reveal } from "@/components/reveal";
 import { tourDates } from "@/data/site";
+import type { CmsEvent } from "@/lib/cms-types";
 
-export function TourSection() {
+export function TourSection({ events = tourDates }: { events?: CmsEvent[] }) {
+  const items = events.length ? events : tourDates;
+
   return (
     <section id="tour" className="bg-bg px-6 py-24 md:px-12 md:py-32">
       <div className="mx-auto max-w-5xl">
@@ -16,7 +19,7 @@ export function TourSection() {
         </Reveal>
 
         <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {tourDates.map((d, i) => (
+          {items.map((d, i) => (
             <Reveal key={`${d.city}-${d.day}`} delay={i * 0.06}>
               <li className="flex h-full flex-col rounded-2xl border border-white/10 bg-panel/60 p-6 backdrop-blur-sm transition hover:border-accent/40">
                 <div className="flex items-baseline gap-3">

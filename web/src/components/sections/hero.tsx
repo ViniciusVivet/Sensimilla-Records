@@ -10,6 +10,7 @@ import {
   heroTagline,
 } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
+import type { CmsMediaSettings, CmsSocialLink } from "@/lib/cms-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -42,10 +43,19 @@ function SocialIcon({ name }: { name: string }) {
   );
 }
 
-export function HeroSection() {
+export function HeroSection({
+  socialLinks: cmsSocialLinks = socialLinks,
+  media = {},
+}: {
+  socialLinks?: readonly CmsSocialLink[];
+  media?: CmsMediaSettings;
+}) {
   const root = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const links = cmsSocialLinks.length ? cmsSocialLinks : socialLinks;
+  const logoSrc = media.heroLogo || "/logo-sensi.png";
+  const bannerSrc = media.bannerImage || "/banner-sensi.jpg";
 
   useLayoutEffect(() => {
     const logo = logoRef.current;
@@ -113,7 +123,7 @@ export function HeroSection() {
         ))}
 
         <Image
-          src="/logo-sensi.png"
+          src={logoSrc}
           alt=""
           fill
           className="object-contain sensi-hero-logo"
@@ -132,7 +142,7 @@ export function HeroSection() {
           aria-label="Redes sociais"
         >
           <div className="flex gap-1 sm:gap-4">
-            {socialLinks.map((s) => (
+            {links.map((s) => (
               <a
                 key={s.name}
                 href={s.href}
@@ -162,7 +172,7 @@ export function HeroSection() {
           {/* Banner / thumbnail */}
           <div className="relative aspect-video w-full overflow-hidden rounded-xl">
             <Image
-              src="/banner-sensi.jpg"
+              src={bannerSrc}
               alt="Sensimilla Records no YouTube"
               fill
               className="object-cover transition duration-500 group-hover:scale-105"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HomeExperience } from "@/components/home-experience";
+import { getPublicCmsData } from "@/lib/cms-data";
 import { getSiteUrl } from "@/lib/site-config";
 
 const siteUrl = getSiteUrl();
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
-  return <HomeExperience />;
+export default async function Home() {
+  const cmsData = await getPublicCmsData();
+  return <HomeExperience cmsData={cmsData} />;
 }

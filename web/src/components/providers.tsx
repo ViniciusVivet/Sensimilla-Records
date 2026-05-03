@@ -1,27 +1,11 @@
 "use client";
-
-import { useEffect } from "react";
 import { ReducedMotionProvider } from "@/components/reduced-motion-provider";
-import { MiniPlayerProvider, useMiniPlayer } from "@/components/mini-player-context";
-import { MiniPlayer } from "@/components/mini-player";
 import type { ReactNode } from "react";
-
-function AutoplayOnMount() {
-  const { open } = useMiniPlayer();
-  useEffect(() => {
-    open(2); // LOUCURA (indice atualizado apos adicao de Eu Fiz Um Desejo no indice 0)
-  }, [open]);
-  return null;
-}
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <ReducedMotionProvider>
-      <MiniPlayerProvider>
-        <AutoplayOnMount />
-        {children}
-        <MiniPlayer />
-      </MiniPlayerProvider>
+      {children}
     </ReducedMotionProvider>
   );
 }

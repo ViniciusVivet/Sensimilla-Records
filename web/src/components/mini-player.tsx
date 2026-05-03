@@ -75,10 +75,6 @@ export function MiniPlayer() {
     };
   }, [endDrag]);
 
-  useEffect(() => {
-    if (currentTrack) setMinimized(false);
-  }, [currentTrack]);
-
   if (!currentTrack) return null;
 
   const posStyle: React.CSSProperties = dragPos

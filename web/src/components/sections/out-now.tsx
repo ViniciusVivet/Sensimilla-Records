@@ -7,13 +7,19 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { catalogReleases } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
 import { useMiniPlayer } from "@/components/mini-player-context";
+import type { CmsRelease } from "@/lib/cms-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function OutNowSection() {
+export function OutNowSection({
+  releases = catalogReleases,
+}: {
+  releases?: CmsRelease[];
+}) {
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const { currentIndex, open, close } = useMiniPlayer();
+  const items = releases.length ? releases : catalogReleases;
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -61,7 +67,7 @@ export function OutNowSection() {
         </div>
 
         <ul className="mt-14 space-y-4">
-          {catalogReleases.map((r, i) => {
+          {items.map((r, i) => {
             const isActive = currentIndex === i;
             return (
               <li key={r.title} data-release-row>

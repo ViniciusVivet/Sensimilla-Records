@@ -246,17 +246,18 @@ function useDragScroll(ref: React.RefObject<HTMLDivElement | null>) {
   return hasMoved;
 }
 
-export function RosterSection() {
+export function RosterSection({ members = roster.members }: { members?: Member[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const hadModalOpenRef = useRef(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const hasDragged = useDragScroll(scrollRef);
+  const items = members.length ? members : roster.members;
 
   const featuredIndex = useMemo(() => {
-    const i = roster.members.findIndex((m) => m.id === roster.featuredMemberId);
+    const i = items.findIndex((m) => m.id === roster.featuredMemberId);
     return i >= 0 ? i : 0;
-  }, []);
+  }, [items]);
 
   useEffect(() => {
     if (!selectedMember) {
@@ -355,7 +356,7 @@ export function RosterSection() {
               overflowAnchor: "none",
             }}
           >
-            {roster.members.map((a, i) => {
+            {items.map((a, i) => {
               const isFeatured = i === featuredIndex;
               return (
                 <article
@@ -419,7 +420,7 @@ export function RosterSection() {
       {selectedMember && (
         <MemberModal
           member={selectedMember}
-          members={roster.members}
+          members={items}
           onClose={() => setSelectedMember(null)}
           onNavigate={setSelectedMember}
         />

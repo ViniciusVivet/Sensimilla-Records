@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { editorialCollage } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
+import type { CmsEditorialPhoto } from "@/lib/cms-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +15,7 @@ function Lightbox({
   startIndex,
   onClose,
 }: {
-  images: typeof editorialCollage;
+  images: CmsEditorialPhoto[];
   startIndex: number;
   onClose: () => void;
 }) {
@@ -77,10 +78,15 @@ function Lightbox({
   );
 }
 
-export function EditorialSection() {
+export function EditorialSection({
+  photos = editorialCollage,
+}: {
+  photos?: CmsEditorialPhoto[];
+}) {
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const items = photos.length ? photos : editorialCollage;
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -137,7 +143,7 @@ export function EditorialSection() {
           </h2>
 
           <div className="relative mt-16 min-h-[420px] md:min-h-[520px]">
-            {editorialCollage.map((photo, i) => {
+            {items.slice(0, 3).map((photo, i) => {
               const positions = [
                 "left-[2%] top-[8%] w-[42%] rotate-[-7deg] md:left-[5%] md:w-[38%]",
                 "right-[4%] top-0 w-[48%] rotate-[5deg] md:right-[8%] md:w-[42%]",
@@ -185,7 +191,7 @@ export function EditorialSection() {
 
       {lightboxIndex !== null && (
         <Lightbox
-          images={editorialCollage}
+          images={items}
           startIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
         />
