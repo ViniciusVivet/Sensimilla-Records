@@ -10,7 +10,9 @@ O repositório na raiz (`SensimillaRecords/`) tem um `package.json` que delega c
 
 | Área | Caminho |
 |------|---------|
-| Textos, equipe, links, releases, tour | `src/data/site.ts` (importa links de `dossie.ts`) |
+| **Admin CMS** (eventos, midias, equipe, etc.) | `/admin` + Supabase — ver `docs/CMS-ADMIN.md` |
+| Conteudo dinamico na home | `src/lib/cms-data.ts` (Supabase) ou fallback `src/lib/cms-fallback.ts` |
+| Textos, equipe, links, releases, tour (fallback) | `src/data/site.ts` (importa links de `dossie.ts`) |
 | **Dossiê completo** (todos os URLs, IDs, faixas, pendências) | `src/data/dossie.ts` |
 | Página listagem interna | `/referencias` (noindex) |
 | Textos longos (manifesto, rascunhos legais) | `src/content/copy.json` |

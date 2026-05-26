@@ -597,13 +597,23 @@ export function AdminPanel() {
             Logado como {session.user.email}. Alteracoes publicadas aparecem na home.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => void supabase.auth.signOut()}
-          className="w-fit rounded-full border border-white/15 px-5 py-3 text-sm text-muted hover:border-accent hover:text-accent"
-        >
-          Sair
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit rounded-full border border-white/15 px-5 py-3 text-sm text-muted hover:border-accent hover:text-accent"
+          >
+            Ver site
+          </a>
+          <button
+            type="button"
+            onClick={() => void supabase.auth.signOut()}
+            className="w-fit rounded-full border border-white/15 px-5 py-3 text-sm text-muted hover:border-accent hover:text-accent"
+          >
+            Sair
+          </button>
+        </div>
       </header>
 
       <div className="mx-auto mt-6 max-w-7xl">

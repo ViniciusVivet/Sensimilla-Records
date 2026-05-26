@@ -48,6 +48,7 @@ cp web/.env.example web/.env.local
 ```
 
 - **`NEXT_PUBLIC_SITE_URL`** — URL pública (sem barra no final). Usada em metadata, Open Graph, `sitemap.xml` e `robots.txt`.
+- **`NEXT_PUBLIC_SUPABASE_URL`** e **`NEXT_PUBLIC_SUPABASE_ANON_KEY`** — habilitam o painel **`/admin`** e conteúdo dinâmico na home (ver [web/docs/CMS-ADMIN.md](web/docs/CMS-ADMIN.md)).
 - **`NEXT_PUBLIC_CONTACT_FORM_ACTION`** (opcional) — URL para onde o formulário de **Contato** envia dados (API, Formspree, etc.). Sem isso, o envio fica só em modo demonstração (log no console).
 
 Alternativa (equivalente):
@@ -72,6 +73,9 @@ npm run dev
 | Caminho | Conteúdo |
 |---------|----------|
 | `/` | Home (experiência longa com scroll) |
+| `/admin` | **Painel CMS** (eventos, equipe, merch, mídias) — requer Supabase; ver [web/docs/CMS-ADMIN.md](web/docs/CMS-ADMIN.md) |
+| `/servicos` | Planos e preços |
+| `/imprensa` | Press kit |
 | `/contato` | Formulário de contato |
 | `/referencias` | Listagem interna de **todos** os links públicos (Instagram, Spotify, YouTube, IDs, faixas, pendências) — `noindex` |
 | `/privacidade` | Política de privacidade (rascunho) |
