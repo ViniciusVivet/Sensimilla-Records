@@ -14,6 +14,27 @@ import type { CmsMediaSettings, CmsSocialLink } from "@/lib/cms-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
+type CoverTransform = { zoom: number; x: number; y: number };
+
+function parseCoverTransform(input?: string): CoverTransform {
+  // Guardas para dados antigos/invalidos do CMS.
+  const fallback: CoverTransform = { zoom: 1, x: 0, y: 0 };
+  if (!input) return fallback;
+  try {
+    const parsed = JSON.parse(input) as Partial<CoverTransform>;
+    const zoom = typeof parsed.zoom === "number" ? parsed.zoom : fallback.zoom;
+    const x = typeof parsed.x === "number" ? parsed.x : fallback.x;
+    const y = typeof parsed.y === "number" ? parsed.y : fallback.y;
+    return {
+      zoom: Number.isFinite(zoom) ? Math.min(3, Math.max(0.5, zoom)) : fallback.zoom,
+      x: Number.isFinite(x) ? Math.min(80, Math.max(-80, x)) : fallback.x,
+      y: Number.isFinite(y) ? Math.min(80, Math.max(-80, y)) : fallback.y,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
 function SocialIcon({ name }: { name: string }) {
   const common = "h-4 w-4 stroke-current";
   if (name === "Instagram")
@@ -56,6 +77,7 @@ export function HeroSection({
   const links = cmsSocialLinks.length ? cmsSocialLinks : socialLinks;
   const logoSrc = media.heroLogo || "/logo-sensi.png";
   const bannerSrc = media.bannerImage || "/banner-sensi.jpg";
+  const bannerTransform = parseCoverTransform(media.bannerImageTransform);
 
   useLayoutEffect(() => {
     const logo = logoRef.current;
@@ -171,15 +193,16 @@ export function HeroSection({
         >
           {/* Banner / thumbnail */}
           <div className="relative aspect-video w-full overflow-hidden rounded-xl">
-            <Image
-              src={bannerSrc}
-              alt="Sensimilla Records no YouTube"
-              fill
-              className="object-cover transition duration-500 group-hover:scale-105"
-              sizes="190px"
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${bannerSrc})`,
+                transform: `scale(${bannerTransform.zoom}) translate(${bannerTransform.x}%, ${bannerTransform.y}%)`,
+              }}
             />
             {/* Ícone play centralizado */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/60 backdrop-blur-sm">
                 <svg className="h-3.5 w-3.5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />

@@ -26,6 +26,8 @@ export const fallbackCmsData: PublicCmsData = {
     heroLogo: "/logo-sensi.png",
     bannerImage: "/banner-sensi.jpg",
     footerBanner: "/banner-sensi.jpg",
+    bannerImageTransform: JSON.stringify({ zoom: 1, x: 0, y: 0 }),
+    footerBannerTransform: JSON.stringify({ zoom: 1, x: 0, y: 0 }),
     verticalReelVideoId: "C9Eyy_hnxvs",
   },
 };

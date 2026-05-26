@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
+import { fallbackCmsData } from "@/lib/cms-fallback";
 
 type TableName =
   | "site_events"
@@ -479,6 +480,41 @@ function SettingsEditor({ supabase }: { supabase: SupabaseClient }) {
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [status, setStatus] = useState("");
 
+  type CoverTransform = { zoom: number; x: number; y: number };
+  const defaultTransform: CoverTransform = { zoom: 1, x: 0, y: 0 };
+
+  function parseTransform(input?: string): CoverTransform {
+    if (!input) return defaultTransform;
+    try {
+      const parsed = JSON.parse(input) as Partial<CoverTransform>;
+      const zoom =
+        typeof parsed.zoom === "number" ? parsed.zoom : defaultTransform.zoom;
+      const x = typeof parsed.x === "number" ? parsed.x : defaultTransform.x;
+      const y = typeof parsed.y === "number" ? parsed.y : defaultTransform.y;
+      return {
+        zoom: Number.isFinite(zoom) ? Math.min(3, Math.max(0.5, zoom)) : 1,
+        x: Number.isFinite(x) ? Math.min(80, Math.max(-80, x)) : 0,
+        y: Number.isFinite(y) ? Math.min(80, Math.max(-80, y)) : 0,
+      };
+    } catch {
+      return defaultTransform;
+    }
+  }
+
+  const [bannerTransform, setBannerTransform] = useState<CoverTransform>(defaultTransform);
+  const [footerTransform, setFooterTransform] = useState<CoverTransform>(defaultTransform);
+
+  const bannerSrc =
+    settings.bannerImage || fallbackCmsData.media.bannerImage || "/banner-sensi.jpg";
+  const footerBannerSrc =
+    settings.footerBanner ||
+    settings.bannerImage ||
+    fallbackCmsData.media.footerBanner ||
+    fallbackCmsData.media.bannerImage ||
+    "/banner-sensi.jpg";
+  const heroLogoSrc =
+    settings.heroLogo || fallbackCmsData.media.heroLogo || "/logo-sensi.png";
+
   const load = useCallback(async () => {
     const { data, error } = await supabase.from("site_settings").select("*");
     if (error) {
@@ -495,9 +531,21 @@ function SettingsEditor({ supabase }: { supabase: SupabaseClient }) {
     void load();
   }, [load]);
 
+  useEffect(() => {
+    setBannerTransform(parseTransform(settings.bannerImageTransform));
+    setFooterTransform(parseTransform(settings.footerBannerTransform));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.bannerImageTransform, settings.footerBannerTransform]);
+
   async function save() {
     setStatus("Salvando...");
-    const rows = Object.entries(settings)
+    const payload: Record<string, string> = {
+      ...settings,
+      bannerImageTransform: JSON.stringify(bannerTransform),
+      footerBannerTransform: JSON.stringify(footerTransform),
+    };
+
+    const rows = Object.entries(payload)
       .filter(([, value]) => value.trim())
       .map(([key, value]) => ({ key, value }));
     const { error } = await supabase.from("site_settings").upsert(rows);
@@ -520,29 +568,272 @@ function SettingsEditor({ supabase }: { supabase: SupabaseClient }) {
   return (
     <section className="max-w-2xl">
       <p className="text-sm text-muted">
-        Midias globais usadas em hero, banner, rodape e clipe vertical.
+        Midias globais usadas em hero, banner e rodape. Ajuste com preview visual (zoom + pan).
       </p>
-      <div className="mt-6 space-y-4 rounded-2xl border border-white/10 bg-panel p-5">
-        {settingFields.map((field) => (
-          <label key={field.key} className="block text-xs uppercase tracking-wider text-muted">
-            {field.label}
-            <input
-              value={settings[field.key] ?? ""}
-              onChange={(e) =>
-                setSettings((current) => ({ ...current, [field.key]: e.target.value }))
-              }
-              className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
-            />
-            {field.key !== "verticalReelVideoId" && (
-              <input
-                onChange={(e) => void handleUpload(field.key, e)}
-                type="file"
-                accept="image/*,video/*"
-                className="mt-2 w-full text-xs text-muted"
+      <div className="mt-6 space-y-6 rounded-2xl border border-white/10 bg-panel p-5">
+        {/* Hero banner */}
+        <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            Banner hero (thumbnail YouTube)
+          </p>
+          <div className="grid gap-4 md:grid-cols-2 md:items-start">
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-panel">
+              <img
+                src={bannerSrc}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{
+                  transform: `scale(${bannerTransform.zoom}) translate(${bannerTransform.x}%, ${bannerTransform.y}%)`,
+                  transformOrigin: "50% 50%",
+                }}
               />
-            )}
-          </label>
-        ))}
+              <div className="pointer-events-none absolute inset-0">
+                <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/15" />
+                <div className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-white/15" />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-xs uppercase tracking-wider text-muted">
+                Trocar imagem
+                <input
+                  onChange={(e) => void handleUpload("bannerImage", e)}
+                  type="file"
+                  accept="image/*"
+                  className="mt-2 w-full text-xs text-muted"
+                />
+              </label>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Zoom</span>
+                  <span className="text-fg/80">{bannerTransform.zoom.toFixed(2)}x</span>
+                </div>
+                <input
+                  type="range"
+                  min={0.5}
+                  max={2.5}
+                  step={0.01}
+                  value={bannerTransform.zoom}
+                  onChange={(e) =>
+                    setBannerTransform((t) => ({ ...t, zoom: Number(e.target.value) }))
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Pan X</span>
+                  <span className="text-fg/80">{Math.round(bannerTransform.x)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={-60}
+                  max={60}
+                  step={1}
+                  value={bannerTransform.x}
+                  onChange={(e) =>
+                    setBannerTransform((t) => ({ ...t, x: Number(e.target.value) }))
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Pan Y</span>
+                  <span className="text-fg/80">{Math.round(bannerTransform.y)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={-60}
+                  max={60}
+                  step={1}
+                  value={bannerTransform.y}
+                  onChange={(e) =>
+                    setBannerTransform((t) => ({ ...t, y: Number(e.target.value) }))
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setBannerTransform(defaultTransform)}
+                  className="rounded-full border border-white/15 px-4 py-2 text-xs text-muted hover:border-accent hover:text-accent"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Rodape banner */}
+        <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            Banner rodape
+          </p>
+          <div className="grid gap-4 md:grid-cols-2 md:items-start">
+            <div className="relative h-40 overflow-hidden rounded-2xl border border-white/10 bg-panel">
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-cover bg-center opacity-15"
+                style={{
+                  backgroundImage: `url(${footerBannerSrc})`,
+                  transform: `scale(${footerTransform.zoom}) translate(${footerTransform.x}%, ${footerTransform.y}%)`,
+                  transformOrigin: "50% 50%",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-xs uppercase tracking-wider text-muted">
+                Trocar imagem
+                <input
+                  onChange={(e) => void handleUpload("footerBanner", e)}
+                  type="file"
+                  accept="image/*"
+                  className="mt-2 w-full text-xs text-muted"
+                />
+              </label>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Zoom</span>
+                  <span className="text-fg/80">{footerTransform.zoom.toFixed(2)}x</span>
+                </div>
+                <input
+                  type="range"
+                  min={0.5}
+                  max={2.5}
+                  step={0.01}
+                  value={footerTransform.zoom}
+                  onChange={(e) =>
+                    setFooterTransform((t) => ({
+                      ...t,
+                      zoom: Number(e.target.value),
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Pan X</span>
+                  <span className="text-fg/80">{Math.round(footerTransform.x)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={-60}
+                  max={60}
+                  step={1}
+                  value={footerTransform.x}
+                  onChange={(e) =>
+                    setFooterTransform((t) => ({ ...t, x: Number(e.target.value) }))
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Pan Y</span>
+                  <span className="text-fg/80">{Math.round(footerTransform.y)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={-60}
+                  max={60}
+                  step={1}
+                  value={footerTransform.y}
+                  onChange={(e) =>
+                    setFooterTransform((t) => ({ ...t, y: Number(e.target.value) }))
+                  }
+                  className="w-full"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFooterTransform(defaultTransform)}
+                  className="rounded-full border border-white/15 px-4 py-2 text-xs text-muted hover:border-accent hover:text-accent"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Logo do hero + outros */}
+        <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            Logo do hero e midias extras
+          </p>
+
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative h-16 w-16 overflow-hidden rounded-full border border-white/10 bg-panel">
+                <img
+                  src={heroLogoSrc}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-fg">Logo do hero</p>
+                <p className="text-xs text-muted">Atualize a imagem e salve.</p>
+              </div>
+            </div>
+
+            <div className="w-full md:max-w-xs">
+              <input
+                onChange={(e) => void handleUpload("heroLogo", e)}
+                type="file"
+                accept="image/*"
+                className="w-full text-xs text-muted"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {settingFields
+              .filter((f) => f.key === "heroVideoSrc" || f.key === "verticalReelVideoId")
+              .map((field) => (
+                <label
+                  key={field.key}
+                  className="block text-xs uppercase tracking-wider text-muted"
+                >
+                  {field.label}
+                  <input
+                    value={settings[field.key] ?? ""}
+                    onChange={(e) =>
+                      setSettings((current) => ({
+                        ...current,
+                        [field.key]: e.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+                  />
+                  {field.key !== "verticalReelVideoId" && (
+                    <input
+                      onChange={(e) => void handleUpload(field.key, e)}
+                      type="file"
+                      accept="image/*,video/*"
+                      className="mt-2 w-full text-xs text-muted"
+                    />
+                  )}
+                </label>
+              ))}
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={() => void save()}

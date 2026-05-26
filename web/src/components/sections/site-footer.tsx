@@ -4,6 +4,26 @@ import Image from "next/image";
 import { socialLinks, footerLinks } from "@/data/site";
 import type { CmsMediaSettings, CmsSocialLink } from "@/lib/cms-types";
 
+type CoverTransform = { zoom: number; x: number; y: number };
+
+function parseCoverTransform(input?: string): CoverTransform {
+  const fallback: CoverTransform = { zoom: 1, x: 0, y: 0 };
+  if (!input) return fallback;
+  try {
+    const parsed = JSON.parse(input) as Partial<CoverTransform>;
+    const zoom = typeof parsed.zoom === "number" ? parsed.zoom : fallback.zoom;
+    const x = typeof parsed.x === "number" ? parsed.x : fallback.x;
+    const y = typeof parsed.y === "number" ? parsed.y : fallback.y;
+    return {
+      zoom: Number.isFinite(zoom) ? Math.min(3, Math.max(0.5, zoom)) : fallback.zoom,
+      x: Number.isFinite(x) ? Math.min(80, Math.max(-80, x)) : fallback.x,
+      y: Number.isFinite(y) ? Math.min(80, Math.max(-80, y)) : fallback.y,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
 function SocialIcon({ name }: { name: string }) {
   const common = "h-5 w-5";
   if (name === "Instagram")
@@ -50,18 +70,21 @@ export function SiteFooter({
   const links = cmsSocialLinks.length ? cmsSocialLinks : socialLinks;
   const bannerSrc = media.footerBanner || media.bannerImage || "/banner-sensi.jpg";
   const logoSrc = media.heroLogo || "/logo-sensi.png";
+  const footerTransform = parseCoverTransform(
+    media.footerBannerTransform || media.bannerImageTransform,
+  );
 
   return (
     <footer className="relative overflow-hidden border-t border-white/10 bg-black px-6 py-16 md:px-12 md:py-20">
       {/* Banner de fundo */}
       <div className="pointer-events-none absolute inset-0">
-        <Image
-          src={bannerSrc}
-          alt=""
-          fill
-          className="object-cover opacity-15"
-          sizes="100vw"
-          priority={false}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center opacity-15"
+          style={{
+            backgroundImage: `url(${bannerSrc})`,
+            transform: `scale(${footerTransform.zoom}) translate(${footerTransform.x}%, ${footerTransform.y}%)`,
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/60" />
       </div>
