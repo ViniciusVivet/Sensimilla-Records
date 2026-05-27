@@ -312,6 +312,105 @@ function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+type CalendarView = "day" | "week" | "month" | "year";
+
+const monthFormatter = new Intl.DateTimeFormat("pt-BR", {
+  month: "long",
+  year: "numeric",
+});
+const shortMonthFormatter = new Intl.DateTimeFormat("pt-BR", { month: "short" });
+const weekdayFormatter = new Intl.DateTimeFormat("pt-BR", { weekday: "short" });
+
+function toDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function parseDateKey(value: string) {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, (month || 1) - 1, day || 1);
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function addMonths(date: Date, months: number) {
+  const next = new Date(date);
+  next.setMonth(next.getMonth() + months);
+  return next;
+}
+
+function startOfWeek(date: Date) {
+  const next = new Date(date);
+  next.setDate(next.getDate() - next.getDay());
+  return next;
+}
+
+function calendarTitle(date: Date, view: CalendarView) {
+  if (view === "year") return String(date.getFullYear());
+  if (view === "day") {
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  }
+  if (view === "week") {
+    const start = startOfWeek(date);
+    const end = addDays(start, 6);
+    return `${start.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} - ${end.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}`;
+  }
+  return monthFormatter.format(date);
+}
+
+function moveCalendar(date: Date, view: CalendarView, amount: number) {
+  if (view === "day") return addDays(date, amount);
+  if (view === "week") return addDays(date, amount * 7);
+  if (view === "year") return new Date(date.getFullYear() + amount, 0, 1);
+  return addMonths(date, amount);
+}
+
+function inferFallbackEventDate(event: { date?: string; month?: string; day?: string }) {
+  if (event.date) return event.date;
+  const monthMap: Record<string, number> = {
+    JAN: 1,
+    FEV: 2,
+    MAR: 3,
+    ABR: 4,
+    MAI: 5,
+    JUN: 6,
+    JUL: 7,
+    AGO: 8,
+    SET: 9,
+    OUT: 10,
+    NOV: 11,
+    DEZ: 12,
+  };
+  const month = monthMap[(event.month || "").toUpperCase()];
+  const day = Number(event.day);
+  if (!month || !day) return "";
+  return `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+function fallbackEventRows() {
+  return fallbackCmsData.events.map((event, index) => ({
+    title: `${event.city} - ${event.venue}`,
+    event_date: inferFallbackEventDate(event),
+    city: event.city,
+    venue: event.venue,
+    note: event.note,
+    ticket_url: event.ticketUrl || "",
+    status: event.status || "past",
+    active: true,
+    sort_order: index * 10,
+  }));
+}
+
 async function uploadFile(
   supabase: SupabaseClient,
   file: File,
@@ -383,6 +482,236 @@ function Login({ supabase }: { supabase: SupabaseClient }) {
   );
 }
 
+function EventCalendar({
+  rows,
+  selectedDate,
+  onSelectDate,
+  onEditEvent,
+}: {
+  rows: Row[];
+  selectedDate: Date;
+  onSelectDate: (date: Date) => void;
+  onEditEvent: (row: Row) => void;
+}) {
+  const [view, setView] = useState<CalendarView>("month");
+  const [cursor, setCursor] = useState(selectedDate);
+  const todayKey = toDateKey(new Date());
+  const selectedKey = toDateKey(selectedDate);
+
+  const eventsByDate = useMemo(() => {
+    return rows.reduce<Record<string, Row[]>>((acc, row) => {
+      const date = rowValue(row, "event_date");
+      if (!date) return acc;
+      acc[date] = [...(acc[date] ?? []), row];
+      return acc;
+    }, {});
+  }, [rows]);
+
+  function chooseDate(date: Date) {
+    setCursor(date);
+    onSelectDate(date);
+  }
+
+  function renderEventPills(dateKey: string, compact = false) {
+    return (eventsByDate[dateKey] ?? []).slice(0, compact ? 2 : 4).map((event) => (
+      <button
+        key={String(event.id ?? `${dateKey}-${rowValue(event, "venue")}`)}
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onEditEvent(event);
+        }}
+        className="block w-full truncate rounded-md bg-accent/15 px-2 py-1 text-left text-[11px] font-bold text-accent hover:bg-accent hover:text-bg"
+      >
+        {rowValue(event, "city") || rowValue(event, "venue") || "Evento"}
+      </button>
+    ));
+  }
+
+  function renderDayCell(date: Date, muted = false) {
+    const dateKey = toDateKey(date);
+    const dayEvents = eventsByDate[dateKey] ?? [];
+    return (
+      <div
+        key={dateKey}
+        className={`min-h-28 rounded-xl border p-2 text-left transition hover:border-accent ${
+          selectedKey === dateKey
+            ? "border-accent bg-accent/10"
+            : "border-white/10 bg-bg/70"
+        } ${muted ? "opacity-45" : ""}`}
+      >
+        <button
+          type="button"
+          onClick={() => chooseDate(date)}
+          className="flex w-full items-center justify-between gap-2 text-left"
+        >
+          <span className="text-xs font-bold text-fg">{date.getDate()}</span>
+          {todayKey === dateKey && (
+            <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-bg">
+              hoje
+            </span>
+          )}
+        </button>
+        <span className="mt-2 block space-y-1">
+          {dayEvents.length ? (
+            renderEventPills(dateKey, true)
+          ) : (
+            <button
+              type="button"
+              onClick={() => chooseDate(date)}
+              className="text-left text-[11px] text-muted hover:text-accent"
+            >
+              clicar para criar
+            </button>
+          )}
+        </span>
+      </div>
+    );
+  }
+
+  const monthDays = useMemo(() => {
+    const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+    const start = startOfWeek(first);
+    return Array.from({ length: 42 }, (_, index) => addDays(start, index));
+  }, [cursor]);
+
+  const weekDays = useMemo(() => {
+    const start = startOfWeek(cursor);
+    return Array.from({ length: 7 }, (_, index) => addDays(start, index));
+  }, [cursor]);
+
+  return (
+    <section className="rounded-2xl border border-white/10 bg-panel p-4">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Calendario</p>
+          <h3 className="font-display mt-1 text-4xl capitalize">{calendarTitle(cursor, view)}</h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {(["day", "week", "month", "year"] as CalendarView[]).map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setView(item)}
+              className={`rounded-full border px-3 py-2 text-xs font-bold uppercase tracking-wider ${
+                view === item
+                  ? "border-accent bg-accent text-bg"
+                  : "border-white/15 text-muted hover:border-accent hover:text-accent"
+              }`}
+            >
+              {item === "day" ? "Dia" : item === "week" ? "Semana" : item === "month" ? "Mes" : "Ano"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setCursor((current) => moveCalendar(current, view, -1))}
+            className="rounded-full border border-white/15 px-4 py-2 text-sm text-fg hover:border-accent hover:text-accent"
+          >
+            Anterior
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const now = new Date();
+              setCursor(now);
+              onSelectDate(now);
+            }}
+            className="rounded-full border border-white/15 px-4 py-2 text-sm text-fg hover:border-accent hover:text-accent"
+          >
+            Hoje
+          </button>
+          <button
+            type="button"
+            onClick={() => setCursor((current) => moveCalendar(current, view, 1))}
+            className="rounded-full border border-white/15 px-4 py-2 text-sm text-fg hover:border-accent hover:text-accent"
+          >
+            Proximo
+          </button>
+        </div>
+        <p className="text-xs text-muted">Clique em um dia para iniciar um evento nessa data.</p>
+      </div>
+
+      {view === "month" && (
+        <div className="mt-4">
+          <div className="grid grid-cols-7 gap-2 pb-2 text-center text-[11px] font-bold uppercase tracking-wider text-muted">
+            {weekDays.map((day) => (
+              <span key={day.getDay()}>{weekdayFormatter.format(day)}</span>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-7">
+            {monthDays.map((day) => renderDayCell(day, day.getMonth() !== cursor.getMonth()))}
+          </div>
+        </div>
+      )}
+
+      {view === "week" && (
+        <div className="mt-4 grid grid-cols-1 gap-2 md:grid-cols-7">
+          {weekDays.map((day) => renderDayCell(day))}
+        </div>
+      )}
+
+      {view === "day" && (
+        <div className="mt-4 rounded-2xl border border-white/10 bg-bg/70 p-4">
+          <div className="rounded-xl border border-white/10 p-4">
+            <span className="font-display text-4xl">{cursor.getDate()}</span>
+            <span className="ml-3 text-sm capitalize text-muted">
+              {cursor.toLocaleDateString("pt-BR", { weekday: "long", month: "long", year: "numeric" })}
+            </span>
+            <span className="mt-4 block space-y-2">
+              {(eventsByDate[toDateKey(cursor)] ?? []).length
+                ? renderEventPills(toDateKey(cursor))
+                : (
+                  <button
+                    type="button"
+                    onClick={() => chooseDate(cursor)}
+                    className="text-sm text-muted hover:text-accent"
+                  >
+                    Nenhum evento. Clique para criar.
+                  </button>
+                )}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {view === "year" && (
+        <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+          {Array.from({ length: 12 }, (_, month) => {
+            const date = new Date(cursor.getFullYear(), month, 1);
+            const count = rows.filter((row) => {
+              const value = rowValue(row, "event_date");
+              return value.startsWith(`${cursor.getFullYear()}-${String(month + 1).padStart(2, "0")}`);
+            }).length;
+            return (
+              <button
+                key={month}
+                type="button"
+                onClick={() => {
+                  setCursor(date);
+                  setView("month");
+                }}
+                className="rounded-xl border border-white/10 bg-bg/70 p-4 text-left hover:border-accent"
+              >
+                <span className="font-display block text-3xl capitalize">
+                  {shortMonthFormatter.format(date)}
+                </span>
+                <span className="text-xs text-muted">
+                  {count ? `${count} evento${count > 1 ? "s" : ""}` : "sem eventos"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function EntityEditor({
   config,
   supabase,
@@ -396,19 +725,21 @@ function EntityEditor({
   const [status, setStatus] = useState("");
   const [query, setQuery] = useState("");
   const [saving, setSaving] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const isEventsConfig = config.table === "site_events";
   const imageField = imageFieldFor(config);
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase
-      .from(config.table)
-      .select("*")
-      .order("sort_order", { ascending: true });
+    const request = supabase.from(config.table).select("*");
+    const { data, error } = isEventsConfig
+      ? await request.order("event_date", { ascending: true })
+      : await request.order("sort_order", { ascending: true });
     if (error) {
       setStatus(error.message);
       return;
     }
     setRows(data ?? []);
-  }, [config.table, supabase]);
+  }, [config.table, isEventsConfig, supabase]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -436,16 +767,47 @@ function EntityEditor({
     }));
   }
 
-  function startNew() {
+  function startNew(date?: Date) {
+    const base = { ...config.defaults };
+    if (isEventsConfig) {
+      const eventDate = date ?? selectedDate;
+      base.event_date = toDateKey(eventDate);
+      base.status = eventDate < new Date(new Date().setHours(0, 0, 0, 0)) ? "past" : "scheduled";
+    }
     setEditingId(null);
-    setForm(config.defaults);
+    setForm(base);
     setStatus("");
   }
 
   function editRow(row: Row) {
     setEditingId(String(row.id));
     setForm(row);
+    const eventDate = rowValue(row, "event_date");
+    if (eventDate) setSelectedDate(parseDateKey(eventDate));
     setStatus("");
+  }
+
+  async function importFallbackEvents() {
+    if (!isEventsConfig) return;
+    const events = fallbackEventRows().filter((event) => event.event_date);
+    if (!events.length) {
+      setStatus("Nenhum evento padrao encontrado para importar.");
+      return;
+    }
+    const existingDates = new Set(rows.map((row) => rowValue(row, "event_date")));
+    const missing = events.filter((event) => !existingDates.has(event.event_date));
+    if (!missing.length) {
+      setStatus("Os eventos padrao ja estao no CMS.");
+      return;
+    }
+    setStatus("Importando eventos padrao...");
+    const { error } = await supabase.from("site_events").insert(missing);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(`${missing.length} evento${missing.length > 1 ? "s" : ""} importado${missing.length > 1 ? "s" : ""}.`);
   }
 
   async function handleFile(field: Field, e: ChangeEvent<HTMLInputElement>) {
@@ -548,6 +910,18 @@ function EntityEditor({
           </div>
         </div>
 
+        {isEventsConfig && (
+          <EventCalendar
+            rows={rows}
+            selectedDate={selectedDate}
+            onSelectDate={(date) => {
+              setSelectedDate(date);
+              startNew(date);
+            }}
+            onEditEvent={editRow}
+          />
+        )}
+
         <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
           <label className="block flex-1 text-xs uppercase tracking-wider text-muted">
             Buscar nesta aba
@@ -558,9 +932,18 @@ function EntityEditor({
               className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
             />
           </label>
+          {isEventsConfig && (
+            <button
+              type="button"
+              onClick={() => void importFallbackEvents()}
+              className="rounded-full border border-white/15 px-5 py-3 text-sm font-bold text-fg hover:border-accent hover:text-accent"
+            >
+              Importar OFDM
+            </button>
+          )}
           <button
             type="button"
-            onClick={startNew}
+            onClick={() => startNew()}
             className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
           >
             Novo item
@@ -648,7 +1031,7 @@ function EntityEditor({
           {editingId && (
             <button
               type="button"
-              onClick={startNew}
+              onClick={() => startNew()}
               className="text-xs text-muted hover:text-accent"
             >
               cancelar
@@ -1213,39 +1596,64 @@ export function AdminPanel() {
       </header>
 
       <div className="mx-auto mt-6 max-w-7xl">
-        <nav className="grid gap-2 pb-3 sm:grid-cols-2 lg:grid-cols-4">
-          {configs.map((item) => (
+        <section
+          aria-label="Categorias do CMS"
+          className="rounded-2xl border border-white/10 bg-panel p-3"
+        >
+          <div className="mb-3 flex items-center gap-3 px-1">
+            <span className="h-px flex-1 bg-white/10" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted">
+              Categorias
+            </span>
+            <span className="h-px flex-1 bg-white/10" />
+          </div>
+
+          <nav className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {configs.map((item) => (
+              <button
+                key={item.table}
+                type="button"
+                onClick={() => setActive(item.table)}
+                className={`relative min-w-[8.5rem] shrink-0 rounded-xl border px-3 py-2 text-left transition ${
+                  active === item.table
+                    ? "border-accent bg-accent text-bg shadow-[0_0_0_1px_rgba(200,242,74,0.25)]"
+                    : "border-white/10 bg-bg/70 text-fg hover:border-accent/70"
+                }`}
+              >
+                <span
+                  className={`absolute inset-y-2 left-0 w-1 rounded-r-full ${
+                    active === item.table ? "bg-bg/80" : "bg-accent/50"
+                  }`}
+                />
+                <span className="block truncate pl-2 text-[10px] font-bold uppercase tracking-wider opacity-65">
+                  {item.area.replace("Home / ", "")}
+                </span>
+                <span className="font-display block pl-2 text-2xl leading-none">
+                  {item.shortLabel}
+                </span>
+              </button>
+            ))}
             <button
-              key={item.table}
               type="button"
-              onClick={() => setActive(item.table)}
-              className={`rounded-2xl border p-4 text-left transition ${
-                active === item.table
-                  ? "border-accent bg-accent text-bg"
-                  : "border-white/15 bg-panel text-fg hover:border-accent"
+              onClick={() => setActive("settings")}
+              className={`relative min-w-[8.5rem] shrink-0 rounded-xl border px-3 py-2 text-left transition ${
+                active === "settings"
+                  ? "border-accent bg-accent text-bg shadow-[0_0_0_1px_rgba(200,242,74,0.25)]"
+                  : "border-white/10 bg-bg/70 text-fg hover:border-accent/70"
               }`}
             >
-              <span className="block text-xs font-bold uppercase tracking-wider opacity-70">
-                {item.area}
+              <span
+                className={`absolute inset-y-2 left-0 w-1 rounded-r-full ${
+                  active === "settings" ? "bg-bg/80" : "bg-accent/50"
+                }`}
+              />
+              <span className="block truncate pl-2 text-[10px] font-bold uppercase tracking-wider opacity-65">
+                Visual
               </span>
-              <span className="font-display mt-1 block text-3xl">{item.shortLabel}</span>
+              <span className="font-display block pl-2 text-2xl leading-none">Midias</span>
             </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => setActive("settings")}
-            className={`rounded-2xl border p-4 text-left transition ${
-              active === "settings"
-                ? "border-accent bg-accent text-bg"
-                : "border-white/15 bg-panel text-fg hover:border-accent"
-            }`}
-          >
-            <span className="block text-xs font-bold uppercase tracking-wider opacity-70">
-              Home / Visual
-            </span>
-            <span className="font-display mt-1 block text-3xl">Midias</span>
-          </button>
-        </nav>
+          </nav>
+        </section>
 
         <div className="mt-6">
           {active === "settings" ? (
