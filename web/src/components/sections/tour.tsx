@@ -32,6 +32,11 @@ export function TourSection({ events = tourDates }: { events?: CmsEvent[] }) {
                 </div>
                 <p className="font-display mt-4 text-2xl">{d.city}</p>
                 <p className="text-sm text-muted">{d.venue}</p>
+                {d.eventTime ? (
+                  <p className="mt-2 text-xs uppercase tracking-wider text-accent">
+                    {d.eventTime.slice(0, 5)}
+                  </p>
+                ) : null}
                 <p className="mt-3 text-xs uppercase tracking-wider text-fg/50">
                   {d.note}
                 </p>

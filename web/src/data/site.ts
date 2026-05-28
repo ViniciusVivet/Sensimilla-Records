@@ -282,6 +282,7 @@ export const catalogReleases = [
 export type TourDate = {
   month: string;
   day: string;
+  eventTime?: string;
   city: string;
   venue: string;
   note: string;

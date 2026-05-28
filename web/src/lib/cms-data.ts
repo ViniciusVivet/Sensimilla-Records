@@ -62,6 +62,7 @@ function mapEvent(row: Row): CmsEvent {
   const date = asString(row.event_date);
   return {
     date,
+    eventTime: asString(row.event_time) || undefined,
     month: asString(row.month) || monthFromDate(date),
     day: asString(row.day) || dayFromDate(date),
     city: asString(row.city),

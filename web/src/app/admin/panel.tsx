@@ -9,6 +9,7 @@ import {
   useState,
   type ChangeEvent,
   type FormEvent,
+  type ReactNode,
 } from "react";
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase";
@@ -57,10 +58,11 @@ const configs: EntityConfig[] = [
     area: "Home / Tour",
     href: "/#tour",
     titleField: "city",
-    summaryFields: ["event_date", "venue", "note"],
+    summaryFields: ["event_date", "event_time", "venue", "note"],
     defaults: {
       title: "",
       event_date: new Date().toISOString().slice(0, 10),
+      event_time: "",
       city: "",
       venue: "",
       note: "Ingressos em breve",
@@ -71,6 +73,7 @@ const configs: EntityConfig[] = [
     },
     fields: [
       { name: "event_date", label: "Data", type: "date", required: true },
+      { name: "event_time", label: "Horario", type: "text", placeholder: "20:00" },
       { name: "city", label: "Cidade", required: true, placeholder: "Sao Paulo" },
       { name: "venue", label: "Local", required: true, placeholder: "Casa / evento" },
       { name: "note", label: "Chamada", placeholder: "Ingressos em breve" },
@@ -291,6 +294,29 @@ function StatusBadge({ active }: { active: boolean }) {
   );
 }
 
+function EventStatusBadge({ status, active }: { status: string; active: boolean }) {
+  const label = !active
+    ? "Oculto"
+    : status === "past"
+      ? "Passado"
+      : status === "draft"
+        ? "Rascunho"
+        : "Agendado";
+  const styles = !active
+    ? "border-white/10 bg-white/[0.03] text-muted"
+    : status === "past"
+      ? "border-white/15 bg-white/[0.05] text-fg/70"
+      : status === "draft"
+        ? "border-yellow-300/30 bg-yellow-300/10 text-yellow-200"
+        : "border-accent/30 bg-accent/10 text-accent";
+
+  return (
+    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider ${styles}`}>
+      {label}
+    </span>
+  );
+}
+
 function StatusMessage({ children }: { children: string }) {
   if (!children) return null;
   return (
@@ -401,6 +427,7 @@ function fallbackEventRows() {
   return fallbackCmsData.events.map((event, index) => ({
     title: `${event.city} - ${event.venue}`,
     event_date: inferFallbackEventDate(event),
+    event_time: "",
     city: event.city,
     venue: event.venue,
     note: event.note,
@@ -409,6 +436,223 @@ function fallbackEventRows() {
     active: true,
     sort_order: index * 10,
   }));
+}
+
+function eventKey(row: Row) {
+  return [
+    rowValue(row, "event_date"),
+    rowValue(row, "city").toLowerCase(),
+    rowValue(row, "venue").toLowerCase(),
+  ].join("|");
+}
+
+function eventTitle(row: Row) {
+  return rowValue(row, "title") || `${rowValue(row, "city") || "Evento"} - ${rowValue(row, "venue") || "sem local"}`;
+}
+
+function formatEventDate(row: Row) {
+  const date = rowValue(row, "event_date");
+  if (!date) return "Sem data";
+  const parsed = parseDateKey(date);
+  return parsed.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function eventSortValue(row: Row) {
+  return `${rowValue(row, "event_date")}T${rowValue(row, "event_time") || "23:59"}`;
+}
+
+function splitEvents(rows: Row[]) {
+  const today = toDateKey(new Date());
+  const visible = [...rows].sort((a, b) => eventSortValue(a).localeCompare(eventSortValue(b)));
+  return {
+    upcoming: visible.filter((row) => rowValue(row, "event_date") >= today && rowValue(row, "status") !== "past"),
+    past: visible.filter((row) => rowValue(row, "event_date") < today || rowValue(row, "status") === "past").reverse(),
+  };
+}
+
+function inputClass() {
+  return "mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm text-fg outline-none focus:border-accent";
+}
+
+function AdminPreview({ config, form }: { config: EntityConfig; form: Row }) {
+  if (config.table === "site_events") {
+    return <EventPreview form={form} />;
+  }
+
+  if (config.table === "site_members") {
+    return (
+      <PreviewShell title="Previa na equipe">
+        <div className="flex gap-3 rounded-xl border border-white/10 bg-bg/70 p-3">
+          <PreviewImage src={rowValue(form, "image_url")} label="Foto" />
+          <div className="min-w-0">
+            <p className="font-display text-2xl">{rowValue(form, "name") || "Nome do membro"}</p>
+            <p className="truncate text-xs uppercase tracking-wider text-accent">
+              {rowValue(form, "role") || "Funcao"}
+            </p>
+            <p className="mt-2 line-clamp-3 text-sm text-muted">
+              {rowValue(form, "bio") || "Bio curta aparece aqui."}
+            </p>
+          </div>
+        </div>
+      </PreviewShell>
+    );
+  }
+
+  if (config.table === "site_releases") {
+    return (
+      <PreviewShell title="Previa no Out Now">
+        <div className="rounded-xl border border-white/10 bg-bg/70 p-3">
+          <PreviewImage src={rowValue(form, "cover_url")} label="Capa" square />
+          <p className="font-display mt-3 text-2xl">{rowValue(form, "title") || "Titulo da musica"}</p>
+          <p className="text-sm text-muted">{rowValue(form, "artist") || "Artista"}</p>
+          <p className="mt-1 text-xs uppercase tracking-wider text-accent">
+            {rowValue(form, "meta") || "Single"}
+          </p>
+          {form.featured ? (
+            <span className="mt-3 inline-flex rounded-full border border-accent/30 px-3 py-1 text-xs text-accent">
+              Destaque da home
+            </span>
+          ) : null}
+        </div>
+      </PreviewShell>
+    );
+  }
+
+  if (config.table === "site_merch") {
+    return (
+      <PreviewShell title="Previa no merch">
+        <div className="rounded-xl border border-white/10 bg-bg/70 p-3">
+          <PreviewImage src={rowValue(form, "image_url")} label="Produto" square />
+          <p className="font-display mt-3 text-2xl">{rowValue(form, "name") || "Produto"}</p>
+          <p className="text-xs uppercase tracking-wider text-muted">{rowValue(form, "tag") || "Categoria"}</p>
+          <p className="mt-2 text-sm font-bold text-accent">{rowValue(form, "price") || "Preco"}</p>
+        </div>
+      </PreviewShell>
+    );
+  }
+
+  if (config.table === "site_editorial_photos") {
+    return (
+      <PreviewShell title="Previa na galeria">
+        <div className="rounded-xl border border-white/10 bg-bg/70 p-3">
+          <PreviewImage src={rowValue(form, "src")} label="Imagem" />
+          <p className="mt-2 text-xs text-muted">{rowValue(form, "alt") || "Texto alternativo"}</p>
+        </div>
+      </PreviewShell>
+    );
+  }
+
+  if (config.table === "site_youtube_videos") {
+    const videoId = rowValue(form, "youtube_id");
+    return (
+      <PreviewShell title="Previa no YouTube">
+        <div className="rounded-xl border border-white/10 bg-bg/70 p-3">
+          <div className="aspect-video rounded-lg border border-white/10 bg-black/50">
+            {videoId ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={rowValue(form, "title") || "Video"}
+                className="h-full w-full rounded-lg"
+                allowFullScreen
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-xs text-muted">
+                Cole um ID do YouTube
+              </div>
+            )}
+          </div>
+          <p className="mt-2 text-sm font-bold">{rowValue(form, "title") || "Titulo do video"}</p>
+        </div>
+      </PreviewShell>
+    );
+  }
+
+  if (config.table === "site_social_links") {
+    return (
+      <PreviewShell title="Previa no hero/rodape">
+        <div className="flex items-center justify-between rounded-full border border-white/15 bg-bg/70 px-4 py-3">
+          <span className="text-sm font-bold">{rowValue(form, "name") || "Rede"}</span>
+          <span className="max-w-[14rem] truncate text-xs text-muted">{rowValue(form, "href") || "https://..."}</span>
+        </div>
+      </PreviewShell>
+    );
+  }
+
+  return null;
+}
+
+function EventPreview({ form }: { form: Row }) {
+  const date = rowValue(form, "event_date");
+  const parsed = date ? parseDateKey(date) : new Date();
+  return (
+    <PreviewShell title="Previa na home / Tour">
+      <div className="rounded-xl border border-white/10 bg-bg/70 p-4">
+        <div className="flex items-baseline gap-3">
+          <span className="font-display text-4xl text-accent">
+            {String(parsed.getDate()).padStart(2, "0")}
+          </span>
+          <span className="text-sm uppercase tracking-widest text-muted">
+            {shortMonthFormatter.format(parsed).replace(".", "")}
+          </span>
+        </div>
+        <p className="font-display mt-4 text-2xl">{rowValue(form, "city") || "Cidade"}</p>
+        <p className="text-sm text-muted">{rowValue(form, "venue") || "Local"}</p>
+        {rowValue(form, "event_time") ? (
+          <p className="mt-2 text-xs uppercase tracking-wider text-accent">
+            {rowValue(form, "event_time")}
+          </p>
+        ) : null}
+        <p className="mt-3 text-xs uppercase tracking-wider text-fg/50">
+          {rowValue(form, "note") || "Chamada do evento"}
+        </p>
+        <span className="mt-4 inline-flex rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-wider text-muted">
+          {rowValue(form, "ticket_url") ? "Ingressos" : "Em breve"}
+        </span>
+      </div>
+    </PreviewShell>
+  );
+}
+
+function PreviewShell({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <aside className="mt-5 rounded-2xl border border-accent/20 bg-accent/5 p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">{title}</p>
+      <div className="mt-3">{children}</div>
+      <p className="mt-3 text-[11px] text-muted">
+        Esta previa e aproximada. A home final ainda depende do layout da secao e do tamanho da tela.
+      </p>
+    </aside>
+  );
+}
+
+function PreviewImage({
+  src,
+  label,
+  square = false,
+}: {
+  src: string;
+  label: string;
+  square?: boolean;
+}) {
+  return (
+    <div
+      className={`relative shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black/30 ${
+        square ? "aspect-square w-full" : "h-24 w-24"
+      }`}
+    >
+      {src ? (
+        <Image src={src} alt="" fill sizes="220px" unoptimized className="object-cover" />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-xs text-muted">
+          {label}
+        </div>
+      )}
+    </div>
+  );
 }
 
 async function uploadFile(
@@ -485,11 +729,13 @@ function Login({ supabase }: { supabase: SupabaseClient }) {
 function EventCalendar({
   rows,
   selectedDate,
+  highlightedDate,
   onSelectDate,
   onEditEvent,
 }: {
   rows: Row[];
   selectedDate: Date;
+  highlightedDate?: string;
   onSelectDate: (date: Date) => void;
   onEditEvent: (row: Row) => void;
 }) {
@@ -538,7 +784,7 @@ function EventCalendar({
           selectedKey === dateKey
             ? "border-accent bg-accent/10"
             : "border-white/10 bg-bg/70"
-        } ${muted ? "opacity-45" : ""}`}
+        } ${highlightedDate === dateKey ? "ring-2 ring-accent/50" : ""} ${muted ? "opacity-45" : ""}`}
       >
         <button
           type="button"
@@ -717,6 +963,251 @@ function EventCalendar({
   );
 }
 
+function EventModal({
+  open,
+  form,
+  editing,
+  saving,
+  status,
+  onClose,
+  onChange,
+  onSave,
+}: {
+  open: boolean;
+  form: Row;
+  editing: boolean;
+  saving: boolean;
+  status: string;
+  onClose: () => void;
+  onChange: (name: string, value: string | boolean | number) => void;
+  onSave: (e: FormEvent) => void;
+}) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 px-4 py-6">
+      <form
+        onSubmit={onSave}
+        className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-panel p-5 shadow-2xl shadow-black/50"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">
+              {editing ? "Editar evento" : "Novo evento"}
+            </p>
+            <h2 className="font-display mt-1 text-4xl">Agenda</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-white/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted hover:border-accent hover:text-accent"
+          >
+            Fechar
+          </button>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <label className="block text-xs uppercase tracking-wider text-muted">
+            Data *
+            <input
+              type="date"
+              required
+              value={rowValue(form, "event_date")}
+              onChange={(e) => onChange("event_date", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted">
+            Horario
+            <input
+              type="time"
+              value={rowValue(form, "event_time")}
+              onChange={(e) => onChange("event_time", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted">
+            Cidade *
+            <input
+              required
+              value={rowValue(form, "city")}
+              onChange={(e) => onChange("city", e.target.value)}
+              placeholder="Sao Paulo"
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted">
+            Local *
+            <input
+              required
+              value={rowValue(form, "venue")}
+              onChange={(e) => onChange("venue", e.target.value)}
+              placeholder="Casa / evento"
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted md:col-span-2">
+            Nome interno
+            <input
+              value={rowValue(form, "title")}
+              onChange={(e) => onChange("title", e.target.value)}
+              placeholder="Opcional. Ex: OFDM's - Sao Paulo"
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted md:col-span-2">
+            Chamada
+            <textarea
+              rows={3}
+              value={rowValue(form, "note")}
+              onChange={(e) => onChange("note", e.target.value)}
+              placeholder="Ingressos em breve"
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted md:col-span-2">
+            Link de ingresso
+            <input
+              value={rowValue(form, "ticket_url")}
+              onChange={(e) => onChange("ticket_url", e.target.value)}
+              placeholder="https://..."
+              className={inputClass()}
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted">
+            Status
+            <select
+              value={rowValue(form, "status") || "scheduled"}
+              onChange={(e) => onChange("status", e.target.value)}
+              className={inputClass()}
+            >
+              <option value="scheduled">Agendado</option>
+              <option value="past">Passado</option>
+              <option value="draft">Rascunho</option>
+            </select>
+          </label>
+          <label className="block text-xs uppercase tracking-wider text-muted">
+            Ordem
+            <input
+              type="number"
+              value={rowValue(form, "sort_order") || "0"}
+              onChange={(e) => onChange("sort_order", Number(e.target.value || 0))}
+              className={inputClass()}
+            />
+          </label>
+          <label className="flex items-center justify-between rounded-xl border border-white/15 bg-bg px-3 py-3 text-xs uppercase tracking-wider text-muted md:col-span-2">
+            Publicado no site
+            <input
+              type="checkbox"
+              checked={form.active !== false}
+              onChange={(e) => onChange("active", e.target.checked)}
+              className="h-5 w-5 accent-[var(--accent)]"
+            />
+          </label>
+        </div>
+
+        <EventPreview form={form} />
+
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            disabled={saving}
+            className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {saving ? "Salvando..." : "Salvar evento"}
+          </button>
+          <StatusMessage>{status}</StatusMessage>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function EventList({
+  title,
+  rows,
+  emptyText,
+  onEdit,
+  onTogglePublished,
+  onDuplicate,
+  onRemove,
+}: {
+  title: string;
+  rows: Row[];
+  emptyText: string;
+  onEdit: (row: Row) => void;
+  onTogglePublished: (row: Row) => void;
+  onDuplicate: (row: Row) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <section className="rounded-2xl border border-white/10 bg-panel p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="font-display text-3xl">{title}</h3>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {rows.length}
+        </span>
+      </div>
+      <div className="mt-3 space-y-2">
+        {rows.map((row) => (
+          <article
+            key={String(row.id)}
+            className="rounded-xl border border-white/10 bg-bg/70 p-3"
+          >
+            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate font-bold text-fg">{eventTitle(row)}</p>
+                  <EventStatusBadge
+                    status={rowValue(row, "status")}
+                    active={row.active !== false}
+                  />
+                </div>
+                <p className="mt-1 text-sm text-muted">
+                  {formatEventDate(row)}
+                  {rowValue(row, "event_time") ? ` - ${rowValue(row, "event_time")}` : ""} - {rowValue(row, "venue") || "sem local"}
+                </p>
+                {rowValue(row, "note") && (
+                  <p className="mt-1 truncate text-xs text-fg/60">{rowValue(row, "note")}</p>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 md:justify-end">
+                <button
+                  type="button"
+                  onClick={() => onTogglePublished(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  {row.active === false ? "Publicar" : "Ocultar"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDuplicate(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  Duplicar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onEdit(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => row.id && onRemove(String(row.id))}
+                  className="rounded-full border border-red-500/30 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-red-300 hover:border-red-400"
+                >
+                  Apagar
+                </button>
+              </div>
+            </div>
+          </article>
+        ))}
+        {!rows.length && <p className="py-4 text-sm text-muted">{emptyText}</p>}
+      </div>
+    </section>
+  );
+}
+
 function EntityEditor({
   config,
   supabase,
@@ -731,6 +1222,8 @@ function EntityEditor({
   const [query, setQuery] = useState("");
   const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [highlightedDate, setHighlightedDate] = useState("");
   const isEventsConfig = config.table === "site_events";
   const imageField = imageFieldFor(config);
 
@@ -759,6 +1252,12 @@ function EntityEditor({
 
   const publishedCount = rows.filter(isPublished).length;
   const draftCount = rows.length - publishedCount;
+  const fallbackRows = useMemo(() => fallbackEventRows().filter((event) => event.event_date), []);
+  const missingFallbackEvents = useMemo(() => {
+    const existing = new Set(rows.map(eventKey));
+    return fallbackRows.filter((event) => !existing.has(eventKey(event)));
+  }, [fallbackRows, rows]);
+  const splitEventRows = useMemo(() => splitEvents(rows), [rows]);
 
   function updateField(field: Field, value: string | boolean) {
     setForm((current) => ({
@@ -782,6 +1281,7 @@ function EntityEditor({
     setEditingId(null);
     setForm(base);
     setStatus("");
+    if (isEventsConfig) setEventModalOpen(true);
   }
 
   function editRow(row: Row) {
@@ -790,17 +1290,16 @@ function EntityEditor({
     const eventDate = rowValue(row, "event_date");
     if (eventDate) setSelectedDate(parseDateKey(eventDate));
     setStatus("");
+    if (isEventsConfig) setEventModalOpen(true);
   }
 
   async function importFallbackEvents() {
     if (!isEventsConfig) return;
-    const events = fallbackEventRows().filter((event) => event.event_date);
-    if (!events.length) {
+    if (!fallbackRows.length) {
       setStatus("Nenhum evento padrao encontrado para importar.");
       return;
     }
-    const existingDates = new Set(rows.map((row) => rowValue(row, "event_date")));
-    const missing = events.filter((event) => !existingDates.has(event.event_date));
+    const missing = missingFallbackEvents;
     if (!missing.length) {
       setStatus("Os eventos padrao ja estao no CMS.");
       return;
@@ -813,6 +1312,39 @@ function EntityEditor({
     }
     await load();
     setStatus(`${missing.length} evento${missing.length > 1 ? "s" : ""} importado${missing.length > 1 ? "s" : ""}.`);
+  }
+
+  async function toggleEventPublished(row: Row) {
+    setStatus("Atualizando publicacao...");
+    const { error } = await supabase
+      .from("site_events")
+      .update({ active: row.active === false })
+      .eq("id", String(row.id));
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(row.active === false ? "Evento publicado." : "Evento ocultado.");
+  }
+
+  async function duplicateEvent(row: Row) {
+    const copy = { ...row };
+    delete copy.id;
+    delete copy.created_at;
+    delete copy.updated_at;
+    copy.title = `${rowValue(row, "title") || eventTitle(row)} (copia)`;
+    copy.active = false;
+    copy.status = "draft";
+    copy.sort_order = Number(row.sort_order ?? 0) + 1;
+    setStatus("Duplicando evento...");
+    const { error } = await supabase.from("site_events").insert(copy);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus("Evento duplicado como rascunho.");
   }
 
   async function handleFile(field: Field, e: ChangeEvent<HTMLInputElement>) {
@@ -851,6 +1383,10 @@ function EntityEditor({
       }
     }
 
+    if (isEventsConfig && !inputValue(payload.event_time).trim()) {
+      delete payload.event_time;
+    }
+
     const query = editingId
       ? supabase.from(config.table).update(payload).eq("id", editingId)
       : supabase.from(config.table).insert(payload);
@@ -862,7 +1398,14 @@ function EntityEditor({
     }
     setForm(config.defaults);
     setEditingId(null);
-    setStatus("Salvo.");
+    const savedDate = rowValue(payload, "event_date");
+    if (isEventsConfig && savedDate) {
+      setHighlightedDate(savedDate);
+      setStatus(`Evento salvo em ${parseDateKey(savedDate).toLocaleDateString("pt-BR")}.`);
+      setEventModalOpen(false);
+    } else {
+      setStatus("Salvo.");
+    }
     await load();
     setSaving(false);
   }
@@ -879,6 +1422,141 @@ function EntityEditor({
     }
     await load();
     setStatus("Item apagado.");
+  }
+
+  if (isEventsConfig) {
+    return (
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-panel p-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">{config.area}</p>
+            <h2 className="font-display mt-1 text-4xl">{config.label}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+              Crie eventos clicando direto no calendario ou gerencie proximos e passados pelas listas.
+            </p>
+          </div>
+          <a
+            href={config.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit rounded-full border border-white/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+          >
+            Ver no site
+          </a>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Total</p>
+            <p className="font-display mt-1 text-4xl">{rows.length}</p>
+          </div>
+          <div className="rounded-2xl border border-accent/20 bg-accent/10 p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Publicados</p>
+            <p className="font-display mt-1 text-4xl text-accent">{publishedCount}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Proximos</p>
+            <p className="font-display mt-1 text-4xl">{splitEventRows.upcoming.length}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Rascunhos</p>
+            <p className="font-display mt-1 text-4xl">{draftCount}</p>
+          </div>
+        </div>
+
+        {missingFallbackEvents.length > 0 && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-accent/20 bg-accent/10 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-bold text-accent">
+                Existe {missingFallbackEvents.length} evento do site fora do CMS
+              </p>
+              <p className="mt-1 text-xs text-fg/70">
+                Importe para a agenda editar tudo pelo painel.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void importFallbackEvents()}
+              className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+            >
+              Importar agora
+            </button>
+          </div>
+        )}
+
+        <EventCalendar
+          rows={rows}
+          selectedDate={selectedDate}
+          highlightedDate={highlightedDate}
+          onSelectDate={(date) => {
+            setSelectedDate(date);
+            startNew(date);
+          }}
+          onEditEvent={editRow}
+        />
+
+        <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
+          <label className="block flex-1 text-xs uppercase tracking-wider text-muted">
+            Buscar eventos
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Cidade, local, nota..."
+              className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => startNew()}
+            className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+          >
+            Novo evento
+          </button>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <EventList
+            title="Proximos eventos"
+            rows={filteredRows.filter((row) => splitEventRows.upcoming.some((event) => event.id === row.id))}
+            emptyText="Nenhum evento futuro cadastrado."
+            onEdit={editRow}
+            onTogglePublished={(row) => void toggleEventPublished(row)}
+            onDuplicate={(row) => void duplicateEvent(row)}
+            onRemove={(id) => void remove(id)}
+          />
+          <EventList
+            title="Eventos passados"
+            rows={filteredRows.filter((row) => splitEventRows.past.some((event) => event.id === row.id))}
+            emptyText="Nenhum evento passado cadastrado."
+            onEdit={editRow}
+            onTogglePublished={(row) => void toggleEventPublished(row)}
+            onDuplicate={(row) => void duplicateEvent(row)}
+            onRemove={(id) => void remove(id)}
+          />
+        </div>
+
+        <StatusMessage>{status}</StatusMessage>
+
+        <EventModal
+          open={eventModalOpen}
+          form={form}
+          editing={Boolean(editingId)}
+          saving={saving}
+          status={status}
+          onClose={() => {
+            setEventModalOpen(false);
+            setStatus("");
+          }}
+          onChange={(name, value) =>
+            setForm((current) => ({
+              ...current,
+              [name]: value,
+            }))
+          }
+          onSave={save}
+        />
+      </section>
+    );
   }
 
   return (
@@ -1110,6 +1788,7 @@ function EntityEditor({
             </label>
           ))}
         </div>
+        <AdminPreview config={config} form={form} />
         <button
           disabled={saving}
           className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg disabled:cursor-not-allowed disabled:opacity-50"

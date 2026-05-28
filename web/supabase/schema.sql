@@ -25,6 +25,7 @@ create table if not exists public.site_events (
   id uuid primary key default gen_random_uuid(),
   title text,
   event_date date not null,
+  event_time time,
   city text not null,
   venue text not null,
   note text,
@@ -35,6 +36,9 @@ create table if not exists public.site_events (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.site_events
+add column if not exists event_time time;
 
 create table if not exists public.site_releases (
   id uuid primary key default gen_random_uuid(),

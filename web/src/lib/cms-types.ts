@@ -8,6 +8,7 @@ import type {
 export type CmsMember = (typeof members)[number];
 export type CmsEvent = (typeof tourDates)[number] & {
   date?: string;
+  eventTime?: string;
   status?: "scheduled" | "past" | "draft";
 };
 export type CmsRelease = {
