@@ -860,7 +860,7 @@ function MemberList({
                   onClick={() => onEdit(row)}
                   className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
                 >
-                  {row._fallback ? "Assumir no CMS" : "Editar"}
+                  {row._fallback ? "Trazer para o painel" : "Editar"}
                 </button>
                 {!row._fallback && (
                   <button
@@ -1450,6 +1450,7 @@ function EntityEditor({
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [highlightedDate, setHighlightedDate] = useState("");
+  const [localImagePreview, setLocalImagePreview] = useState<Record<string, string>>({});
   const isEventsConfig = config.table === "site_events";
   const isMembersConfig = config.table === "site_members";
   const imageField = imageFieldFor(config);
@@ -1518,6 +1519,7 @@ function EntityEditor({
     setEditingId(null);
     setForm(base);
     setStatus("");
+    setLocalImagePreview({});
     if (isEventsConfig) setEventModalOpen(true);
   }
 
@@ -1528,11 +1530,13 @@ function EntityEditor({
       delete draft._fallback;
       setEditingId(null);
       setForm(draft);
+      setLocalImagePreview({});
       setStatus("Este membro ja aparece no site, mas ainda esta fora do CMS. Revise e salve para assumir o controle pelo painel.");
       return;
     }
     setEditingId(String(row.id));
     setForm(row);
+    setLocalImagePreview({});
     const eventDate = rowValue(row, "event_date");
     if (eventDate) setSelectedDate(parseDateKey(eventDate));
     setStatus("");
@@ -1645,6 +1649,8 @@ function EntityEditor({
   async function handleFile(field: Field, e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    const previewUrl = URL.createObjectURL(file);
+    setLocalImagePreview((current) => ({ ...current, [field.name]: previewUrl }));
     setStatus("Enviando arquivo...");
     try {
       const url = await uploadFile(supabase, file, config.table);
@@ -2005,6 +2011,28 @@ function EntityEditor({
                     </span>
                   ) : (
                     <>
+                      {field.type === "image" && (
+                        <div className="mt-2 rounded-2xl border border-white/10 bg-bg/70 p-3">
+                          <div className="flex gap-3">
+                            <PreviewImage
+                              src={localImagePreview[field.name] || rowValue(form, field.name)}
+                              label="Foto"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-bold text-fg">Foto do membro</p>
+                              <p className="mt-1 text-xs normal-case tracking-normal text-muted">
+                                Escolha uma imagem da galeria do celular ou do computador. A previa aparece aqui antes de salvar.
+                              </p>
+                              <input
+                                onChange={(e) => void handleFile(field, e)}
+                                type="file"
+                                accept="image/*"
+                                className="mt-3 w-full text-xs normal-case tracking-normal text-muted"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <input
                         value={inputValue(form[field.name])}
                         onChange={(e) => updateField(field, e.target.value)}
@@ -2014,12 +2042,9 @@ function EntityEditor({
                         className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
                       />
                       {field.type === "image" && (
-                        <input
-                          onChange={(e) => void handleFile(field, e)}
-                          type="file"
-                          accept="image/*"
-                          className="mt-2 w-full text-xs text-muted"
-                        />
+                        <span className="mt-1 block text-[11px] normal-case tracking-normal text-muted">
+                          Opcional: cole uma URL publica acima, ou use o seletor de arquivo.
+                        </span>
                       )}
                     </>
                   )}
