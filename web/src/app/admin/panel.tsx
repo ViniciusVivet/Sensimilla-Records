@@ -438,12 +438,37 @@ function fallbackEventRows() {
   }));
 }
 
+function fallbackMemberRows() {
+  return fallbackCmsData.members.map((member, index) => ({
+    slug: member.id,
+    name: member.name,
+    role: member.role || "",
+    bio: member.bio || "",
+    image_url: member.image || "",
+    spotify_url: member.spotifyUrl || "",
+    instagram_url: member.instagramUrl || "",
+    youtube_url: member.youtubeUrl || "",
+    youtube_video_id: member.youtubeVideoId || "",
+    is_placeholder: Boolean(member.isPlaceholder),
+    active: true,
+    sort_order: index * 10,
+  }));
+}
+
 function eventKey(row: Row) {
   return [
     rowValue(row, "event_date"),
     rowValue(row, "city").toLowerCase(),
     rowValue(row, "venue").toLowerCase(),
   ].join("|");
+}
+
+function memberKey(row: Row) {
+  return (rowValue(row, "slug") || rowValue(row, "name")).toLowerCase();
+}
+
+function memberName(row: Row) {
+  return rowValue(row, "name") || "Membro sem nome";
 }
 
 function eventTitle(row: Row) {
@@ -652,6 +677,193 @@ function PreviewImage({
         </div>
       )}
     </div>
+  );
+}
+
+function MembersSectionPreview({
+  rows,
+  draft,
+  editingId,
+  onEdit,
+}: {
+  rows: Row[];
+  draft: Row;
+  editingId: string | null;
+  onEdit: (row: Row) => void;
+}) {
+  const mergedRows = useMemo(() => {
+    const normalized = rows.map((row) =>
+      editingId && String(row.id) === editingId ? { ...row, ...draft } : row,
+    );
+    if (!editingId && rowValue(draft, "name")) {
+      normalized.push({ ...draft, id: "__draft" });
+    }
+    return normalized
+      .filter((row) => row.active !== false)
+      .sort((a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0));
+  }, [draft, editingId, rows]);
+
+  return (
+    <section className="rounded-2xl border border-accent/20 bg-panel p-4">
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Previa da secao</p>
+          <h3 className="font-display mt-1 text-4xl">Quem faz a Sensimilla</h3>
+          <p className="mt-1 text-sm text-muted">
+            Aproximacao do carrossel da home. Clique em um card para editar.
+          </p>
+        </div>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {mergedRows.length} visiveis
+        </span>
+      </div>
+
+      <div className="mt-5 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {mergedRows.map((member, index) => {
+          const isDraft = member.id === "__draft";
+          const isEditing = editingId && String(member.id) === editingId;
+          return (
+            <button
+              key={String(member.id ?? memberKey(member))}
+              type="button"
+              onClick={() => !isDraft && onEdit(member)}
+              className={`group relative w-[220px] shrink-0 overflow-hidden rounded-2xl border text-left transition hover:scale-[1.01] ${
+                isDraft || isEditing
+                  ? "border-accent ring-1 ring-accent/40"
+                  : index === 0
+                    ? "border-accent/40 ring-1 ring-accent/20"
+                    : "border-white/10"
+              }`}
+            >
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-bg">
+                {rowValue(member, "image_url") ? (
+                  <Image
+                    src={rowValue(member, "image_url")}
+                    alt=""
+                    fill
+                    sizes="220px"
+                    unoptimized
+                    className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
+                    <span className="font-display text-5xl text-fg/25">?</span>
+                    <span className="mt-2 text-xs uppercase tracking-[0.25em] text-fg/40">
+                      Sem foto
+                    </span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h4 className="font-display text-2xl text-white">{memberName(member)}</h4>
+                  {isDraft && (
+                    <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-bg">
+                      previa
+                    </span>
+                  )}
+                </div>
+                {rowValue(member, "role") && (
+                  <p className="mt-1 line-clamp-1 text-[10px] uppercase tracking-wider text-white/60">
+                    {rowValue(member, "role")}
+                  </p>
+                )}
+                {rowValue(member, "bio") && (
+                  <p className="mt-2 line-clamp-3 text-[11px] leading-relaxed text-white/55">
+                    {rowValue(member, "bio")}
+                  </p>
+                )}
+              </div>
+            </button>
+          );
+        })}
+        {!mergedRows.length && (
+          <div className="rounded-xl border border-white/10 bg-bg/70 p-6 text-sm text-muted">
+            Nenhum membro publicado para prever.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function MemberList({
+  rows,
+  onEdit,
+  onTogglePublished,
+  onDuplicate,
+  onRemove,
+}: {
+  rows: Row[];
+  onEdit: (row: Row) => void;
+  onTogglePublished: (row: Row) => void;
+  onDuplicate: (row: Row) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <section className="rounded-2xl border border-white/10 bg-panel p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="font-display text-3xl">Membros cadastrados</h3>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {rows.length}
+        </span>
+      </div>
+      <div className="mt-3 space-y-2">
+        {rows.map((row) => (
+          <article key={String(row.id)} className="rounded-xl border border-white/10 bg-bg/70 p-3">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                <PreviewImage src={rowValue(row, "image_url")} label="Foto" />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate font-bold text-fg">{memberName(row)}</p>
+                    <StatusBadge active={row.active !== false} />
+                  </div>
+                  <p className="mt-1 truncate text-sm text-muted">
+                    {rowValue(row, "role") || "Sem funcao"} - ordem {rowValue(row, "sort_order") || "0"}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-fg/50">
+                    {rowValue(row, "instagram_url") || rowValue(row, "spotify_url") || "Sem links"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 md:justify-end">
+                <button
+                  type="button"
+                  onClick={() => onTogglePublished(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  {row.active === false ? "Publicar" : "Ocultar"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDuplicate(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  Duplicar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onEdit(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => row.id && onRemove(String(row.id))}
+                  className="rounded-full border border-red-500/30 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-red-300 hover:border-red-400"
+                >
+                  Apagar
+                </button>
+              </div>
+            </div>
+          </article>
+        ))}
+        {!rows.length && <p className="py-4 text-sm text-muted">Nenhum membro cadastrado no CMS.</p>}
+      </div>
+    </section>
   );
 }
 
@@ -1225,6 +1437,7 @@ function EntityEditor({
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [highlightedDate, setHighlightedDate] = useState("");
   const isEventsConfig = config.table === "site_events";
+  const isMembersConfig = config.table === "site_members";
   const imageField = imageFieldFor(config);
 
   const load = useCallback(async () => {
@@ -1257,6 +1470,11 @@ function EntityEditor({
     const existing = new Set(rows.map(eventKey));
     return fallbackRows.filter((event) => !existing.has(eventKey(event)));
   }, [fallbackRows, rows]);
+  const fallbackMembers = useMemo(() => fallbackMemberRows(), []);
+  const missingFallbackMembers = useMemo(() => {
+    const existing = new Set(rows.map(memberKey));
+    return fallbackMembers.filter((member) => !existing.has(memberKey(member)));
+  }, [fallbackMembers, rows]);
   const splitEventRows = useMemo(() => splitEvents(rows), [rows]);
 
   function updateField(field: Field, value: string | boolean) {
@@ -1314,6 +1532,22 @@ function EntityEditor({
     setStatus(`${missing.length} evento${missing.length > 1 ? "s" : ""} importado${missing.length > 1 ? "s" : ""}.`);
   }
 
+  async function importFallbackMembers() {
+    if (!isMembersConfig) return;
+    if (!missingFallbackMembers.length) {
+      setStatus("Os membros padrao ja estao no CMS.");
+      return;
+    }
+    setStatus("Importando membros padrao...");
+    const { error } = await supabase.from("site_members").insert(missingFallbackMembers);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(`${missingFallbackMembers.length} membro${missingFallbackMembers.length > 1 ? "s" : ""} importado${missingFallbackMembers.length > 1 ? "s" : ""}.`);
+  }
+
   async function toggleEventPublished(row: Row) {
     setStatus("Atualizando publicacao...");
     const { error } = await supabase
@@ -1345,6 +1579,39 @@ function EntityEditor({
     }
     await load();
     setStatus("Evento duplicado como rascunho.");
+  }
+
+  async function toggleMemberPublished(row: Row) {
+    setStatus("Atualizando membro...");
+    const { error } = await supabase
+      .from("site_members")
+      .update({ active: row.active === false })
+      .eq("id", String(row.id));
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(row.active === false ? "Membro publicado." : "Membro ocultado.");
+  }
+
+  async function duplicateMember(row: Row) {
+    const copy = { ...row };
+    delete copy.id;
+    delete copy.created_at;
+    delete copy.updated_at;
+    copy.slug = `${memberKey(row)}-copia-${Date.now()}`;
+    copy.name = `${memberName(row)} (copia)`;
+    copy.active = false;
+    copy.sort_order = Number(row.sort_order ?? 0) + 1;
+    setStatus("Duplicando membro...");
+    const { error } = await supabase.from("site_members").insert(copy);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus("Membro duplicado como rascunho.");
   }
 
   async function handleFile(field: Field, e: ChangeEvent<HTMLInputElement>) {
@@ -1555,6 +1822,187 @@ function EntityEditor({
           }
           onSave={save}
         />
+      </section>
+    );
+  }
+
+  if (isMembersConfig) {
+    return (
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-panel p-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">{config.area}</p>
+            <h2 className="font-display mt-1 text-4xl">{config.label}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+              Controle totalmente quem aparece na secao Equipe: ordem, foto, bio, links e publicacao.
+            </p>
+          </div>
+          <a
+            href={config.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit rounded-full border border-white/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+          >
+            Ver no site
+          </a>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Total</p>
+            <p className="font-display mt-1 text-4xl">{rows.length}</p>
+          </div>
+          <div className="rounded-2xl border border-accent/20 bg-accent/10 p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Publicados</p>
+            <p className="font-display mt-1 text-4xl text-accent">{publishedCount}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Ocultos</p>
+            <p className="font-display mt-1 text-4xl">{rows.length - publishedCount}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Faltando</p>
+            <p className="font-display mt-1 text-4xl">{missingFallbackMembers.length}</p>
+          </div>
+        </div>
+
+        {missingFallbackMembers.length > 0 && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-accent/20 bg-accent/10 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-bold text-accent">
+                A home tem {missingFallbackMembers.length} membro{missingFallbackMembers.length > 1 ? "s" : ""} fora do CMS
+              </p>
+              <p className="mt-1 text-xs text-fg/70">
+                Importe para o painel controlar a secao real de membros.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void importFallbackMembers()}
+              className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+            >
+              Importar membros
+            </button>
+          </div>
+        )}
+
+        <MembersSectionPreview
+          rows={rows}
+          draft={form}
+          editingId={editingId}
+          onEdit={editRow}
+        />
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
+              <label className="block flex-1 text-xs uppercase tracking-wider text-muted">
+                Buscar membros
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Nome, funcao, link..."
+                  className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => startNew()}
+                className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+              >
+                Novo membro
+              </button>
+            </div>
+
+            <MemberList
+              rows={filteredRows}
+              onEdit={editRow}
+              onTogglePublished={(row) => void toggleMemberPublished(row)}
+              onDuplicate={(row) => void duplicateMember(row)}
+              onRemove={(id) => void remove(id)}
+            />
+          </div>
+
+          <form onSubmit={save} className="h-fit rounded-2xl border border-white/10 bg-panel p-5 lg:sticky lg:top-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-accent">
+                  {editingId ? "Editando" : "Criando"}
+                </p>
+                <h2 className="font-display text-3xl">{editingId ? "Editar membro" : "Novo membro"}</h2>
+              </div>
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => startNew()}
+                  className="text-xs text-muted hover:text-accent"
+                >
+                  cancelar
+                </button>
+              )}
+            </div>
+            <div className="mt-5 space-y-4">
+              {config.fields.map((field) => (
+                <label key={field.name} className="block text-xs uppercase tracking-wider text-muted">
+                  <span>
+                    {field.label}
+                    {field.required ? <span className="text-accent"> *</span> : null}
+                  </span>
+                  {field.type === "textarea" ? (
+                    <textarea
+                      value={inputValue(form[field.name])}
+                      onChange={(e) => updateField(field, e.target.value)}
+                      rows={4}
+                      required={field.required}
+                      placeholder={field.placeholder}
+                      className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                    />
+                  ) : field.type === "checkbox" ? (
+                    <span className="mt-2 flex items-center justify-between rounded-xl border border-white/15 bg-bg px-3 py-3 normal-case tracking-normal">
+                      <span className="text-sm text-fg">{Boolean(form[field.name]) ? "Sim" : "Nao"}</span>
+                      <input
+                        checked={Boolean(form[field.name])}
+                        onChange={(e) => updateField(field, e.target.checked)}
+                        type="checkbox"
+                        className="h-5 w-5 accent-[var(--accent)]"
+                      />
+                    </span>
+                  ) : (
+                    <>
+                      <input
+                        value={inputValue(form[field.name])}
+                        onChange={(e) => updateField(field, e.target.value)}
+                        type={field.type === "number" ? "number" : "text"}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                      />
+                      {field.type === "image" && (
+                        <input
+                          onChange={(e) => void handleFile(field, e)}
+                          type="file"
+                          accept="image/*"
+                          className="mt-2 w-full text-xs text-muted"
+                        />
+                      )}
+                    </>
+                  )}
+                  {field.help && <span className="mt-1 block text-[11px] normal-case tracking-normal text-muted">{field.help}</span>}
+                </label>
+              ))}
+            </div>
+            <AdminPreview config={config} form={form} />
+            <button
+              disabled={saving}
+              className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? "Salvando..." : "Salvar membro"}
+            </button>
+            <div className="mt-4">
+              <StatusMessage>{status}</StatusMessage>
+            </div>
+          </form>
+        </div>
       </section>
     );
   }
