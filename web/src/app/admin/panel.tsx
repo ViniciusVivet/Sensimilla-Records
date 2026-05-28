@@ -440,6 +440,8 @@ function fallbackEventRows() {
 
 function fallbackMemberRows() {
   return fallbackCmsData.members.map((member, index) => ({
+    id: `fallback-${member.id}`,
+    _fallback: true,
     slug: member.id,
     name: member.name,
     role: member.role || "",
@@ -818,7 +820,13 @@ function MemberList({
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="truncate font-bold text-fg">{memberName(row)}</p>
-                    <StatusBadge active={row.active !== false} />
+                    {row._fallback ? (
+                      <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                        No site / fora do CMS
+                      </span>
+                    ) : (
+                      <StatusBadge active={row.active !== false} />
+                    )}
                   </div>
                   <p className="mt-1 truncate text-sm text-muted">
                     {rowValue(row, "role") || "Sem funcao"} - ordem {rowValue(row, "sort_order") || "0"}
@@ -829,34 +837,40 @@ function MemberList({
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 md:justify-end">
-                <button
-                  type="button"
-                  onClick={() => onTogglePublished(row)}
-                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
-                >
-                  {row.active === false ? "Publicar" : "Ocultar"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onDuplicate(row)}
-                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
-                >
-                  Duplicar
-                </button>
+                {!row._fallback && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onTogglePublished(row)}
+                      className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                    >
+                      {row.active === false ? "Publicar" : "Ocultar"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDuplicate(row)}
+                      className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                    >
+                      Duplicar
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={() => onEdit(row)}
                   className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
                 >
-                  Editar
+                  {row._fallback ? "Assumir no CMS" : "Editar"}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => row.id && onRemove(String(row.id))}
-                  className="rounded-full border border-red-500/30 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-red-300 hover:border-red-400"
-                >
-                  Apagar
-                </button>
+                {!row._fallback && (
+                  <button
+                    type="button"
+                    onClick={() => row.id && onRemove(String(row.id))}
+                    className="rounded-full border border-red-500/30 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-red-300 hover:border-red-400"
+                  >
+                    Apagar
+                  </button>
+                )}
               </div>
             </div>
           </article>
@@ -1457,12 +1471,6 @@ function EntityEditor({
     void load();
   }, [load]);
 
-  const filteredRows = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return rows;
-    return rows.filter((row) => searchText(row, config).includes(normalized));
-  }, [config, query, rows]);
-
   const publishedCount = rows.filter(isPublished).length;
   const draftCount = rows.length - publishedCount;
   const fallbackRows = useMemo(() => fallbackEventRows().filter((event) => event.event_date), []);
@@ -1475,6 +1483,17 @@ function EntityEditor({
     const existing = new Set(rows.map(memberKey));
     return fallbackMembers.filter((member) => !existing.has(memberKey(member)));
   }, [fallbackMembers, rows]);
+  const effectiveMemberRows = useMemo(() => {
+    return [...rows, ...missingFallbackMembers].sort(
+      (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0),
+    );
+  }, [missingFallbackMembers, rows]);
+  const visibleRows = isMembersConfig ? effectiveMemberRows : rows;
+  const filteredRows = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return visibleRows;
+    return visibleRows.filter((row) => searchText(row, config).includes(normalized));
+  }, [config, query, visibleRows]);
   const splitEventRows = useMemo(() => splitEvents(rows), [rows]);
 
   function updateField(field: Field, value: string | boolean) {
@@ -1503,6 +1522,15 @@ function EntityEditor({
   }
 
   function editRow(row: Row) {
+    if (row._fallback) {
+      const draft = { ...row };
+      delete draft.id;
+      delete draft._fallback;
+      setEditingId(null);
+      setForm(draft);
+      setStatus("Este membro ja aparece no site, mas ainda esta fora do CMS. Revise e salve para assumir o controle pelo painel.");
+      return;
+    }
     setEditingId(String(row.id));
     setForm(row);
     const eventDate = rowValue(row, "event_date");
@@ -1649,6 +1677,10 @@ function EntityEditor({
         }
       }
     }
+
+    delete payload._fallback;
+    delete payload.created_at;
+    delete payload.updated_at;
 
     if (isEventsConfig && !inputValue(payload.event_time).trim()) {
       delete payload.event_time;
@@ -1850,15 +1882,19 @@ function EntityEditor({
         <div className="grid gap-3 sm:grid-cols-4">
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <p className="text-xs uppercase tracking-wider text-muted">Total</p>
-            <p className="font-display mt-1 text-4xl">{rows.length}</p>
+            <p className="font-display mt-1 text-4xl">{effectiveMemberRows.length}</p>
           </div>
           <div className="rounded-2xl border border-accent/20 bg-accent/10 p-4">
             <p className="text-xs uppercase tracking-wider text-muted">Publicados</p>
-            <p className="font-display mt-1 text-4xl text-accent">{publishedCount}</p>
+            <p className="font-display mt-1 text-4xl text-accent">
+              {effectiveMemberRows.filter(isPublished).length}
+            </p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <p className="text-xs uppercase tracking-wider text-muted">Ocultos</p>
-            <p className="font-display mt-1 text-4xl">{rows.length - publishedCount}</p>
+            <p className="font-display mt-1 text-4xl">
+              {effectiveMemberRows.length - effectiveMemberRows.filter(isPublished).length}
+            </p>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
             <p className="text-xs uppercase tracking-wider text-muted">Faltando</p>
@@ -1887,7 +1923,7 @@ function EntityEditor({
         )}
 
         <MembersSectionPreview
-          rows={rows}
+          rows={effectiveMemberRows}
           draft={form}
           editingId={editingId}
           onEdit={editRow}
