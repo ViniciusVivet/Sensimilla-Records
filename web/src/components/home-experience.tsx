@@ -4,7 +4,6 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { MiniPlayer } from "@/components/mini-player";
 import { MiniPlayerProvider } from "@/components/mini-player-context";
 import { HeroSection } from "@/components/sections/hero";
-import { TypographySplash } from "@/components/sections/typography-splash";
 import { BrandStatementSection } from "@/components/sections/brand-statement";
 import { RosterSection } from "@/components/sections/roster";
 import { TypeOutlineSection } from "@/components/sections/type-outline";
@@ -31,7 +30,6 @@ export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
           className="bg-bg text-fg pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-0"
         >
           <HeroSection socialLinks={cmsData.socialLinks} media={cmsData.media} />
-          <TypographySplash />
           <BrandStatementSection />
           <RosterSection members={cmsData.members} />
           <TourSection events={cmsData.events} />

@@ -118,7 +118,7 @@ export function HeroSection({
     <section
       ref={root}
       id="inicio"
-      className="relative min-h-[75dvh] overflow-hidden bg-black"
+      className="relative min-h-[62dvh] overflow-hidden bg-black"
     >
       <div className="hero-video-wrap pointer-events-none absolute inset-0">
         {/* Fumaça */}
@@ -226,7 +226,7 @@ export function HeroSection({
 
       <div
         ref={logoRef}
-        className="relative z-10 flex min-h-[40dvh] flex-col items-center justify-end pb-12 pt-24 md:min-h-[45dvh] md:pb-16"
+        className="relative z-10 flex min-h-[32dvh] flex-col items-center justify-end pb-8 pt-20 md:min-h-[36dvh] md:pb-12"
       >
         <p className="mb-3 text-center text-[9px] uppercase tracking-[0.45em] text-muted/60">
           {heroTagline} · Gravadora
@@ -239,7 +239,7 @@ export function HeroSection({
         </p>
 
         {/* Scroll indicator */}
-        <div className="mt-10 flex flex-col items-center gap-1" aria-hidden>
+        <div className="mt-6 flex flex-col items-center gap-1" aria-hidden>
           <div className="sensi-scroll-arrow" />
         </div>
       </div>
