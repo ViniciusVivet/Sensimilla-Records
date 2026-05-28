@@ -159,7 +159,7 @@ export function HeroSection({
       </div>
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[8] h-28 bg-gradient-to-b from-transparent via-black/65 to-sage"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[8] h-44 bg-gradient-to-b from-transparent via-black/25 via-55% to-sage"
       />
 
       <header className="relative z-20 flex items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-8 md:pt-6">
