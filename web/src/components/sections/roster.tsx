@@ -308,9 +308,13 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
     <section
       ref={sectionRef}
       id="equipe"
-      className="relative bg-panel py-24 text-fg md:py-32"
+      className="relative bg-panel pb-20 pt-14 text-fg md:pb-28 md:pt-20"
     >
-      <div className="mx-auto max-w-6xl px-6 md:px-12">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-sage to-panel"
+      />
+      <div className="relative z-10 mx-auto max-w-6xl px-6 md:px-12">
         <p className="text-xs uppercase tracking-[0.3em] text-muted">
           {roster.eyebrow}
         </p>
@@ -323,7 +327,7 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
       </div>
 
       {/* Carrossel com setas laterais */}
-      <div className="relative mt-14">
+      <div className="relative z-10 mt-10 md:mt-12">
         {/* Seta esquerda — posicionada depois dos pills de navegacao */}
         <button
           type="button"
