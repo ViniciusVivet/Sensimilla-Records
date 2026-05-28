@@ -74,11 +74,28 @@ create table if not exists public.site_editorial_photos (
   id uuid primary key default gen_random_uuid(),
   src text not null,
   alt text not null,
+  media_type text not null default 'image' check (media_type in ('image', 'video')),
   active boolean not null default true,
   sort_order integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.site_editorial_photos
+add column if not exists media_type text not null default 'image';
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'site_editorial_photos_media_type_check'
+  ) then
+    alter table public.site_editorial_photos
+    add constraint site_editorial_photos_media_type_check
+    check (media_type in ('image', 'video'));
+  end if;
+end $$;
 
 create table if not exists public.site_social_links (
   id uuid primary key default gen_random_uuid(),

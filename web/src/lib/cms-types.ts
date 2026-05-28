@@ -34,7 +34,9 @@ export type CmsFeaturedRelease = {
   platforms: { name: string; href: string }[];
 };
 export type CmsMerchProduct = (typeof merchProducts)[number];
-export type CmsEditorialPhoto = (typeof editorialCollage)[number];
+export type CmsEditorialPhoto = (typeof editorialCollage)[number] & {
+  mediaType?: "image" | "video";
+};
 export type CmsSocialLink = { name: string; href: string };
 
 export type CmsVideo = {

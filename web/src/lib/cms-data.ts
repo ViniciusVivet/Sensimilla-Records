@@ -101,6 +101,7 @@ function mapPhoto(row: Row): CmsEditorialPhoto {
   return {
     src: asString(row.src),
     alt: asString(row.alt),
+    mediaType: asString(row.media_type, "image") as CmsEditorialPhoto["mediaType"],
   };
 }
 

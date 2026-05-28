@@ -21,6 +21,7 @@ function Lightbox({
 }) {
   const [idx, setIdx] = useState(startIndex);
   const img = images[idx];
+  const mediaType = img.mediaType || "image";
 
   return (
     <div
@@ -32,13 +33,23 @@ function Lightbox({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative aspect-[3/4] h-[70vh] overflow-hidden rounded-2xl">
-          <Image
-            src={img.src}
-            alt={img.alt}
-            fill
-            className="object-cover"
-            sizes="90vw"
-          />
+          {mediaType === "video" ? (
+            <video
+              src={img.src}
+              className="h-full w-full object-cover"
+              controls
+              autoPlay
+              playsInline
+            />
+          ) : (
+            <Image
+              src={img.src}
+              alt={img.alt}
+              fill
+              className="object-cover"
+              sizes="90vw"
+            />
+          )}
         </div>
         <p className="mt-3 text-center text-sm text-white/60">{img.alt}</p>
 
@@ -86,7 +97,7 @@ export function EditorialSection({
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const items = photos.length ? photos : editorialCollage;
+  const items: CmsEditorialPhoto[] = photos.length ? photos : editorialCollage;
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -144,6 +155,7 @@ export function EditorialSection({
 
           <div className="relative mt-16 min-h-[420px] md:min-h-[520px]">
             {items.slice(0, 3).map((photo, i) => {
+              const mediaType = photo.mediaType || "image";
               const positions = [
                 "left-[2%] top-[8%] w-[42%] rotate-[-7deg] md:left-[5%] md:w-[38%]",
                 "right-[4%] top-0 w-[48%] rotate-[5deg] md:right-[8%] md:w-[42%]",
@@ -165,13 +177,29 @@ export function EditorialSection({
                   <div
                     className={`relative ${aspects[i]} overflow-hidden rounded-lg border border-fg/10`}
                   >
-                    <Image
-                      src={photo.src}
-                      alt={photo.alt}
-                      fill
-                      className="object-cover"
-                      sizes="48vw"
-                    />
+                    {mediaType === "video" ? (
+                      <>
+                        <video
+                          src={photo.src}
+                          className="h-full w-full object-cover"
+                          muted
+                          playsInline
+                          loop
+                          autoPlay
+                        />
+                        <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                          video
+                        </span>
+                      </>
+                    ) : (
+                      <Image
+                        src={photo.src}
+                        alt={photo.alt}
+                        fill
+                        className="object-cover"
+                        sizes="48vw"
+                      />
+                    )}
                   </div>
                 </button>
               );
@@ -183,7 +211,7 @@ export function EditorialSection({
           type="button"
           onClick={() => setLightboxIndex(0)}
           className="absolute bottom-8 right-8 z-20 hidden h-14 w-14 items-center justify-center rounded-full border border-fg/25 bg-black/20 text-fg backdrop-blur-sm transition hover:border-accent hover:text-accent md:flex"
-          aria-label="Explorar galeria"
+          aria-label="Explorar backstage"
         >
           ◎
         </button>

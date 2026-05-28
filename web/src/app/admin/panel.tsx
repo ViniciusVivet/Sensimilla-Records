@@ -27,7 +27,7 @@ type TableName =
 type Field = {
   name: string;
   label: string;
-  type?: "text" | "textarea" | "date" | "number" | "checkbox" | "image" | "json" | "select";
+  type?: "text" | "textarea" | "date" | "number" | "checkbox" | "image" | "media" | "json" | "select";
   placeholder?: string;
   help?: string;
   required?: boolean;
@@ -189,17 +189,26 @@ const configs: EntityConfig[] = [
   },
   {
     table: "site_editorial_photos",
-    label: "Galeria",
-    shortLabel: "Galeria",
-    description: "Fotos da secao Visuais/editorial.",
-    area: "Home / Visuais",
+    label: "Backstage",
+    shortLabel: "Backstage",
+    description: "Fotos e videos descontraidos da secao de bastidores.",
+    area: "Home / Backstage",
     href: "/#visuais",
     titleField: "alt",
-    summaryFields: ["src"],
-    defaults: { src: "", alt: "", active: true, sort_order: 0 },
+    summaryFields: ["media_type", "src"],
+    defaults: { src: "", alt: "", media_type: "image", active: true, sort_order: 0 },
     fields: [
-      { name: "src", label: "Imagem", type: "image", required: true },
-      { name: "alt", label: "Texto alternativo", required: true, help: "Descreva a imagem para acessibilidade e SEO." },
+      {
+        name: "media_type",
+        label: "Tipo",
+        type: "select",
+        options: [
+          { label: "Foto", value: "image" },
+          { label: "Video", value: "video" },
+        ],
+      },
+      { name: "src", label: "Arquivo", type: "media", required: true, help: "Escolha foto ou video da galeria do celular/PC, ou cole uma URL publica." },
+      { name: "alt", label: "Legenda / texto alternativo", required: true, help: "Descreva a cena para acessibilidade e contexto." },
       { name: "sort_order", label: "Ordem", type: "number", help: "Numero menor aparece primeiro." },
       { name: "active", label: "Publicado no site", type: "checkbox" },
     ],
@@ -263,7 +272,7 @@ function isPublished(row: Row) {
 }
 
 function imageFieldFor(config: EntityConfig) {
-  return config.fields.find((field) => field.type === "image")?.name;
+  return config.fields.find((field) => field.type === "image" || field.type === "media")?.name;
 }
 
 function rowSummary(row: Row, config: EntityConfig) {
@@ -499,6 +508,18 @@ function fallbackReleaseRows() {
   return rows;
 }
 
+function fallbackBackstageRows() {
+  return fallbackCmsData.editorialPhotos.map((photo, index) => ({
+    id: `fallback-backstage-${photo.src || photo.alt || index}`,
+    _fallback: true,
+    src: photo.src,
+    alt: photo.alt,
+    media_type: photo.mediaType || "image",
+    active: true,
+    sort_order: index * 10,
+  }));
+}
+
 function eventKey(row: Row) {
   return [
     rowValue(row, "event_date"),
@@ -521,6 +542,14 @@ function releaseKey(row: Row) {
 
 function releaseTitle(row: Row) {
   return rowValue(row, "title") || "Musica sem titulo";
+}
+
+function backstageKey(row: Row) {
+  return (rowValue(row, "src") || rowValue(row, "alt")).toLowerCase();
+}
+
+function backstageTitle(row: Row) {
+  return rowValue(row, "alt") || "Midia sem legenda";
 }
 
 function eventTitle(row: Row) {
@@ -618,11 +647,8 @@ function AdminPreview({ config, form }: { config: EntityConfig; form: Row }) {
 
   if (config.table === "site_editorial_photos") {
     return (
-      <PreviewShell title="Previa na galeria">
-        <div className="rounded-xl border border-white/10 bg-bg/70 p-3">
-          <PreviewImage src={rowValue(form, "src")} label="Imagem" />
-          <p className="mt-2 text-xs text-muted">{rowValue(form, "alt") || "Texto alternativo"}</p>
-        </div>
+      <PreviewShell title="Previa exata no Backstage">
+        <BackstagePreview items={[form]} />
       </PreviewShell>
     );
   }
@@ -704,7 +730,7 @@ function PreviewShell({ title, children }: { title: string; children: ReactNode 
       <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">{title}</p>
       <div className="mt-3">{children}</div>
       <p className="mt-3 text-[11px] text-muted">
-        Esta previa e aproximada. A home final ainda depende do layout da secao e do tamanho da tela.
+        A previa acompanha o conteudo salvo; pequenas diferencas podem ocorrer pelo tamanho da tela.
       </p>
     </aside>
   );
@@ -733,6 +759,192 @@ function PreviewImage({
         </div>
       )}
     </div>
+  );
+}
+
+function PreviewMedia({
+  src,
+  mediaType,
+  label,
+  square = false,
+}: {
+  src: string;
+  mediaType: string;
+  label: string;
+  square?: boolean;
+}) {
+  return (
+    <div
+      className={`relative shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black/30 ${
+        square ? "aspect-square w-full" : "h-24 w-24"
+      }`}
+    >
+      {src ? (
+        mediaType === "video" ? (
+          <video src={src} className="h-full w-full object-cover" muted playsInline loop autoPlay />
+        ) : (
+          <Image src={src} alt="" fill sizes="220px" unoptimized className="object-cover" />
+        )
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-xs text-muted">
+          {label}
+        </div>
+      )}
+      {src && mediaType === "video" ? (
+        <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+          video
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+function BackstagePreview({ items }: { items: Row[] }) {
+  const ordered = [...items]
+    .filter((item) => item.active !== false)
+    .sort((a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0));
+  const visible = ordered.filter((item) => rowValue(item, "src")).slice(0, 3);
+  const previewItems = visible.length ? visible : ordered.slice(0, 3);
+  const positions = [
+    "left-[2%] top-[8%] w-[42%] rotate-[-7deg] md:left-[5%] md:w-[38%]",
+    "right-[4%] top-0 w-[48%] rotate-[5deg] md:right-[8%] md:w-[42%]",
+    "bottom-0 left-[18%] w-[52%] rotate-[-3deg] md:left-[22%] md:w-[45%]",
+  ];
+  const aspects = ["aspect-[4/5]", "aspect-[3/4]", "aspect-[16/10]"];
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl bg-lime-field p-5 text-fg">
+      <h3
+        className="font-display text-outline pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[34vw] leading-none opacity-40"
+        aria-hidden
+      >
+        SENSI
+      </h3>
+      <div className="relative z-10">
+        <p className="text-xs uppercase tracking-[0.35em] text-fg/55">
+          Editorial - bastidores
+        </p>
+        <p className="font-display mt-2 max-w-sm text-3xl">
+          Colagens do que acontece fora do streaming
+        </p>
+        <div className="relative mt-8 min-h-[300px]">
+          {previewItems.map((item, index) => {
+            const src = rowValue(item, "src");
+            const mediaType = rowValue(item, "media_type") || "image";
+            return (
+              <div
+                key={String(item.id ?? index)}
+                className={`absolute shadow-2xl shadow-black/40 ${positions[index] ?? positions[0]}`}
+              >
+                <div className={`relative ${aspects[index] ?? aspects[0]} overflow-hidden rounded-lg border border-fg/10 bg-black/20`}>
+                  {src ? (
+                    mediaType === "video" ? (
+                      <>
+                        <video src={src} className="h-full w-full object-cover" muted playsInline loop autoPlay />
+                        <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                          video
+                        </span>
+                      </>
+                    ) : (
+                      <Image src={src} alt="" fill sizes="48vw" unoptimized className="object-cover" />
+                    )
+                  ) : (
+                    <div className="flex h-full min-h-40 items-center justify-center text-xs text-fg/60">
+                      Backstage
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BackstageSectionPreview({
+  rows,
+  draft,
+  editingId,
+  onEdit,
+  onReorder,
+}: {
+  rows: Row[];
+  draft: Row;
+  editingId: string | null;
+  onEdit: (row: Row) => void;
+  onReorder: (draggedId: string, targetId: string) => void;
+}) {
+  const mergedRows = useMemo(() => {
+    const normalized = rows.map((row) =>
+      editingId && String(row.id) === editingId ? { ...row, ...draft } : row,
+    );
+    if (!editingId && rowValue(draft, "src")) {
+      normalized.push({ ...draft, id: "__draft" });
+    }
+    return normalized
+      .filter((row) => row.active !== false)
+      .sort((a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0));
+  }, [draft, editingId, rows]);
+
+  return (
+    <section className="rounded-2xl border border-accent/20 bg-panel p-4">
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Previa exata da home</p>
+          <h3 className="font-display mt-1 text-4xl">Backstage</h3>
+          <p className="mt-1 text-sm text-muted">
+            Esta composicao usa os mesmos itens, ordem e proporcoes da secao publica.
+          </p>
+        </div>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {mergedRows.length} visiveis
+        </span>
+      </div>
+
+      <div className="mt-5">
+        <BackstagePreview items={mergedRows} />
+      </div>
+
+      <div className="mt-5 grid gap-2 md:grid-cols-3">
+        {mergedRows.map((item) => {
+          const isDraft = item.id === "__draft";
+          const isEditing = editingId && String(item.id) === editingId;
+          return (
+            <button
+              key={String(item.id ?? backstageKey(item))}
+              type="button"
+              draggable={!isDraft}
+              onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", draggableId(item));
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                onReorder(e.dataTransfer.getData("text/plain"), draggableId(item));
+              }}
+              onClick={() => !isDraft && onEdit(item)}
+              className={`rounded-2xl border bg-bg/70 p-3 text-left transition hover:border-accent ${
+                isDraft || isEditing ? "border-accent ring-1 ring-accent/40" : "border-white/10"
+              }`}
+            >
+              <PreviewMedia
+                src={rowValue(item, "src")}
+                mediaType={rowValue(item, "media_type") || "image"}
+                label="Backstage"
+                square
+              />
+              <p className="mt-3 line-clamp-2 text-sm font-bold text-fg">{backstageTitle(item)}</p>
+              <p className="mt-1 text-xs uppercase tracking-wider text-muted">
+                {rowValue(item, "media_type") === "video" ? "Video" : "Foto"} - ordem {rowValue(item, "sort_order") || "0"}
+              </p>
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -1164,6 +1376,101 @@ function ReleaseList({
           </article>
         ))}
         {!rows.length && <p className="py-4 text-sm text-muted">Nenhuma musica cadastrada no CMS.</p>}
+      </div>
+    </section>
+  );
+}
+
+function BackstageList({
+  rows,
+  onEdit,
+  onTogglePublished,
+  onDuplicate,
+  onRemove,
+}: {
+  rows: Row[];
+  onEdit: (row: Row) => void;
+  onTogglePublished: (row: Row) => void;
+  onDuplicate: (row: Row) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <section className="rounded-2xl border border-white/10 bg-panel p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="font-display text-3xl">Midias do Backstage</h3>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {rows.length}
+        </span>
+      </div>
+      <div className="mt-3 space-y-2">
+        {rows.map((row) => (
+          <article key={String(row.id)} className="rounded-xl border border-white/10 bg-bg/70 p-3">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                <PreviewMedia
+                  src={rowValue(row, "src")}
+                  mediaType={rowValue(row, "media_type") || "image"}
+                  label="Midia"
+                />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate font-bold text-fg">{backstageTitle(row)}</p>
+                    {row._fallback ? (
+                      <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                        No site / fora do painel
+                      </span>
+                    ) : (
+                      <StatusBadge active={row.active !== false} />
+                    )}
+                  </div>
+                  <p className="mt-1 truncate text-sm text-muted">
+                    {rowValue(row, "media_type") === "video" ? "Video" : "Foto"} - ordem {rowValue(row, "sort_order") || "0"}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-fg/50">
+                    {rowValue(row, "src") || "Sem arquivo"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 md:justify-end">
+                {!row._fallback && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onTogglePublished(row)}
+                      className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                    >
+                      {row.active === false ? "Publicar" : "Ocultar"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDuplicate(row)}
+                      className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                    >
+                      Duplicar
+                    </button>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onEdit(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  {row._fallback ? "Trazer para o painel" : "Editar"}
+                </button>
+                {!row._fallback && (
+                  <button
+                    type="button"
+                    onClick={() => row.id && onRemove(String(row.id))}
+                    className="rounded-full border border-red-500/30 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-red-300 hover:border-red-400"
+                  >
+                    Apagar
+                  </button>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+        {!rows.length && <p className="py-4 text-sm text-muted">Nenhuma midia cadastrada no Backstage.</p>}
       </div>
     </section>
   );
@@ -1742,6 +2049,7 @@ function EntityEditor({
   const isEventsConfig = config.table === "site_events";
   const isMembersConfig = config.table === "site_members";
   const isReleasesConfig = config.table === "site_releases";
+  const isBackstageConfig = config.table === "site_editorial_photos";
   const imageField = imageFieldFor(config);
 
   const load = useCallback(async () => {
@@ -1788,7 +2096,23 @@ function EntityEditor({
       (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0),
     );
   }, [missingFallbackReleases, rows]);
-  const visibleRows = isMembersConfig ? effectiveMemberRows : isReleasesConfig ? effectiveReleaseRows : rows;
+  const fallbackBackstage = useMemo(() => fallbackBackstageRows(), []);
+  const missingFallbackBackstage = useMemo(() => {
+    const existing = new Set(rows.map(backstageKey));
+    return fallbackBackstage.filter((item) => !existing.has(backstageKey(item)));
+  }, [fallbackBackstage, rows]);
+  const effectiveBackstageRows = useMemo(() => {
+    return [...rows, ...missingFallbackBackstage].sort(
+      (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0),
+    );
+  }, [missingFallbackBackstage, rows]);
+  const visibleRows = isMembersConfig
+    ? effectiveMemberRows
+    : isReleasesConfig
+      ? effectiveReleaseRows
+      : isBackstageConfig
+        ? effectiveBackstageRows
+        : rows;
   const filteredRows = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return visibleRows;
@@ -1833,7 +2157,9 @@ function EntityEditor({
       setStatus(
         isReleasesConfig
           ? "Esta musica ja aparece no site, mas ainda esta fora do painel. Revise e salve para controlar pelo CMS."
-          : "Este membro ja aparece no site, mas ainda esta fora do CMS. Revise e salve para assumir o controle pelo painel.",
+          : isBackstageConfig
+            ? "Esta midia ja aparece no site, mas ainda esta fora do painel. Revise e salve para controlar pelo CMS."
+            : "Este membro ja aparece no site, mas ainda esta fora do CMS. Revise e salve para assumir o controle pelo painel.",
       );
       return;
     }
@@ -1903,6 +2229,28 @@ function EntityEditor({
     }
     await load();
     setStatus(`${payload.length} musica${payload.length > 1 ? "s" : ""} importada${payload.length > 1 ? "s" : ""}.`);
+  }
+
+  async function importFallbackBackstage() {
+    if (!isBackstageConfig) return;
+    if (!missingFallbackBackstage.length) {
+      setStatus("As midias padrao ja estao no CMS.");
+      return;
+    }
+    setStatus("Importando Backstage padrao...");
+    const payload = missingFallbackBackstage.map((item) => {
+      const copy: Row = { ...item };
+      delete copy.id;
+      delete copy._fallback;
+      return copy;
+    });
+    const { error } = await supabase.from("site_editorial_photos").insert(payload);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(`${payload.length} midia${payload.length > 1 ? "s" : ""} importada${payload.length > 1 ? "s" : ""}.`);
   }
 
   async function toggleEventPublished(row: Row) {
@@ -2005,6 +2353,39 @@ function EntityEditor({
     setStatus("Musica duplicada como rascunho.");
   }
 
+  async function toggleBackstagePublished(row: Row) {
+    setStatus("Atualizando Backstage...");
+    const { error } = await supabase
+      .from("site_editorial_photos")
+      .update({ active: row.active === false })
+      .eq("id", String(row.id));
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(row.active === false ? "Midia publicada." : "Midia ocultada.");
+  }
+
+  async function duplicateBackstage(row: Row) {
+    const copy = { ...row };
+    delete copy.id;
+    delete copy.created_at;
+    delete copy.updated_at;
+    delete copy._fallback;
+    copy.alt = `${backstageTitle(row)} (copia)`;
+    copy.active = false;
+    copy.sort_order = Number(row.sort_order ?? 0) + 1;
+    setStatus("Duplicando midia...");
+    const { error } = await supabase.from("site_editorial_photos").insert(copy);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus("Midia duplicada como rascunho.");
+  }
+
   async function reorderCmsRows(table: TableName, effectiveRows: Row[], draggedId: string, targetId: string) {
     if (!draggedId || !targetId || draggedId === targetId) return;
     const ordered = [...effectiveRows].sort(
@@ -2049,7 +2430,13 @@ function EntityEditor({
     setStatus("Enviando arquivo...");
     try {
       const url = await uploadFile(supabase, file, config.table);
-      setForm((current) => ({ ...current, [field.name]: url }));
+      setForm((current) => ({
+        ...current,
+        [field.name]: url,
+        ...(field.type === "media"
+          ? { media_type: file.type.startsWith("video/") ? "video" : "image" }
+          : {}),
+      }));
       setStatus("Upload concluido.");
     } catch (err) {
       setStatus(err instanceof Error ? err.message : "Falha no upload.");
@@ -2675,6 +3062,213 @@ function EntityEditor({
     );
   }
 
+  if (isBackstageConfig) {
+    return (
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-panel p-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">{config.area}</p>
+            <h2 className="font-display mt-1 text-4xl">{config.label}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+              Controle as fotos e videos que aparecem na colagem de bastidores da home.
+            </p>
+          </div>
+          <a
+            href={config.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit rounded-full border border-white/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+          >
+            Ver no site
+          </a>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Total</p>
+            <p className="font-display mt-1 text-4xl">{effectiveBackstageRows.length}</p>
+          </div>
+          <div className="rounded-2xl border border-accent/20 bg-accent/10 p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Publicadas</p>
+            <p className="font-display mt-1 text-4xl text-accent">
+              {effectiveBackstageRows.filter(isPublished).length}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Videos</p>
+            <p className="font-display mt-1 text-4xl">
+              {effectiveBackstageRows.filter((row) => rowValue(row, "media_type") === "video").length}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Faltando</p>
+            <p className="font-display mt-1 text-4xl">{missingFallbackBackstage.length}</p>
+          </div>
+        </div>
+
+        {missingFallbackBackstage.length > 0 && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-accent/20 bg-accent/10 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-bold text-accent">
+                A home tem {missingFallbackBackstage.length} midia{missingFallbackBackstage.length > 1 ? "s" : ""} fora do painel
+              </p>
+              <p className="mt-1 text-xs text-fg/70">
+                Importe para ordenar, editar, ocultar ou remover pelo CMS.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void importFallbackBackstage()}
+              className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+            >
+              Importar Backstage
+            </button>
+          </div>
+        )}
+
+        <BackstageSectionPreview
+          rows={effectiveBackstageRows}
+          draft={form}
+          editingId={editingId}
+          onEdit={editRow}
+          onReorder={(draggedId, targetId) =>
+            void reorderCmsRows("site_editorial_photos", effectiveBackstageRows, draggedId, targetId)
+          }
+        />
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
+              <label className="block flex-1 text-xs uppercase tracking-wider text-muted">
+                Buscar Backstage
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Legenda, arquivo, tipo..."
+                  className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => startNew()}
+                className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+              >
+                Nova midia
+              </button>
+            </div>
+
+            <BackstageList
+              rows={filteredRows}
+              onEdit={editRow}
+              onTogglePublished={(row) => void toggleBackstagePublished(row)}
+              onDuplicate={(row) => void duplicateBackstage(row)}
+              onRemove={(id) => void remove(id)}
+            />
+          </div>
+
+          <form onSubmit={save} className="h-fit rounded-2xl border border-white/10 bg-panel p-5 lg:sticky lg:top-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-accent">
+                  {editingId ? "Editando" : "Criando"}
+                </p>
+                <h2 className="font-display text-3xl">{editingId ? "Editar midia" : "Nova midia"}</h2>
+              </div>
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => startNew()}
+                  className="text-xs text-muted hover:text-accent"
+                >
+                  cancelar
+                </button>
+              )}
+            </div>
+            <div className="mt-5 space-y-4">
+              {config.fields.map((field) => (
+                <label key={field.name} className="block text-xs uppercase tracking-wider text-muted">
+                  <span>
+                    {field.label}
+                    {field.required ? <span className="text-accent"> *</span> : null}
+                  </span>
+                  {field.type === "checkbox" ? (
+                    <span className="mt-2 flex items-center justify-between rounded-xl border border-white/15 bg-bg px-3 py-3 normal-case tracking-normal">
+                      <span className="text-sm text-fg">{Boolean(form[field.name]) ? "Sim" : "Nao"}</span>
+                      <input
+                        checked={Boolean(form[field.name])}
+                        onChange={(e) => updateField(field, e.target.checked)}
+                        type="checkbox"
+                        className="h-5 w-5 accent-[var(--accent)]"
+                      />
+                    </span>
+                  ) : field.type === "select" ? (
+                    <select
+                      value={inputValue(form[field.name])}
+                      onChange={(e) => updateField(field, e.target.value)}
+                      required={field.required}
+                      className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                    >
+                      {(field.options ?? []).map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <>
+                      {field.type === "media" && (
+                        <div className="mt-2 rounded-2xl border border-white/10 bg-bg/70 p-3">
+                          <div className="flex gap-3">
+                            <PreviewMedia
+                              src={localImagePreview[field.name] || rowValue(form, field.name)}
+                              mediaType={rowValue(form, "media_type") || "image"}
+                              label="Midia"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-bold text-fg">Arquivo do Backstage</p>
+                              <p className="mt-1 text-xs normal-case tracking-normal text-muted">
+                                Escolha uma foto ou video da galeria do celular/PC. A previa aparece antes de salvar.
+                              </p>
+                              <input
+                                onChange={(e) => void handleFile(field, e)}
+                                type="file"
+                                accept="image/*,video/*"
+                                className="mt-3 w-full text-xs normal-case tracking-normal text-muted"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <input
+                        value={inputValue(form[field.name])}
+                        onChange={(e) => updateField(field, e.target.value)}
+                        type={field.type === "number" ? "number" : "text"}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                      />
+                    </>
+                  )}
+                  {field.help && <span className="mt-1 block text-[11px] normal-case tracking-normal text-muted">{field.help}</span>}
+                </label>
+              ))}
+            </div>
+            <AdminPreview config={config} form={form} />
+            <button
+              disabled={saving}
+              className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? "Salvando..." : "Salvar midia"}
+            </button>
+            <div className="mt-4">
+              <StatusMessage>{status}</StatusMessage>
+            </div>
+          </form>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
       <div className="min-w-0 space-y-5">
@@ -2754,6 +3348,7 @@ function EntityEditor({
             const title = rowValue(row, config.titleField) || "Sem titulo";
             const summary = rowSummary(row, config);
             const imageUrl = imageField ? rowValue(row, imageField) : "";
+            const isMediaRow = config.fields.some((field) => field.name === imageField && field.type === "media");
             return (
               <article
                 key={row.id}
@@ -2761,22 +3356,11 @@ function EntityEditor({
                   editingId === row.id ? "bg-accent/10" : "bg-white/[0.02]"
                 }`}
               >
-                <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-white/10 bg-bg">
-                  {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      unoptimized
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-muted">
-                      sem img
-                    </div>
-                  )}
-                </div>
+                <PreviewMedia
+                  src={imageUrl}
+                  mediaType={isMediaRow ? rowValue(row, "media_type") || "image" : "image"}
+                  label="sem img"
+                />
 
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -2890,13 +3474,27 @@ function EntityEditor({
                     required={field.required}
                     className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
                   />
-                  {field.type === "image" && (
-                    <input
-                      onChange={(e) => void handleFile(field, e)}
-                      type="file"
-                      accept="image/*"
-                      className="mt-2 w-full text-xs text-muted"
-                    />
+                  {(field.type === "image" || field.type === "media") && (
+                    <div className="mt-2 rounded-2xl border border-white/10 bg-bg/70 p-3">
+                      <div className="flex gap-3">
+                        <PreviewMedia
+                          src={localImagePreview[field.name] || rowValue(form, field.name)}
+                          mediaType={field.type === "media" ? rowValue(form, "media_type") || "image" : "image"}
+                          label="Arquivo"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold text-fg">
+                            {field.type === "media" ? "Foto ou video" : "Imagem"}
+                          </p>
+                          <input
+                            onChange={(e) => void handleFile(field, e)}
+                            type="file"
+                            accept={field.type === "media" ? "image/*,video/*" : "image/*"}
+                            className="mt-3 w-full text-xs text-muted"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </>
               )}
