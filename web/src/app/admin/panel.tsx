@@ -513,7 +513,7 @@ function EventCalendar({
   }
 
   function renderEventPills(dateKey: string, compact = false) {
-    return (eventsByDate[dateKey] ?? []).slice(0, compact ? 2 : 4).map((event) => (
+    return (eventsByDate[dateKey] ?? []).slice(0, compact ? 1 : 4).map((event) => (
       <button
         key={String(event.id ?? `${dateKey}-${rowValue(event, "venue")}`)}
         type="button"
@@ -521,7 +521,7 @@ function EventCalendar({
           e.stopPropagation();
           onEditEvent(event);
         }}
-        className="block w-full truncate rounded-md bg-accent/15 px-2 py-1 text-left text-[11px] font-bold text-accent hover:bg-accent hover:text-bg"
+        className="block w-full truncate rounded-md bg-accent/15 px-1.5 py-0.5 text-left text-[10px] font-bold text-accent hover:bg-accent hover:text-bg"
       >
         {rowValue(event, "city") || rowValue(event, "venue") || "Evento"}
       </button>
@@ -534,7 +534,7 @@ function EventCalendar({
     return (
       <div
         key={dateKey}
-        className={`min-h-28 rounded-xl border p-2 text-left transition hover:border-accent ${
+        className={`min-h-16 rounded-lg border p-1.5 text-left transition hover:border-accent md:min-h-20 ${
           selectedKey === dateKey
             ? "border-accent bg-accent/10"
             : "border-white/10 bg-bg/70"
@@ -545,23 +545,23 @@ function EventCalendar({
           onClick={() => chooseDate(date)}
           className="flex w-full items-center justify-between gap-2 text-left"
         >
-          <span className="text-xs font-bold text-fg">{date.getDate()}</span>
+          <span className="text-[11px] font-bold text-fg">{date.getDate()}</span>
           {todayKey === dateKey && (
-            <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-bg">
+            <span className="rounded-full bg-accent px-1.5 py-0.5 text-[9px] font-bold text-bg">
               hoje
             </span>
           )}
         </button>
-        <span className="mt-2 block space-y-1">
+        <span className="mt-1 block space-y-1">
           {dayEvents.length ? (
             renderEventPills(dateKey, true)
           ) : (
             <button
               type="button"
               onClick={() => chooseDate(date)}
-              className="text-left text-[11px] text-muted hover:text-accent"
+              className="text-left text-[10px] text-muted hover:text-accent"
             >
-              clicar para criar
+              +
             </button>
           )}
         </span>
@@ -580,12 +580,17 @@ function EventCalendar({
     return Array.from({ length: 7 }, (_, index) => addDays(start, index));
   }, [cursor]);
 
+  const previousLabel =
+    view === "month" ? "Mes anterior" : view === "week" ? "Semana anterior" : view === "day" ? "Dia anterior" : "Ano anterior";
+  const nextLabel =
+    view === "month" ? "Proximo mes" : view === "week" ? "Proxima semana" : view === "day" ? "Proximo dia" : "Proximo ano";
+
   return (
-    <section className="rounded-2xl border border-white/10 bg-panel p-4">
+    <section className="rounded-2xl border border-white/10 bg-panel p-3">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-accent">Calendario</p>
-          <h3 className="font-display mt-1 text-4xl capitalize">{calendarTitle(cursor, view)}</h3>
+          <h3 className="font-display mt-1 text-3xl capitalize">{calendarTitle(cursor, view)}</h3>
         </div>
         <div className="flex flex-wrap gap-2">
           {(["day", "week", "month", "year"] as CalendarView[]).map((item) => (
@@ -605,14 +610,14 @@ function EventCalendar({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setCursor((current) => moveCalendar(current, view, -1))}
-            className="rounded-full border border-white/15 px-4 py-2 text-sm text-fg hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-fg hover:border-accent hover:text-accent"
           >
-            Anterior
+            {previousLabel}
           </button>
           <button
             type="button"
@@ -621,36 +626,36 @@ function EventCalendar({
               setCursor(now);
               onSelectDate(now);
             }}
-            className="rounded-full border border-white/15 px-4 py-2 text-sm text-fg hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-fg hover:border-accent hover:text-accent"
           >
             Hoje
           </button>
           <button
             type="button"
             onClick={() => setCursor((current) => moveCalendar(current, view, 1))}
-            className="rounded-full border border-white/15 px-4 py-2 text-sm text-fg hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-fg hover:border-accent hover:text-accent"
           >
-            Proximo
+            {nextLabel}
           </button>
         </div>
         <p className="text-xs text-muted">Clique em um dia para iniciar um evento nessa data.</p>
       </div>
 
       {view === "month" && (
-        <div className="mt-4">
-          <div className="grid grid-cols-7 gap-2 pb-2 text-center text-[11px] font-bold uppercase tracking-wider text-muted">
+        <div className="mt-3">
+          <div className="grid grid-cols-7 gap-1 pb-2 text-center text-[10px] font-bold uppercase tracking-wider text-muted md:gap-2 md:text-[11px]">
             {weekDays.map((day) => (
               <span key={day.getDay()}>{weekdayFormatter.format(day)}</span>
             ))}
           </div>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-7">
+          <div className="grid grid-cols-7 gap-1 md:gap-2">
             {monthDays.map((day) => renderDayCell(day, day.getMonth() !== cursor.getMonth()))}
           </div>
         </div>
       )}
 
       {view === "week" && (
-        <div className="mt-4 grid grid-cols-1 gap-2 md:grid-cols-7">
+        <div className="mt-3 grid grid-cols-7 gap-1 md:gap-2">
           {weekDays.map((day) => renderDayCell(day))}
         </div>
       )}
