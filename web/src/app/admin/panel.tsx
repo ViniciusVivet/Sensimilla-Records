@@ -457,6 +457,48 @@ function fallbackMemberRows() {
   }));
 }
 
+function fallbackReleaseRows() {
+  const rows = fallbackCmsData.releases.map((release, index) => ({
+    id: `fallback-release-${release.spotifyEmbed || release.title}`,
+    _fallback: true,
+    title: release.title,
+    artist: release.artist,
+    meta: release.meta,
+    cover_url: release.cover,
+    spotify_embed: release.spotifyEmbed,
+    href: release.href || (release.spotifyEmbed ? `https://open.spotify.com/${release.spotifyEmbed}` : ""),
+    cta: release.cta || "Ouvir no Spotify",
+    description: release.description || "",
+    platforms: release.platforms || [],
+    featured: Boolean(release.featured),
+    active: true,
+    sort_order: index * 10,
+  }));
+
+  const featured = fallbackCmsData.featuredRelease;
+  const featuredKey = featured.spotifyEmbed || featured.title;
+  if (!rows.some((row) => releaseKey(row) === featuredKey.toLowerCase())) {
+    rows.unshift({
+      id: `fallback-release-${featuredKey}`,
+      _fallback: true,
+      title: featured.title,
+      artist: featured.subtitle,
+      meta: "Destaque",
+      cover_url: featured.cover,
+      spotify_embed: featured.spotifyEmbed,
+      href: featured.href,
+      cta: featured.cta,
+      description: featured.description,
+      platforms: featured.platforms,
+      featured: true,
+      active: true,
+      sort_order: -10,
+    });
+  }
+
+  return rows;
+}
+
 function eventKey(row: Row) {
   return [
     rowValue(row, "event_date"),
@@ -471,6 +513,14 @@ function memberKey(row: Row) {
 
 function memberName(row: Row) {
   return rowValue(row, "name") || "Membro sem nome";
+}
+
+function releaseKey(row: Row) {
+  return (rowValue(row, "spotify_embed") || rowValue(row, "title")).toLowerCase();
+}
+
+function releaseTitle(row: Row) {
+  return rowValue(row, "title") || "Musica sem titulo";
 }
 
 function eventTitle(row: Row) {
@@ -876,6 +926,216 @@ function MemberList({
           </article>
         ))}
         {!rows.length && <p className="py-4 text-sm text-muted">Nenhum membro cadastrado no CMS.</p>}
+      </div>
+    </section>
+  );
+}
+
+function ReleasesSectionPreview({
+  rows,
+  draft,
+  editingId,
+  onEdit,
+}: {
+  rows: Row[];
+  draft: Row;
+  editingId: string | null;
+  onEdit: (row: Row) => void;
+}) {
+  const mergedRows = useMemo(() => {
+    const normalized = rows.map((row) =>
+      editingId && String(row.id) === editingId ? { ...row, ...draft } : row,
+    );
+    if (!editingId && rowValue(draft, "title")) {
+      normalized.push({ ...draft, id: "__draft" });
+    }
+    return normalized
+      .filter((row) => row.active !== false)
+      .sort((a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0));
+  }, [draft, editingId, rows]);
+
+  const featured = mergedRows.find((row) => Boolean(row.featured)) ?? mergedRows[0];
+
+  return (
+    <section className="rounded-2xl border border-accent/20 bg-panel p-4">
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Previa da secao</p>
+          <h3 className="font-display mt-1 text-4xl">Out Now / Destaque</h3>
+          <p className="mt-1 text-sm text-muted">
+            Aproximacao de como a lista de musicas e o destaque aparecem na home.
+          </p>
+        </div>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {mergedRows.length} visiveis
+        </span>
+      </div>
+
+      {featured && (
+        <div className="mt-5 grid gap-4 rounded-2xl border border-white/10 bg-sage p-4 text-bg md:grid-cols-[160px_minmax(0,1fr)]">
+          <PreviewImage src={rowValue(featured, "cover_url")} label="Capa" square />
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-[0.25em] text-bg/55">
+              {rowValue(featured, "artist") || "Destaque"}
+            </p>
+            <h4 className="font-display mt-2 text-4xl">{releaseTitle(featured)}</h4>
+            <p className="mt-3 line-clamp-3 text-sm text-bg/70">
+              {rowValue(featured, "description") || "Descricao do destaque aparece aqui."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-5 space-y-2">
+        {mergedRows.map((release) => {
+          const isDraft = release.id === "__draft";
+          const isEditing = editingId && String(release.id) === editingId;
+          return (
+            <button
+              key={String(release.id ?? releaseKey(release))}
+              type="button"
+              onClick={() => !isDraft && onEdit(release)}
+              className={`flex w-full gap-3 rounded-2xl border bg-bg/70 p-3 text-left transition hover:border-accent ${
+                isDraft || isEditing ? "border-accent ring-1 ring-accent/40" : "border-white/10"
+              }`}
+            >
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/30">
+                {rowValue(release, "cover_url") ? (
+                  <Image
+                    src={rowValue(release, "cover_url")}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    unoptimized
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-xs text-muted">Capa</div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-display truncate text-2xl">{releaseTitle(release)}</p>
+                  {release.featured ? (
+                    <span className="rounded-full border border-accent/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+                      destaque
+                    </span>
+                  ) : null}
+                  {isDraft ? (
+                    <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-bg">
+                      previa
+                    </span>
+                  ) : null}
+                </div>
+                <p className="truncate text-sm text-muted">{rowValue(release, "artist") || "Artista"}</p>
+                <p className="mt-1 text-xs uppercase tracking-wider text-muted/80">
+                  {rowValue(release, "meta") || "Single"} - ordem {rowValue(release, "sort_order") || "0"}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+        {!mergedRows.length && (
+          <div className="rounded-xl border border-white/10 bg-bg/70 p-6 text-sm text-muted">
+            Nenhuma musica publicada para prever.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ReleaseList({
+  rows,
+  onEdit,
+  onTogglePublished,
+  onDuplicate,
+  onRemove,
+}: {
+  rows: Row[];
+  onEdit: (row: Row) => void;
+  onTogglePublished: (row: Row) => void;
+  onDuplicate: (row: Row) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <section className="rounded-2xl border border-white/10 bg-panel p-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="font-display text-3xl">Musicas cadastradas</h3>
+        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          {rows.length}
+        </span>
+      </div>
+      <div className="mt-3 space-y-2">
+        {rows.map((row) => (
+          <article key={String(row.id)} className="rounded-xl border border-white/10 bg-bg/70 p-3">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                <PreviewImage src={rowValue(row, "cover_url")} label="Capa" />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate font-bold text-fg">{releaseTitle(row)}</p>
+                    {row._fallback ? (
+                      <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                        No site / fora do painel
+                      </span>
+                    ) : (
+                      <StatusBadge active={row.active !== false} />
+                    )}
+                    {row.featured ? (
+                      <span className="rounded-full border border-accent/30 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+                        Destaque
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 truncate text-sm text-muted">
+                    {rowValue(row, "artist") || "Sem artista"} - {rowValue(row, "meta") || "Single"} - ordem {rowValue(row, "sort_order") || "0"}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-fg/50">
+                    {rowValue(row, "spotify_embed") || "Sem Spotify embed"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 md:justify-end">
+                {!row._fallback && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onTogglePublished(row)}
+                      className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                    >
+                      {row.active === false ? "Publicar" : "Ocultar"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDuplicate(row)}
+                      className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                    >
+                      Duplicar
+                    </button>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onEdit(row)}
+                  className="rounded-full border border-white/15 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+                >
+                  {row._fallback ? "Trazer para o painel" : "Editar"}
+                </button>
+                {!row._fallback && (
+                  <button
+                    type="button"
+                    onClick={() => row.id && onRemove(String(row.id))}
+                    className="rounded-full border border-red-500/30 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-red-300 hover:border-red-400"
+                  >
+                    Apagar
+                  </button>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+        {!rows.length && <p className="py-4 text-sm text-muted">Nenhuma musica cadastrada no CMS.</p>}
       </div>
     </section>
   );
@@ -1453,6 +1713,7 @@ function EntityEditor({
   const [localImagePreview, setLocalImagePreview] = useState<Record<string, string>>({});
   const isEventsConfig = config.table === "site_events";
   const isMembersConfig = config.table === "site_members";
+  const isReleasesConfig = config.table === "site_releases";
   const imageField = imageFieldFor(config);
 
   const load = useCallback(async () => {
@@ -1489,7 +1750,17 @@ function EntityEditor({
       (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0),
     );
   }, [missingFallbackMembers, rows]);
-  const visibleRows = isMembersConfig ? effectiveMemberRows : rows;
+  const fallbackReleases = useMemo(() => fallbackReleaseRows(), []);
+  const missingFallbackReleases = useMemo(() => {
+    const existing = new Set(rows.map(releaseKey));
+    return fallbackReleases.filter((release) => !existing.has(releaseKey(release)));
+  }, [fallbackReleases, rows]);
+  const effectiveReleaseRows = useMemo(() => {
+    return [...rows, ...missingFallbackReleases].sort(
+      (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0),
+    );
+  }, [missingFallbackReleases, rows]);
+  const visibleRows = isMembersConfig ? effectiveMemberRows : isReleasesConfig ? effectiveReleaseRows : rows;
   const filteredRows = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return visibleRows;
@@ -1531,7 +1802,11 @@ function EntityEditor({
       setEditingId(null);
       setForm(draft);
       setLocalImagePreview({});
-      setStatus("Este membro ja aparece no site, mas ainda esta fora do CMS. Revise e salve para assumir o controle pelo painel.");
+      setStatus(
+        isReleasesConfig
+          ? "Esta musica ja aparece no site, mas ainda esta fora do painel. Revise e salve para controlar pelo CMS."
+          : "Este membro ja aparece no site, mas ainda esta fora do CMS. Revise e salve para assumir o controle pelo painel.",
+      );
       return;
     }
     setEditingId(String(row.id));
@@ -1578,6 +1853,28 @@ function EntityEditor({
     }
     await load();
     setStatus(`${missingFallbackMembers.length} membro${missingFallbackMembers.length > 1 ? "s" : ""} importado${missingFallbackMembers.length > 1 ? "s" : ""}.`);
+  }
+
+  async function importFallbackReleases() {
+    if (!isReleasesConfig) return;
+    if (!missingFallbackReleases.length) {
+      setStatus("As musicas padrao ja estao no CMS.");
+      return;
+    }
+    setStatus("Importando musicas padrao...");
+    const payload = missingFallbackReleases.map((release) => {
+      const copy: Row = { ...release };
+      delete copy.id;
+      delete copy._fallback;
+      return copy;
+    });
+    const { error } = await supabase.from("site_releases").insert(payload);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(`${payload.length} musica${payload.length > 1 ? "s" : ""} importada${payload.length > 1 ? "s" : ""}.`);
   }
 
   async function toggleEventPublished(row: Row) {
@@ -1644,6 +1941,40 @@ function EntityEditor({
     }
     await load();
     setStatus("Membro duplicado como rascunho.");
+  }
+
+  async function toggleReleasePublished(row: Row) {
+    setStatus("Atualizando musica...");
+    const { error } = await supabase
+      .from("site_releases")
+      .update({ active: row.active === false })
+      .eq("id", String(row.id));
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus(row.active === false ? "Musica publicada." : "Musica ocultada.");
+  }
+
+  async function duplicateRelease(row: Row) {
+    const copy = { ...row };
+    delete copy.id;
+    delete copy.created_at;
+    delete copy.updated_at;
+    delete copy._fallback;
+    copy.title = `${releaseTitle(row)} (copia)`;
+    copy.active = false;
+    copy.featured = false;
+    copy.sort_order = Number(row.sort_order ?? 0) + 1;
+    setStatus("Duplicando musica...");
+    const { error } = await supabase.from("site_releases").insert(copy);
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    await load();
+    setStatus("Musica duplicada como rascunho.");
   }
 
   async function handleFile(field: Field, e: ChangeEvent<HTMLInputElement>) {
@@ -2058,6 +2389,212 @@ function EntityEditor({
               className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving ? "Salvando..." : "Salvar membro"}
+            </button>
+            <div className="mt-4">
+              <StatusMessage>{status}</StatusMessage>
+            </div>
+          </form>
+        </div>
+      </section>
+    );
+  }
+
+  if (isReleasesConfig) {
+    return (
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-panel p-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">{config.area}</p>
+            <h2 className="font-display mt-1 text-4xl">{config.label}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+              Controle as musicas que aparecem no Out Now, no mini player e no destaque da home.
+            </p>
+          </div>
+          <a
+            href={config.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-fit rounded-full border border-white/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-fg hover:border-accent hover:text-accent"
+          >
+            Ver no site
+          </a>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Total</p>
+            <p className="font-display mt-1 text-4xl">{effectiveReleaseRows.length}</p>
+          </div>
+          <div className="rounded-2xl border border-accent/20 bg-accent/10 p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Publicadas</p>
+            <p className="font-display mt-1 text-4xl text-accent">
+              {effectiveReleaseRows.filter(isPublished).length}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Destaques</p>
+            <p className="font-display mt-1 text-4xl">
+              {effectiveReleaseRows.filter((row) => Boolean(row.featured)).length}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs uppercase tracking-wider text-muted">Faltando</p>
+            <p className="font-display mt-1 text-4xl">{missingFallbackReleases.length}</p>
+          </div>
+        </div>
+
+        {missingFallbackReleases.length > 0 && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-accent/20 bg-accent/10 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-bold text-accent">
+                A home tem {missingFallbackReleases.length} musica{missingFallbackReleases.length > 1 ? "s" : ""} fora do painel
+              </p>
+              <p className="mt-1 text-xs text-fg/70">
+                Importe para ordenar, editar, ocultar ou remover pelo CMS.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => void importFallbackReleases()}
+              className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+            >
+              Importar musicas
+            </button>
+          </div>
+        )}
+
+        <ReleasesSectionPreview
+          rows={effectiveReleaseRows}
+          draft={form}
+          editingId={editingId}
+          onEdit={editRow}
+        />
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-panel p-4 sm:flex-row sm:items-center sm:justify-between">
+              <label className="block flex-1 text-xs uppercase tracking-wider text-muted">
+                Buscar musicas
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Titulo, artista, Spotify..."
+                  className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => startNew()}
+                className="rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg"
+              >
+                Nova musica
+              </button>
+            </div>
+
+            <ReleaseList
+              rows={filteredRows}
+              onEdit={editRow}
+              onTogglePublished={(row) => void toggleReleasePublished(row)}
+              onDuplicate={(row) => void duplicateRelease(row)}
+              onRemove={(id) => void remove(id)}
+            />
+          </div>
+
+          <form onSubmit={save} className="h-fit rounded-2xl border border-white/10 bg-panel p-5 lg:sticky lg:top-6">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-accent">
+                  {editingId ? "Editando" : "Criando"}
+                </p>
+                <h2 className="font-display text-3xl">{editingId ? "Editar musica" : "Nova musica"}</h2>
+              </div>
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => startNew()}
+                  className="text-xs text-muted hover:text-accent"
+                >
+                  cancelar
+                </button>
+              )}
+            </div>
+            <div className="mt-5 space-y-4">
+              {config.fields.map((field) => (
+                <label key={field.name} className="block text-xs uppercase tracking-wider text-muted">
+                  <span>
+                    {field.label}
+                    {field.required ? <span className="text-accent"> *</span> : null}
+                  </span>
+                  {field.type === "textarea" ? (
+                    <textarea
+                      value={inputValue(form[field.name])}
+                      onChange={(e) => updateField(field, e.target.value)}
+                      rows={4}
+                      required={field.required}
+                      placeholder={field.placeholder}
+                      className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                    />
+                  ) : field.type === "checkbox" ? (
+                    <span className="mt-2 flex items-center justify-between rounded-xl border border-white/15 bg-bg px-3 py-3 normal-case tracking-normal">
+                      <span className="text-sm text-fg">{Boolean(form[field.name]) ? "Sim" : "Nao"}</span>
+                      <input
+                        checked={Boolean(form[field.name])}
+                        onChange={(e) => updateField(field, e.target.checked)}
+                        type="checkbox"
+                        className="h-5 w-5 accent-[var(--accent)]"
+                      />
+                    </span>
+                  ) : field.type === "json" ? (
+                    <textarea
+                      value={inputValue(form[field.name])}
+                      onChange={(e) => updateField(field, e.target.value)}
+                      rows={4}
+                      className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 font-mono text-xs normal-case tracking-normal text-fg outline-none focus:border-accent"
+                    />
+                  ) : (
+                    <>
+                      {field.type === "image" && (
+                        <div className="mt-2 rounded-2xl border border-white/10 bg-bg/70 p-3">
+                          <div className="flex gap-3">
+                            <PreviewImage
+                              src={localImagePreview[field.name] || rowValue(form, field.name)}
+                              label="Capa"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-bold text-fg">Capa da musica</p>
+                              <p className="mt-1 text-xs normal-case tracking-normal text-muted">
+                                Envie uma capa do celular/PC ou cole uma URL publica no campo abaixo.
+                              </p>
+                              <input
+                                onChange={(e) => void handleFile(field, e)}
+                                type="file"
+                                accept="image/*"
+                                className="mt-3 w-full text-xs normal-case tracking-normal text-muted"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <input
+                        value={inputValue(form[field.name])}
+                        onChange={(e) => updateField(field, e.target.value)}
+                        type={field.type === "number" ? "number" : "text"}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                        className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm normal-case tracking-normal text-fg outline-none focus:border-accent"
+                      />
+                    </>
+                  )}
+                  {field.help && <span className="mt-1 block text-[11px] normal-case tracking-normal text-muted">{field.help}</span>}
+                </label>
+              ))}
+            </div>
+            <AdminPreview config={config} form={form} />
+            <button
+              disabled={saving}
+              className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-bold text-bg disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? "Salvando..." : "Salvar musica"}
             </button>
             <div className="mt-4">
               <StatusMessage>{status}</StatusMessage>
