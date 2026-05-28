@@ -433,18 +433,22 @@ function inferFallbackEventDate(event: { date?: string; month?: string; day?: st
 }
 
 function fallbackEventRows() {
-  return fallbackCmsData.events.map((event, index) => ({
-    title: `${event.city} - ${event.venue}`,
-    event_date: inferFallbackEventDate(event),
-    event_time: "",
-    city: event.city,
-    venue: event.venue,
-    note: event.note,
-    ticket_url: event.ticketUrl || "",
-    status: event.status || "past",
-    active: true,
-    sort_order: index * 10,
-  }));
+  return fallbackCmsData.events.map((event, index) => {
+    const eventDate = inferFallbackEventDate(event);
+    const today = toDateKey(new Date());
+    return {
+      title: `${event.city} - ${event.venue}`,
+      event_date: eventDate,
+      event_time: event.eventTime || null,
+      city: event.city,
+      venue: event.venue,
+      note: event.note,
+      ticket_url: event.ticketUrl || "",
+      status: event.status || (eventDate && eventDate < today ? "past" : "scheduled"),
+      active: true,
+      sort_order: index * 10,
+    };
+  });
 }
 
 function fallbackMemberRows() {
@@ -2184,13 +2188,18 @@ function EntityEditor({
       return;
     }
     setStatus("Importando eventos padrao...");
-    const { error } = await supabase.from("site_events").insert(missing);
+    const payload = missing.map((event) => {
+      const copy: Row = { ...event };
+      if (!rowValue(copy, "event_time")) delete copy.event_time;
+      return copy;
+    });
+    const { error } = await supabase.from("site_events").insert(payload);
     if (error) {
       setStatus(error.message);
       return;
     }
     await load();
-    setStatus(`${missing.length} evento${missing.length > 1 ? "s" : ""} importado${missing.length > 1 ? "s" : ""}.`);
+    setStatus(`${payload.length} evento${payload.length > 1 ? "s" : ""} importado${payload.length > 1 ? "s" : ""}.`);
   }
 
   async function importFallbackMembers() {
@@ -2570,6 +2579,8 @@ function EntityEditor({
             </button>
           </div>
         )}
+
+        <StatusMessage>{status}</StatusMessage>
 
         <EventCalendar
           rows={rows}
