@@ -555,6 +555,10 @@ function inputClass() {
   return "mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-3 text-sm text-fg outline-none focus:border-accent";
 }
 
+function draggableId(row: Row) {
+  return String(row.id ?? "");
+}
+
 function AdminPreview({ config, form }: { config: EntityConfig; form: Row }) {
   if (config.table === "site_events") {
     return <EventPreview form={form} />;
@@ -737,11 +741,13 @@ function MembersSectionPreview({
   draft,
   editingId,
   onEdit,
+  onReorder,
 }: {
   rows: Row[];
   draft: Row;
   editingId: string | null;
   onEdit: (row: Row) => void;
+  onReorder: (draggedId: string, targetId: string) => void;
 }) {
   const mergedRows = useMemo(() => {
     const normalized = rows.map((row) =>
@@ -778,6 +784,16 @@ function MembersSectionPreview({
             <button
               key={String(member.id ?? memberKey(member))}
               type="button"
+              draggable={!isDraft}
+              onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", draggableId(member));
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                onReorder(e.dataTransfer.getData("text/plain"), draggableId(member));
+              }}
               onClick={() => !isDraft && onEdit(member)}
               className={`group relative w-[220px] shrink-0 overflow-hidden rounded-2xl border text-left transition hover:scale-[1.01] ${
                 isDraft || isEditing
@@ -936,11 +952,13 @@ function ReleasesSectionPreview({
   draft,
   editingId,
   onEdit,
+  onReorder,
 }: {
   rows: Row[];
   draft: Row;
   editingId: string | null;
   onEdit: (row: Row) => void;
+  onReorder: (draggedId: string, targetId: string) => void;
 }) {
   const mergedRows = useMemo(() => {
     const normalized = rows.map((row) =>
@@ -994,6 +1012,16 @@ function ReleasesSectionPreview({
             <button
               key={String(release.id ?? releaseKey(release))}
               type="button"
+              draggable={!isDraft}
+              onDragStart={(e) => {
+                e.dataTransfer.setData("text/plain", draggableId(release));
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                onReorder(e.dataTransfer.getData("text/plain"), draggableId(release));
+              }}
               onClick={() => !isDraft && onEdit(release)}
               className={`flex w-full gap-3 rounded-2xl border bg-bg/70 p-3 text-left transition hover:border-accent ${
                 isDraft || isEditing ? "border-accent ring-1 ring-accent/40" : "border-white/10"
@@ -1977,6 +2005,42 @@ function EntityEditor({
     setStatus("Musica duplicada como rascunho.");
   }
 
+  async function reorderCmsRows(table: TableName, effectiveRows: Row[], draggedId: string, targetId: string) {
+    if (!draggedId || !targetId || draggedId === targetId) return;
+    const ordered = [...effectiveRows].sort(
+      (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0),
+    );
+    const fromIndex = ordered.findIndex((row) => draggableId(row) === draggedId);
+    const toIndex = ordered.findIndex((row) => draggableId(row) === targetId);
+    if (fromIndex < 0 || toIndex < 0) return;
+    if (ordered[fromIndex]._fallback || ordered[toIndex]._fallback) {
+      setStatus("Para ordenar, primeiro use Trazer para o painel ou Importar.");
+      return;
+    }
+    const [moved] = ordered.splice(fromIndex, 1);
+    ordered.splice(toIndex, 0, moved);
+    const persisted = ordered.filter((row) => !row._fallback && row.id && row.id !== "__draft");
+    setRows((current) =>
+      current.map((row) => {
+        const index = persisted.findIndex((item) => item.id === row.id);
+        return index >= 0 ? { ...row, sort_order: index * 10 } : row;
+      }),
+    );
+    setStatus("Salvando nova ordem...");
+    const updates = persisted.map((row, index) =>
+      supabase.from(table).update({ sort_order: index * 10 }).eq("id", String(row.id)),
+    );
+    const results = await Promise.all(updates);
+    const error = results.find((result) => result.error)?.error;
+    if (error) {
+      setStatus(error.message);
+      await load();
+      return;
+    }
+    await load();
+    setStatus("Ordem atualizada.");
+  }
+
   async function handleFile(field: Field, e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -2264,6 +2328,9 @@ function EntityEditor({
           draft={form}
           editingId={editingId}
           onEdit={editRow}
+          onReorder={(draggedId, targetId) =>
+            void reorderCmsRows("site_members", effectiveMemberRows, draggedId, targetId)
+          }
         />
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
@@ -2468,6 +2535,9 @@ function EntityEditor({
           draft={form}
           editingId={editingId}
           onEdit={editRow}
+          onReorder={(draggedId, targetId) =>
+            void reorderCmsRows("site_releases", effectiveReleaseRows, draggedId, targetId)
+          }
         />
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
