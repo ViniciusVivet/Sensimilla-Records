@@ -7,6 +7,7 @@ import type {
 
 export type CmsMember = (typeof members)[number];
 export type CmsEvent = (typeof tourDates)[number] & {
+  title?: string;
   date?: string;
   eventTime?: string;
   status?: "scheduled" | "past" | "draft";

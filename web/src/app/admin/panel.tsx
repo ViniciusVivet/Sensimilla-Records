@@ -57,8 +57,8 @@ const configs: EntityConfig[] = [
     description: "Shows e datas que aparecem na secao Tour da home.",
     area: "Home / Tour",
     href: "/#tour",
-    titleField: "city",
-    summaryFields: ["event_date", "event_time", "venue", "note"],
+    titleField: "title",
+    summaryFields: ["event_date", "event_time", "city", "venue", "note"],
     defaults: {
       title: "",
       event_date: new Date().toISOString().slice(0, 10),
@@ -72,6 +72,7 @@ const configs: EntityConfig[] = [
       sort_order: 0,
     },
     fields: [
+      { name: "title", label: "Nome do evento", required: true, placeholder: "OFDM's - Sao Paulo" },
       { name: "event_date", label: "Data", type: "date", required: true },
       { name: "event_time", label: "Horario", type: "text", placeholder: "20:00" },
       { name: "city", label: "Cidade", required: true, placeholder: "Sao Paulo" },
@@ -557,7 +558,7 @@ function backstageTitle(row: Row) {
 }
 
 function eventTitle(row: Row) {
-  return rowValue(row, "title") || `${rowValue(row, "city") || "Evento"} - ${rowValue(row, "venue") || "sem local"}`;
+  return rowValue(row, "title") || rowValue(row, "venue") || rowValue(row, "city") || "Evento sem nome";
 }
 
 function formatEventDate(row: Row) {
@@ -710,8 +711,11 @@ function EventPreview({ form }: { form: Row }) {
             {shortMonthFormatter.format(parsed).replace(".", "")}
           </span>
         </div>
-        <p className="font-display mt-4 text-2xl">{rowValue(form, "city") || "Cidade"}</p>
-        <p className="text-sm text-muted">{rowValue(form, "venue") || "Local"}</p>
+        <p className="font-display mt-4 text-2xl">{eventTitle(form)}</p>
+        <p className="text-sm text-muted">
+          {rowValue(form, "city") || "Cidade"}
+          {rowValue(form, "venue") ? ` - ${rowValue(form, "venue")}` : " - Local"}
+        </p>
         {rowValue(form, "event_time") ? (
           <p className="mt-2 text-xs uppercase tracking-wider text-accent">
             {rowValue(form, "event_time")}
@@ -1594,7 +1598,7 @@ function EventCalendar({
         }}
         className="block w-full truncate rounded-md bg-accent/15 px-1.5 py-0.5 text-left text-[10px] font-bold text-accent hover:bg-accent hover:text-bg"
       >
-        {rowValue(event, "city") || rowValue(event, "venue") || "Evento"}
+        {eventTitle(event)}
       </button>
     ));
   }
@@ -1831,6 +1835,16 @@ function EventModal({
         </div>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <label className="block text-xs uppercase tracking-wider text-muted md:col-span-2">
+            Nome do evento *
+            <input
+              required
+              value={rowValue(form, "title")}
+              onChange={(e) => onChange("title", e.target.value)}
+              placeholder="OFDM's - Sao Paulo"
+              className={inputClass()}
+            />
+          </label>
           <label className="block text-xs uppercase tracking-wider text-muted">
             Data *
             <input
@@ -1867,15 +1881,6 @@ function EventModal({
               value={rowValue(form, "venue")}
               onChange={(e) => onChange("venue", e.target.value)}
               placeholder="Casa / evento"
-              className={inputClass()}
-            />
-          </label>
-          <label className="block text-xs uppercase tracking-wider text-muted md:col-span-2">
-            Nome interno
-            <input
-              value={rowValue(form, "title")}
-              onChange={(e) => onChange("title", e.target.value)}
-              placeholder="Opcional. Ex: OFDM's - Sao Paulo"
               className={inputClass()}
             />
           </label>

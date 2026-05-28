@@ -61,6 +61,7 @@ function mapMember(row: Row): CmsMember {
 function mapEvent(row: Row): CmsEvent {
   const date = asString(row.event_date);
   return {
+    title: asString(row.title) || undefined,
     date,
     eventTime: asString(row.event_time) || undefined,
     month: asString(row.month) || monthFromDate(date),

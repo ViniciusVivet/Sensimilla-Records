@@ -5,7 +5,7 @@ import { tourDates } from "@/data/site";
 import type { CmsEvent } from "@/lib/cms-types";
 
 export function TourSection({ events = tourDates }: { events?: CmsEvent[] }) {
-  const items = events.length ? events : tourDates;
+  const items: CmsEvent[] = events.length ? events : tourDates;
 
   return (
     <section id="tour" className="bg-bg px-6 py-24 md:px-12 md:py-32">
@@ -30,8 +30,10 @@ export function TourSection({ events = tourDates }: { events?: CmsEvent[] }) {
                     {d.month}
                   </span>
                 </div>
-                <p className="font-display mt-4 text-2xl">{d.city}</p>
-                <p className="text-sm text-muted">{d.venue}</p>
+                <p className="font-display mt-4 text-2xl">{d.title || d.city}</p>
+                <p className="text-sm text-muted">
+                  {d.title ? `${d.city} - ${d.venue}` : d.venue}
+                </p>
                 {d.eventTime ? (
                   <p className="mt-2 text-xs uppercase tracking-wider text-accent">
                     {d.eventTime.slice(0, 5)}
