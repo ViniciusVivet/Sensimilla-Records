@@ -4,3 +4,4 @@ node_modules/
 
 # configuracoes locais de agentes de IA
 .claude/
+CLAUDE.md
