@@ -30,15 +30,18 @@ export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
           className="bg-bg text-fg pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-0"
         >
           <HeroSection socialLinks={cmsData.socialLinks} media={cmsData.media} />
-          <BrandStatementSection />
+          <BrandStatementSection
+            manifestoLine={cmsData.media.manifestoLine}
+            manifestoStats={cmsData.media.manifestoStats}
+          />
           <RosterSection members={cmsData.members} />
           <TourSection events={cmsData.events} />
           <TypeOutlineSection />
           <FeaturedReleaseSection release={cmsData.featuredRelease} />
           <OutNowSection releases={cmsData.releases} />
           <LiveBridgeSection />
-          <ServicosTeaserSection />
-          <MerchSection products={cmsData.merchProducts} />
+          <ServicosTeaserSection whatsappNumber={cmsData.media.whatsappNumber} />
+          <MerchSection products={cmsData.merchProducts} whatsappNumber={cmsData.media.whatsappNumber} />
           <YoutubeHubSection videos={cmsData.youtubeVideos} />
           <EditorialSection photos={cmsData.editorialPhotos} />
           <VerticalReelSection videoId={cmsData.media.verticalReelVideoId} />

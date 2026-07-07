@@ -10,7 +10,13 @@ const stats = [
   { value: "Estúdio", label: "Próprio · ZL SP" },
 ];
 
-export function BrandStatementSection() {
+export function BrandStatementSection({
+  manifestoLine,
+  manifestoStats,
+}: {
+  manifestoLine?: string;
+  manifestoStats?: string;
+}) {
   return (
     <section
       id="manifesto"
@@ -24,7 +30,7 @@ export function BrandStatementSection() {
         </Reveal>
         <Reveal delay={0.15} className="mt-5 md:mt-7">
           <p className="max-w-xl text-base leading-relaxed text-bg/80 sm:text-lg md:text-xl">
-            {manifesto.line}
+            {manifestoLine || manifesto.line}
           </p>
         </Reveal>
 
@@ -43,7 +49,7 @@ export function BrandStatementSection() {
         </Reveal>
 
         <Reveal delay={0.25} className="mt-5 max-w-lg text-sm leading-relaxed text-bg/55 md:text-base">
-          {manifesto.stats}
+          {manifestoStats || manifesto.stats}
         </Reveal>
         <Reveal delay={0.3} className="mt-6">
           <span className="text-xs uppercase tracking-[0.35em] text-bg/50">
