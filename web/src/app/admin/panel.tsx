@@ -251,11 +251,19 @@ const configs: EntityConfig[] = [
 ];
 
 const settingFields = [
-  { key: "heroLogo", label: "Logo do hero" },
-  { key: "bannerImage", label: "Banner principal" },
-  { key: "footerBanner", label: "Banner do rodape" },
-  { key: "heroVideoSrc", label: "Video do hero" },
-  { key: "verticalReelVideoId", label: "ID do clipe vertical" },
+  { key: "heroLogo", label: "Logo do hero", group: "visual" },
+  { key: "bannerImage", label: "Banner principal", group: "visual" },
+  { key: "footerBanner", label: "Banner do rodape", group: "visual" },
+  { key: "heroVideoSrc", label: "Video do hero", group: "visual" },
+  { key: "verticalReelVideoId", label: "ID do clipe vertical", group: "visual" },
+  { key: "whatsappNumber", label: "Numero do WhatsApp", group: "contato", placeholder: "5511918540870", help: "Numero completo com DDI+DDD, sem espacos ou tracos." },
+  { key: "contactFormEmail", label: "E-mail do formulario de contato", group: "contato", placeholder: "contato@sensimillarecords.com" },
+  { key: "tagline", label: "Tagline do selo", group: "textos", placeholder: "É A SEN$I" },
+  { key: "manifestoLine", label: "Manifesto (linha principal)", group: "textos", type: "textarea" as const },
+  { key: "manifestoStats", label: "Manifesto (descricao do estudio)", group: "textos", type: "textarea" as const },
+  { key: "artistPlans", label: "Planos para artistas (JSON)", group: "servicos", type: "json" as const, help: "Array de planos. Cada item: {tag, price, period, description, features: [...], highlight, badge}" },
+  { key: "brandPlans", label: "Planos para marcas (JSON)", group: "servicos", type: "json" as const, help: "Mesmo formato dos planos de artista." },
+  { key: "avulsoServices", label: "Servicos avulsos (JSON)", group: "servicos", type: "json" as const, help: "Array de {label, price}. Ex: [{\"label\":\"Gravacao\",\"price\":\"R$ 150/h\"}]" },
 ];
 
 function inputValue(value: unknown) {
@@ -3625,10 +3633,10 @@ function SettingsEditor({ supabase }: { supabase: SupabaseClient }) {
     <section className="max-w-5xl space-y-6">
       <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-panel p-5 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-accent">Home / Visual</p>
-          <h2 className="font-display mt-1 text-4xl">Midias globais</h2>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Configuracoes gerais</p>
+          <h2 className="font-display mt-1 text-4xl">Config do site</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            Ajuste logo, banners, video do hero e clipe vertical. Os previews abaixo mostram enquadramento antes de salvar.
+            Midias, contato, textos e precos. Tudo que aparece no site sem precisar mexer no codigo.
           </p>
         </div>
         <a
@@ -3911,6 +3919,101 @@ function SettingsEditor({ supabase }: { supabase: SupabaseClient }) {
           </div>
         </div>
 
+        {/* Contato */}
+        <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            Contato e WhatsApp
+          </p>
+          <p className="text-xs text-muted">
+            O numero do WhatsApp aparece no botao flutuante, na secao de merch, nos servicos e na pagina de imprensa.
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            {settingFields
+              .filter((f) => f.group === "contato")
+              .map((field) => (
+                <label key={field.key} className="block text-xs uppercase tracking-wider text-muted">
+                  {field.label}
+                  <input
+                    value={settings[field.key] ?? ""}
+                    onChange={(e) =>
+                      setSettings((current) => ({ ...current, [field.key]: e.target.value }))
+                    }
+                    placeholder={field.placeholder}
+                    className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+                  />
+                  {field.help && <span className="mt-1 block text-[11px] text-muted/70">{field.help}</span>}
+                </label>
+              ))}
+          </div>
+        </div>
+
+        {/* Textos do site */}
+        <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            Textos do site
+          </p>
+          <p className="text-xs text-muted">
+            Tagline e manifesto que aparecem na home. Deixe em branco para usar os textos padrao.
+          </p>
+          <div className="space-y-4">
+            {settingFields
+              .filter((f) => f.group === "textos")
+              .map((field) => (
+                <label key={field.key} className="block text-xs uppercase tracking-wider text-muted">
+                  {field.label}
+                  {field.type === "textarea" ? (
+                    <textarea
+                      value={settings[field.key] ?? ""}
+                      onChange={(e) =>
+                        setSettings((current) => ({ ...current, [field.key]: e.target.value }))
+                      }
+                      placeholder={field.placeholder}
+                      rows={3}
+                      className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+                    />
+                  ) : (
+                    <input
+                      value={settings[field.key] ?? ""}
+                      onChange={(e) =>
+                        setSettings((current) => ({ ...current, [field.key]: e.target.value }))
+                      }
+                      placeholder={field.placeholder}
+                      className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+                    />
+                  )}
+                </label>
+              ))}
+          </div>
+        </div>
+
+        {/* Servicos e precos */}
+        <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">
+            Servicos e precos
+          </p>
+          <p className="text-xs text-muted">
+            Configure planos e precos da pagina /servicos. Use JSON valido. Deixe em branco para usar os valores padrao do codigo.
+          </p>
+          <div className="space-y-4">
+            {settingFields
+              .filter((f) => f.group === "servicos")
+              .map((field) => (
+                <label key={field.key} className="block text-xs uppercase tracking-wider text-muted">
+                  {field.label}
+                  <textarea
+                    value={settings[field.key] ?? ""}
+                    onChange={(e) =>
+                      setSettings((current) => ({ ...current, [field.key]: e.target.value }))
+                    }
+                    rows={6}
+                    className="mt-2 w-full rounded-xl border border-white/15 bg-bg px-3 py-2 font-mono text-xs text-fg outline-none focus:border-accent"
+                  />
+                  {field.help && <span className="mt-1 block text-[11px] text-muted/70">{field.help}</span>}
+                </label>
+              ))}
+          </div>
+        </div>
+
         <button
           type="button"
           onClick={() => void save()}
@@ -4062,9 +4165,9 @@ export function AdminPanel() {
                 }`}
               />
               <span className="block truncate pl-2 text-[10px] font-bold uppercase tracking-wider opacity-65">
-                Visual
+                Geral
               </span>
-              <span className="font-display block pl-2 text-2xl leading-none">Midias</span>
+              <span className="font-display block pl-2 text-2xl leading-none">Config</span>
             </button>
           </nav>
         </section>

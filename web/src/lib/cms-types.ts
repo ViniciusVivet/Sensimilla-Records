@@ -51,18 +51,18 @@ export type CmsMediaSettings = {
   heroLogo?: string;
   bannerImage?: string;
   footerBanner?: string;
-  /**
-   * Ajustes visuais para como o banner aparece (zoom + pan).
-   * Salvo como string JSON no Supabase (ex.: {"zoom":1,"x":0,"y":0}).
-   */
   bannerImageTransform?: string;
-  /**
-   * Ajustes visuais para o banner do rodape (zoom + pan).
-   * Salvo como string JSON no Supabase (ex.: {"zoom":1,"x":0,"y":0}).
-   */
   footerBannerTransform?: string;
   heroVideoSrc?: string;
   verticalReelVideoId?: string;
+  whatsappNumber?: string;
+  tagline?: string;
+  manifestoLine?: string;
+  manifestoStats?: string;
+  artistPlans?: string;
+  brandPlans?: string;
+  avulsoServices?: string;
+  contactFormEmail?: string;
 };
 
 export type PublicCmsData = {
