@@ -290,16 +290,16 @@ export type TourDate = {
 };
 
 export const tourDates: TourDate[] = [
-  {
-    month: "ABR",
-    day: "11",
-    city: "São Paulo",
-    venue: "OFDM's",
-    note: "Ingressos no link oficial",
-    ticketUrl:
-      "https://moonz.com.br/event/ofdm-s-sao-palo/Rp7Uqg95h/Msvsz7bF0",
-  },
-  // Placeholders removidos — adicionar eventos reais conforme confirmados.
+  // Adicionar eventos reais conforme confirmados.
+  // Exemplo:
+  // {
+  //   month: "JUL",
+  //   day: "25",
+  //   city: "São Paulo",
+  //   venue: "Nome do local",
+  //   note: "Ingressos em breve",
+  //   ticketUrl: "https://...",
+  // },
 ];
 
 export const merchProducts = [
