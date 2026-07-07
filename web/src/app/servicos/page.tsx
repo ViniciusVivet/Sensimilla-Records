@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getSiteUrl } from "@/lib/site-config";
+import { WHATSAPP_NUMBER, buildWhatsAppUrl, formatPhoneDisplay } from "@/lib/constants";
+import { getPublicCmsData } from "@/lib/cms-data";
 
 const siteUrl = getSiteUrl();
 
@@ -159,6 +161,8 @@ const diferenciais = [
   },
 ];
 
+type PlanData = (typeof artistPlans)[number];
+
 function PlanCard({
   tag,
   highlight,
@@ -167,7 +171,8 @@ function PlanCard({
   period,
   description,
   features,
-}: (typeof artistPlans)[number]) {
+  waNumber,
+}: PlanData & { waNumber?: string }) {
   return (
     <div
       className={`group relative flex flex-col rounded-3xl border p-6 transition-all duration-500 hover:scale-[1.02] md:p-8 ${
@@ -198,7 +203,7 @@ function PlanCard({
         ))}
       </ul>
       <a
-        href={`https://wa.me/5511918540870?text=${encodeURIComponent(`Oi, vim pelo site da Sensimilla e quero saber mais sobre o plano ${tag}`)}`}
+        href={buildWhatsAppUrl(`Oi, vim pelo site da Sensimilla e quero saber mais sobre o plano ${tag}`, waNumber)}
         target="_blank"
         rel="noopener noreferrer"
         className={`mt-8 block rounded-full py-3 text-center text-sm font-semibold uppercase tracking-wider transition ${
@@ -225,7 +230,23 @@ function SectionDivider({ label }: { label: string }) {
   );
 }
 
-export default function ServicosPage() {
+function safeJsonArray<T>(json: string | undefined, fallback: T[]): T[] {
+  if (!json) return fallback;
+  try {
+    const parsed = JSON.parse(json);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export default async function ServicosPage() {
+  const cmsData = await getPublicCmsData();
+  const waNumber = cmsData.media.whatsappNumber;
+  const cmsArtistPlans = safeJsonArray<PlanData>(cmsData.media.artistPlans, artistPlans);
+  const cmsBrandPlans = safeJsonArray<PlanData>(cmsData.media.brandPlans, brandPlans);
+  const cmsAvulso = safeJsonArray<{ label: string; price: string }>(cmsData.media.avulsoServices, avulso);
+
   return (
     <div className="relative min-h-full bg-bg text-fg">
       {/* Hero */}
@@ -277,7 +298,7 @@ export default function ServicosPage() {
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <a
-              href="https://wa.me/5511918540870?text=Oi%2C%20vim%20pelo%20site%20e%20quero%20saber%20sobre%20os%20servicos"
+              href={buildWhatsAppUrl("Oi, vim pelo site e quero saber sobre os servicos", waNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(200,242,74,0.15)]"
@@ -305,8 +326,8 @@ export default function ServicosPage() {
           Planos mensais e por projeto para quem quer crescer consistente.
         </p>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {artistPlans.map((plan) => (
-            <PlanCard key={plan.tag} {...plan} />
+          {cmsArtistPlans.map((plan) => (
+            <PlanCard key={plan.tag} {...plan} waNumber={waNumber} />
           ))}
         </div>
 
@@ -320,8 +341,8 @@ export default function ServicosPage() {
             Conteúdo com qualidade de gravadora para quem quer se comunicar de verdade.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {brandPlans.map((plan) => (
-              <PlanCard key={plan.tag} {...plan} />
+            {cmsBrandPlans.map((plan) => (
+              <PlanCard key={plan.tag} {...plan} waNumber={waNumber} />
             ))}
           </div>
         </div>
@@ -358,7 +379,7 @@ export default function ServicosPage() {
           </h2>
           <div className="mx-auto mt-10 max-w-xl">
             <div className="overflow-hidden rounded-3xl border border-white/10 divide-y divide-white/5">
-              {avulso.map((item) => (
+              {cmsAvulso.map((item) => (
                 <div
                   key={item.label}
                   className="flex items-center justify-between px-6 py-5 transition hover:bg-white/[0.02]"
@@ -452,12 +473,12 @@ export default function ServicosPage() {
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <a
-              href="https://wa.me/5511918540870?text=Oi%2C%20vim%20pelo%20site%20da%20Sensimilla%20Records%20e%20quero%20saber%20mais%20sobre%20os%20servicos"
+              href={buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records e quero saber mais sobre os servicos", waNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-accent px-10 py-3.5 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(200,242,74,0.15)]"
             >
-              WhatsApp · (11) 91854-0870
+              WhatsApp · {formatPhoneDisplay(waNumber || WHATSAPP_NUMBER)}
             </a>
             <a
               href="https://www.instagram.com/sensi.rec/"

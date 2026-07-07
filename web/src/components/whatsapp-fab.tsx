@@ -1,7 +1,8 @@
 "use client";
 
-const WA_URL =
-  "https://wa.me/5511918540870?text=Oi%2C%20vim%20pelo%20site%20da%20Sensimilla%20Records";
+import { buildWhatsAppUrl } from "@/lib/constants";
+
+const WA_URL = buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records");
 
 export function WhatsAppFab() {
   return (

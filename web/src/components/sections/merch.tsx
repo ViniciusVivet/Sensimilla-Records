@@ -3,23 +3,26 @@
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { merchProducts } from "@/data/site";
+import { buildWhatsAppUrl } from "@/lib/constants";
 import type { CmsMerchProduct } from "@/lib/cms-types";
 
-const WA_NUMBER = "5511918540870";
-
-function buildWhatsAppUrl(productName: string, price: string) {
-  const msg = `Oi, vim pelo site da Sensimilla e tenho interesse na ${productName} (${price}). Ainda tem disponível?`;
-  return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+function buildMerchWhatsAppUrl(productName: string, price: string, waNumber?: string) {
+  return buildWhatsAppUrl(
+    `Oi, vim pelo site da Sensimilla e tenho interesse na ${productName} (${price}). Ainda tem disponível?`,
+    waNumber,
+  );
 }
 
 function MerchModal({
   startIndex,
   products,
   onClose,
+  whatsappNumber,
 }: {
   startIndex: number;
   products: CmsMerchProduct[];
   onClose: () => void;
+  whatsappNumber?: string;
 }) {
   const [idx, setIdx] = useState(startIndex);
   const product = products[idx];
@@ -100,7 +103,7 @@ function MerchModal({
             {product.price}
           </p>
           <a
-            href={buildWhatsAppUrl(product.name, product.price)}
+            href={buildMerchWhatsAppUrl(product.name, product.price, whatsappNumber)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-5 inline-block rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_20px_rgba(200,242,74,0.2)]"
@@ -118,8 +121,10 @@ function MerchModal({
 
 export function MerchSection({
   products = merchProducts,
+  whatsappNumber,
 }: {
   products?: CmsMerchProduct[];
+  whatsappNumber?: string;
 }) {
   const [modalIndex, setModalIndex] = useState<number | null>(null);
   const items = products.length ? products : merchProducts;
@@ -188,6 +193,7 @@ export function MerchSection({
           startIndex={modalIndex}
           products={items}
           onClose={() => setModalIndex(null)}
+          whatsappNumber={whatsappNumber}
         />
       )}
     </>

@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { buildWhatsAppUrl } from "@/lib/constants";
 
-export function ServicosTeaserSection() {
+export function ServicosTeaserSection({ whatsappNumber }: { whatsappNumber?: string }) {
   return (
     <section className="bg-bg px-6 py-20 md:px-12 md:py-28">
       <div className="mx-auto max-w-6xl">
@@ -34,7 +35,7 @@ export function ServicosTeaserSection() {
               Ver planos e preços
             </Link>
             <a
-              href="https://wa.me/5511918540870"
+              href={buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records", whatsappNumber)}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-white/20 px-8 py-3 text-sm font-medium text-fg transition hover:border-accent/50 hover:text-accent"

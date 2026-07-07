@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getSiteUrl } from "@/lib/site-config";
+import { WHATSAPP_NUMBER, formatPhoneDisplay } from "@/lib/constants";
+import { getPublicCmsData } from "@/lib/cms-data";
 import { selo } from "@/data/dossie";
 import { members, socialLinks } from "@/data/site";
 
@@ -21,7 +23,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ImprensaPage() {
+export default async function ImprensaPage() {
+  const cmsData = await getPublicCmsData();
+  const waNumber = cmsData.media.whatsappNumber || WHATSAPP_NUMBER;
   return (
     <div className="min-h-full bg-bg text-fg">
       <header className="border-b border-white/10 px-6 py-4 md:px-10">
@@ -133,10 +137,10 @@ export default function ImprensaPage() {
               <dt className="text-muted shrink-0 w-32">Contato</dt>
               <dd>
                 <a
-                  href="https://wa.me/5511918540870"
+                  href={`https://wa.me/${waNumber}`}
                   className="text-accent hover:underline"
                 >
-                  (11) 91854-0870
+                  {formatPhoneDisplay(waNumber)}
                 </a>
               </dd>
             </div>
