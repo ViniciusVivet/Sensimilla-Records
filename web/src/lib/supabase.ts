@@ -15,5 +15,8 @@ export function createSupabaseBrowserClient(): SupabaseClient | null {
 }
 
 export function createSupabaseServerClient(): SupabaseClient | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (url && serviceKey) return createClient(url, serviceKey);
   return createSupabaseBrowserClient();
 }
