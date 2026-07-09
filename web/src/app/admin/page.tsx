@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AdminPanel } from "./panel";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Admin",
   robots: { index: false, follow: false },
