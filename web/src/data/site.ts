@@ -12,11 +12,11 @@ export const navPills = [
   { id: "hero", label: "Início", href: "#inicio" },
   { id: "manifesto", label: "Manifesto", href: "#manifesto" },
   { id: "roster", label: "Equipe", href: "#equipe" },
-  { id: "tour", label: "Tour", href: "#tour" },
+  { id: "agenda", label: "Agenda", href: "#agenda" },
   { id: "backstage", label: "Backstage", href: "#backstage" },
   { id: "release", label: "Destaque", href: "#destaque" },
-  { id: "catalog", label: "Out Now", href: "#out-now" },
-  { id: "merch", label: "Merch", href: "#merch" },
+  { id: "catalog", label: "Ouça Agora", href: "#ouca-agora" },
+  { id: "loja", label: "Loja", href: "#loja" },
   { id: "youtube", label: "YouTube", href: "#youtube" },
 ] as const;
 
@@ -340,11 +340,11 @@ export const reelPoster = IMG.vivet;
 
 export const footerLinks = [
   { label: "Início", href: "/" },
-  { label: "Shows", href: "/#tour" },
-  { label: "Discografia", href: "/#out-now" },
+  { label: "Agenda", href: "/#agenda" },
+  { label: "Ouça Agora", href: "/#ouca-agora" },
   { label: "YouTube", href: "/#youtube" },
   { label: "Equipe", href: "/#equipe" },
-  { label: "Merch", href: "/#merch" },
+  { label: "Loja", href: "/#loja" },
   { label: "Serviços", href: "/servicos" },
   { label: "Imprensa", href: "/imprensa" },
   { label: "Contato", href: "/contato" },

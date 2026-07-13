@@ -132,7 +132,7 @@ export function MerchSection({
   return (
     <>
       <section
-        id="merch"
+        id="loja"
         className="bg-lime-field px-6 py-24 text-fg md:px-12 md:py-32"
       >
         <div className="mx-auto max-w-6xl">
@@ -141,7 +141,7 @@ export function MerchSection({
               <p className="text-xs uppercase tracking-[0.35em] text-fg/50">
                 Loja · equipamento & wear
               </p>
-              <h2 className="font-display mt-2 text-5xl md:text-7xl">Merch</h2>
+              <h2 className="font-display mt-2 text-5xl md:text-7xl">Loja</h2>
             </div>
             <p className="max-w-sm text-sm text-fg/65">
               Peças limitadas e parcerias com estúdio. Som limpo, estética crua.

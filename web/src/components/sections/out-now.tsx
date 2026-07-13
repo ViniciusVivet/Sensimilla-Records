@@ -53,13 +53,13 @@ export function OutNowSection({
   return (
     <section
       ref={root}
-      id="out-now"
+      id="ouca-agora"
       className="relative bg-bg px-6 py-24 md:px-12 md:py-32"
     >
       <div className="mx-auto max-w-5xl">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <h2 className="font-display text-5xl md:text-7xl">Out Now</h2>
+            <h2 className="font-display text-5xl md:text-7xl">Ouça Agora</h2>
             <p className="mt-2 max-w-sm text-sm text-muted">
               Lançamentos recentes do catálogo — rap, trap e o som da Zona Leste.
             </p>
