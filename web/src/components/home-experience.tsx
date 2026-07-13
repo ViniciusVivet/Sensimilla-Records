@@ -8,13 +8,10 @@ import { BrandStatementSection } from "@/components/sections/brand-statement";
 import { BackstageSpotlightSection } from "@/components/sections/backstage-spotlight";
 import { RosterSection } from "@/components/sections/roster";
 import { TypeOutlineSection } from "@/components/sections/type-outline";
-import { FeaturedReleaseSection } from "@/components/sections/featured-release";
 import { OutNowSection } from "@/components/sections/out-now";
-import { LiveBridgeSection } from "@/components/sections/live-bridge";
 import { TourSection } from "@/components/sections/tour";
 import { MerchSection } from "@/components/sections/merch";
 import { YoutubeHubSection } from "@/components/sections/youtube-hub";
-import { ServicosTeaserSection } from "@/components/sections/servicos-teaser";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { NavPills } from "@/components/nav-pills";
 import type { PublicCmsData } from "@/lib/cms-types";
@@ -37,10 +34,7 @@ export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
           <TourSection events={cmsData.events} />
           <TypeOutlineSection />
           <BackstageSpotlightSection />
-          <FeaturedReleaseSection release={cmsData.featuredRelease} />
-          <OutNowSection releases={cmsData.releases} />
-          <LiveBridgeSection />
-          <ServicosTeaserSection whatsappNumber={cmsData.media.whatsappNumber} />
+          <OutNowSection releases={cmsData.releases} whatsappNumber={cmsData.media.whatsappNumber} />
           <MerchSection products={cmsData.merchProducts} whatsappNumber={cmsData.media.whatsappNumber} />
           <YoutubeHubSection videos={cmsData.youtubeVideos} />
           <SiteFooter socialLinks={cmsData.socialLinks} media={cmsData.media} />

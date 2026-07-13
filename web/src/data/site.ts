@@ -14,7 +14,6 @@ export const navPills = [
   { id: "roster", label: "Equipe", href: "#equipe" },
   { id: "agenda", label: "Agenda", href: "#agenda" },
   { id: "backstage", label: "Backstage", href: "#backstage" },
-  { id: "release", label: "Destaque", href: "#destaque" },
   { id: "catalog", label: "Ouça Agora", href: "#ouca-agora" },
   { id: "loja", label: "Loja", href: "#loja" },
   { id: "youtube", label: "YouTube", href: "#youtube" },

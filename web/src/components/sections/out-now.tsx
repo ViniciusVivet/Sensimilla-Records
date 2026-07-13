@@ -4,17 +4,21 @@ import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import { catalogReleases } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
 import { useMiniPlayer } from "@/components/mini-player-context";
+import { buildWhatsAppUrl } from "@/lib/constants";
 import type { CmsRelease } from "@/lib/cms-types";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function OutNowSection({
   releases = catalogReleases,
+  whatsappNumber,
 }: {
   releases?: CmsRelease[];
+  whatsappNumber?: string;
 }) {
   const root = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
@@ -161,6 +165,36 @@ export function OutNowSection({
             );
           })}
         </ul>
+
+        {/* CTA — Grave com a gente */}
+        <div className="mt-16 overflow-hidden rounded-2xl border border-accent/15 bg-accent/[0.04] px-6 py-10 text-center md:mt-20 md:px-12 md:py-14">
+          <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-accent/70">
+            Sensimilla Records · Estúdio
+          </p>
+          <h3 className="font-display mt-3 text-3xl text-white md:text-5xl">
+            GRAVE COM A GENTE
+          </h3>
+          <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-fg/50">
+            A mesma estrutura que produz os lançamentos do selo — aberta pra
+            você. Gravação, mix & master, clipes e distribuição digital.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/servicos"
+              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(200,242,74,0.15)]"
+            >
+              Ver planos e preços
+            </Link>
+            <a
+              href={buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records e quero saber sobre gravar com vocês", whatsappNumber)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-white/15 px-8 py-3 text-sm text-fg/70 transition hover:border-accent/40 hover:text-accent"
+            >
+              Chamar no WhatsApp
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );
