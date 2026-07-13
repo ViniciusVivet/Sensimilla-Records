@@ -8,6 +8,7 @@ import { BrandStatementSection } from "@/components/sections/brand-statement";
 import { BackstageSpotlightSection } from "@/components/sections/backstage-spotlight";
 import { RosterSection } from "@/components/sections/roster";
 import { TypeOutlineSection } from "@/components/sections/type-outline";
+import { FeaturedReleaseSection } from "@/components/sections/featured-release";
 import { OutNowSection } from "@/components/sections/out-now";
 import { TourSection } from "@/components/sections/tour";
 import { MerchSection } from "@/components/sections/merch";
@@ -34,6 +35,7 @@ export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
           <TourSection events={cmsData.events} />
           <TypeOutlineSection />
           <BackstageSpotlightSection />
+          <FeaturedReleaseSection release={cmsData.featuredRelease} />
           <OutNowSection releases={cmsData.releases} whatsappNumber={cmsData.media.whatsappNumber} />
           <MerchSection products={cmsData.merchProducts} whatsappNumber={cmsData.media.whatsappNumber} />
           <YoutubeHubSection videos={cmsData.youtubeVideos} />
