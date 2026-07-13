@@ -246,6 +246,55 @@ function useDragScroll(ref: React.RefObject<HTMLDivElement | null>) {
   return hasMoved;
 }
 
+/** On desktop, convert vertical wheel into horizontal scroll on the cards.
+ *  Let page scroll resume when hitting the first/last card. */
+function useWheelToScroll(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // Only on pointer devices (no touch)
+    const mq = window.matchMedia("(pointer: fine)");
+    if (!mq.matches) return;
+
+    let isHovering = false;
+
+    const onEnter = () => { isHovering = true; };
+    const onLeave = () => { isHovering = false; };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!isHovering) return;
+
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 0) return;
+
+      const atStart = el.scrollLeft <= 1;
+      const atEnd = el.scrollLeft >= maxScroll - 1;
+      const scrollingDown = e.deltaY > 0;
+      const scrollingUp = e.deltaY < 0;
+
+      // At limits — let page scroll normally
+      if (atEnd && scrollingDown) return;
+      if (atStart && scrollingUp) return;
+
+      // Otherwise hijack into horizontal
+      e.preventDefault();
+      el.scrollBy({ left: e.deltaY, behavior: "auto" });
+    };
+
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
+    // Must be { passive: false } to allow preventDefault
+    el.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("wheel", onWheel);
+    };
+  }, [ref]);
+}
+
 export function RosterSection({ members = roster.members }: { members?: Member[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -253,6 +302,9 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const hasDragged = useDragScroll(scrollRef);
   const items = members.length ? members : roster.members;
+
+  // Desktop: scroll vertical → horizontal nos cards
+  useWheelToScroll(scrollRef);
 
   const featuredIndex = useMemo(() => {
     const i = items.findIndex((m) => m.id === roster.featuredMemberId);
@@ -328,7 +380,7 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
 
       {/* Carrossel com setas laterais */}
       <div className="relative z-10 mt-10 md:mt-12">
-        {/* Seta esquerda — posicionada depois dos pills de navegacao */}
+        {/* Seta esquerda */}
         <button
           type="button"
           onClick={() => scroll("left")}
@@ -348,7 +400,6 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
           ›
         </button>
 
-        {/* Recuo no wrapper (nao no overflow-x): evita snap/scroll anchoring resetarem scrollLeft quando imagens carregam ou ScrollTrigger refresca */}
         <div className="pl-6 pr-6 md:pl-[154px] lg:pl-[162px] md:pr-12">
           <div
             ref={scrollRef}
@@ -418,6 +469,11 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
             })}
           </div>
         </div>
+
+        {/* Hint de scroll — só desktop */}
+        <p className="mt-2 hidden text-center text-[10px] uppercase tracking-[0.3em] text-muted/40 md:block">
+          Role para navegar
+        </p>
       </div>
 
       {/* Modal de detalhe do membro */}
