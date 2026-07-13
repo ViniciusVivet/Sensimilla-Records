@@ -67,12 +67,13 @@ export function NavPills() {
           : "bg-transparent"
       }`}
     >
-      <nav
-        ref={navRef}
-        className="scrollbar-hide relative mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-3 md:justify-center md:gap-2 md:px-6"
-        aria-label="Seções"
-      >
-        {navPills.map((item) => {
+      <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-3 md:px-6">
+        <nav
+          ref={navRef}
+          className="scrollbar-hide relative flex min-w-0 flex-1 items-center gap-1 overflow-x-auto md:justify-center md:gap-2"
+          aria-label="Seções"
+        >
+          {navPills.map((item) => {
           const id = item.href.replace("#", "");
           const active = activeId === id;
           return (
@@ -91,15 +92,26 @@ export function NavPills() {
           );
         })}
 
-        {/* Underline animado */}
-        <span
-          className="pointer-events-none absolute bottom-1.5 h-[2px] rounded-full bg-accent transition-all duration-300 ease-out"
-          style={{
-            left: underline.left,
-            width: underline.width,
-          }}
-        />
-      </nav>
+          {/* Underline animado */}
+          <span
+            className="pointer-events-none absolute bottom-1.5 h-[2px] rounded-full bg-accent transition-all duration-300 ease-out"
+            style={{
+              left: underline.left,
+              width: underline.width,
+            }}
+          />
+        </nav>
+
+        {/* Botao Servicos persistente */}
+        <a
+          href="/servicos"
+          className={`shrink-0 rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-accent backdrop-blur-sm transition-all duration-300 hover:bg-accent hover:text-bg ${
+            scrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+          }`}
+        >
+          Serviços
+        </a>
+      </div>
     </header>
   );
 }
