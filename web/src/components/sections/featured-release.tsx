@@ -14,7 +14,7 @@ export function FeaturedReleaseSection({
 
   return (
     <section
-      id="ouca-agora"
+      id="destaque-release"
       className="bg-sage px-6 py-24 text-bg md:px-16 md:py-32"
     >
       <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-center md:gap-16">

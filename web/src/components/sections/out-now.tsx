@@ -57,7 +57,7 @@ export function OutNowSection({
   return (
     <section
       ref={root}
-      id="catalogo"
+      id="ouca-agora"
       className="relative bg-bg px-6 py-24 md:px-12 md:py-32"
     >
       <div className="mx-auto max-w-5xl">
