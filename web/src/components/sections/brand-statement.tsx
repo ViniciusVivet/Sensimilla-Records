@@ -6,7 +6,7 @@ import { manifesto, members, catalogReleases } from "@/data/site";
 const stats = [
   { value: `${members.length}`, label: "Artistas no selo" },
   { value: `${catalogReleases.length}+`, label: "Releases" },
-  { value: "100k+", label: "Streams combinados" },
+  { value: "1M+", label: "Streams combinados" },
   { value: "Estúdio", label: "Próprio · ZL SP" },
 ];
 
