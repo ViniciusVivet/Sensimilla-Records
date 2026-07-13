@@ -14,7 +14,6 @@ import { LiveBridgeSection } from "@/components/sections/live-bridge";
 import { TourSection } from "@/components/sections/tour";
 import { MerchSection } from "@/components/sections/merch";
 import { YoutubeHubSection } from "@/components/sections/youtube-hub";
-import { EditorialSection } from "@/components/sections/editorial";
 import { VerticalReelSection } from "@/components/sections/vertical-reel";
 import { ServicosTeaserSection } from "@/components/sections/servicos-teaser";
 import { SiteFooter } from "@/components/sections/site-footer";
@@ -35,17 +34,16 @@ export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
             manifestoLine={cmsData.media.manifestoLine}
             manifestoStats={cmsData.media.manifestoStats}
           />
-          <BackstageSpotlightSection />
           <RosterSection members={cmsData.members} />
           <TourSection events={cmsData.events} />
           <TypeOutlineSection />
+          <BackstageSpotlightSection />
           <FeaturedReleaseSection release={cmsData.featuredRelease} />
           <OutNowSection releases={cmsData.releases} />
           <LiveBridgeSection />
           <ServicosTeaserSection whatsappNumber={cmsData.media.whatsappNumber} />
           <MerchSection products={cmsData.merchProducts} whatsappNumber={cmsData.media.whatsappNumber} />
           <YoutubeHubSection videos={cmsData.youtubeVideos} />
-          <EditorialSection photos={cmsData.editorialPhotos} />
           <VerticalReelSection videoId={cmsData.media.verticalReelVideoId} />
           <SiteFooter socialLinks={cmsData.socialLinks} media={cmsData.media} />
         </main>

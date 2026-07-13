@@ -11,14 +11,13 @@ import {
 export const navPills = [
   { id: "hero", label: "Início", href: "#inicio" },
   { id: "manifesto", label: "Manifesto", href: "#manifesto" },
-  { id: "backstage", label: "Backstage", href: "#backstage" },
   { id: "roster", label: "Equipe", href: "#equipe" },
   { id: "tour", label: "Tour", href: "#tour" },
+  { id: "backstage", label: "Backstage", href: "#backstage" },
   { id: "release", label: "Destaque", href: "#destaque" },
   { id: "catalog", label: "Out Now", href: "#out-now" },
   { id: "merch", label: "Merch", href: "#merch" },
   { id: "youtube", label: "YouTube", href: "#youtube" },
-  { id: "editorial", label: "Visuais", href: "#visuais" },
 ] as const;
 
 /** Redes globais (hero + rodapé) — fonte: `dossie.ts` → `selo`. */
