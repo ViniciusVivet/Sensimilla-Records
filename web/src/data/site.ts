@@ -11,6 +11,7 @@ import {
 export const navPills = [
   { id: "hero", label: "Início", href: "#inicio" },
   { id: "manifesto", label: "Manifesto", href: "#manifesto" },
+  { id: "backstage", label: "Backstage", href: "#backstage" },
   { id: "roster", label: "Equipe", href: "#equipe" },
   { id: "tour", label: "Tour", href: "#tour" },
   { id: "release", label: "Destaque", href: "#destaque" },
