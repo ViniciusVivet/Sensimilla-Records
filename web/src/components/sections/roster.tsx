@@ -3,6 +3,7 @@
 import { useRef, useMemo, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { roster, type Member } from "@/data/site";
+import { useReducedMotion } from "@/components/reduced-motion-provider";
 
 function MemberModal({
   member,
@@ -200,111 +201,76 @@ function MemberModal({
   );
 }
 
-function useDragScroll(ref: React.RefObject<HTMLDivElement | null>) {
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
-  const hasMoved = useRef(false);
+function MemberCard({
+  member,
+  isFeatured,
+  onClick,
+}: {
+  member: Member;
+  isFeatured: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <article
+      className={`group relative shrink-0 overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer select-none ${
+        isFeatured
+          ? "border-accent/40 ring-1 ring-accent/30"
+          : "border-white/10"
+      }`}
+      style={{ width: "min(280px, 72vw)" }}
+      onClick={onClick}
+    >
+      <div className="relative aspect-[3/4] w-full overflow-hidden">
+        {member.image ? (
+          <Image
+            src={member.image}
+            alt={member.name}
+            fill
+            className="pointer-events-none object-cover transition duration-700 group-hover:scale-[1.03]"
+            sizes="280px"
+            draggable={false}
+          />
+        ) : (
+          <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
+            <span className="font-display text-5xl text-fg/25 md:text-6xl">
+              ?
+            </span>
+            <span className="mt-2 text-xs uppercase tracking-[0.25em] text-fg/40">
+              Em breve
+            </span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      </div>
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const onDown = (e: MouseEvent) => {
-      isDragging.current = true;
-      hasMoved.current = false;
-      startX.current = e.pageX - el.offsetLeft;
-      scrollLeft.current = el.scrollLeft;
-      el.style.cursor = "grabbing";
-    };
-
-    const onMove = (e: MouseEvent) => {
-      if (!isDragging.current) return;
-      e.preventDefault();
-      const x = e.pageX - el.offsetLeft;
-      const walk = x - startX.current;
-      if (Math.abs(walk) > 5) hasMoved.current = true;
-      el.scrollLeft = scrollLeft.current - walk;
-    };
-
-    const onUp = () => {
-      isDragging.current = false;
-      el.style.cursor = "";
-    };
-
-    el.addEventListener("mousedown", onDown);
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-
-    return () => {
-      el.removeEventListener("mousedown", onDown);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, [ref]);
-
-  return hasMoved;
-}
-
-/** On desktop, convert vertical wheel into horizontal scroll on the cards.
- *  Let page scroll resume when hitting the first/last card. */
-function useWheelToScroll(ref: React.RefObject<HTMLDivElement | null>) {
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    // Only on pointer devices (no touch)
-    const mq = window.matchMedia("(pointer: fine)");
-    if (!mq.matches) return;
-
-    let isHovering = false;
-
-    const onEnter = () => { isHovering = true; };
-    const onLeave = () => { isHovering = false; };
-
-    const onWheel = (e: WheelEvent) => {
-      if (!isHovering) return;
-
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (maxScroll <= 0) return;
-
-      const atStart = el.scrollLeft <= 1;
-      const atEnd = el.scrollLeft >= maxScroll - 1;
-      const scrollingDown = e.deltaY > 0;
-      const scrollingUp = e.deltaY < 0;
-
-      // At limits — let page scroll normally
-      if (atEnd && scrollingDown) return;
-      if (atStart && scrollingUp) return;
-
-      // Otherwise hijack into horizontal
-      e.preventDefault();
-      el.scrollBy({ left: e.deltaY, behavior: "auto" });
-    };
-
-    el.addEventListener("mouseenter", onEnter);
-    el.addEventListener("mouseleave", onLeave);
-    // Must be { passive: false } to allow preventDefault
-    el.addEventListener("wheel", onWheel, { passive: false });
-
-    return () => {
-      el.removeEventListener("mouseenter", onEnter);
-      el.removeEventListener("mouseleave", onLeave);
-      el.removeEventListener("wheel", onWheel);
-    };
-  }, [ref]);
+      <div className="absolute bottom-0 left-0 right-0 space-y-1.5 p-3 md:p-4">
+        <div>
+          <h3 className="font-display text-xl text-white md:text-2xl">
+            {member.name}
+          </h3>
+          {member.role && (
+            <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/60 line-clamp-1">
+              {member.role}
+            </p>
+          )}
+          {member.bio && (
+            <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-white/50 md:line-clamp-3">
+              {member.bio}
+            </p>
+          )}
+        </div>
+      </div>
+    </article>
+  );
 }
 
 export function RosterSection({ members = roster.members }: { members?: Member[] }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const hadModalOpenRef = useRef(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const hasDragged = useDragScroll(scrollRef);
+  const [isPaused, setIsPaused] = useState(false);
+  const reducedMotion = useReducedMotion();
   const items = members.length ? members : roster.members;
-
-  // Desktop: scroll vertical → horizontal nos cards
-  useWheelToScroll(scrollRef);
 
   const featuredIndex = useMemo(() => {
     const i = items.findIndex((m) => m.id === roster.featuredMemberId);
@@ -326,35 +292,18 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
     }
   }, [selectedMember]);
 
-  const scroll = useCallback((dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.querySelector("article");
-    const step = card ? card.offsetWidth + 16 : 300;
-    el.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" });
-  }, []);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (selectedMember) return;
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        scroll("left");
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        scroll("right");
-      }
-    },
-    [scroll, selectedMember],
-  );
-
   const handleCardClick = useCallback(
     (member: Member) => {
-      if (hasDragged.current) return;
       setSelectedMember(member);
     },
-    [hasDragged],
+    [],
   );
+
+  // Duplicar items para loop infinito seamless
+  const loopItems = useMemo(() => [...items, ...items], [items]);
+
+  // Duração da animação — ~4s por card, ritmo agradavel
+  const duration = items.length * 4;
 
   return (
     <section
@@ -378,102 +327,43 @@ export function RosterSection({ members = roster.members }: { members?: Member[]
         </p>
       </div>
 
-      {/* Carrossel com setas laterais */}
-      <div className="relative z-10 mt-10 md:mt-12">
-        {/* Seta esquerda */}
-        <button
-          type="button"
-          onClick={() => scroll("left")}
-          aria-label="Anterior"
-          className="absolute left-[148px] top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent lg:flex lg:left-[156px]"
+      {/* Carrossel infinito */}
+      <div
+        className="relative z-10 mt-10 overflow-hidden md:mt-12"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+      >
+        {/* Fade nas bordas */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-panel to-transparent md:w-24"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-panel to-transparent md:w-24"
+        />
+
+        <div
+          className="flex gap-4 pb-4"
+          style={{
+            animation: reducedMotion
+              ? "none"
+              : `rosterMarquee ${duration}s linear infinite`,
+            animationPlayState: isPaused || selectedMember ? "paused" : "running",
+            width: "max-content",
+          }}
         >
-          ‹
-        </button>
-
-        {/* Seta direita */}
-        <button
-          type="button"
-          onClick={() => scroll("right")}
-          aria-label="Próximo"
-          className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-white/15 backdrop-blur-md h-11 w-11 text-lg text-white/80 shadow-lg transition hover:bg-white/25 hover:text-accent md:flex"
-        >
-          ›
-        </button>
-
-        <div className="pl-6 pr-6 md:pl-[154px] lg:pl-[162px] md:pr-12">
-          <div
-            ref={scrollRef}
-            tabIndex={0}
-            onKeyDown={handleKeyDown}
-            className="flex cursor-grab snap-x snap-proximity gap-4 overflow-x-auto pb-4 outline-none active:cursor-grabbing scrollbar-hide touch-pan-x"
-            style={{
-              WebkitOverflowScrolling: "touch",
-              overflowAnchor: "none",
-            }}
-          >
-            {items.map((a, i) => {
-              const isFeatured = i === featuredIndex;
-              return (
-                <article
-                key={a.id}
-                className={`group relative shrink-0 snap-start overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer select-none ${
-                  isFeatured
-                    ? "border-accent/40 ring-1 ring-accent/30"
-                    : "border-white/10"
-                }`}
-                style={{ width: "min(280px, 72vw)" }}
-                onClick={() => handleCardClick(a)}
-              >
-                <div className="relative aspect-[3/4] w-full overflow-hidden">
-                  {a.image ? (
-                    <Image
-                      src={a.image}
-                      alt={a.name}
-                      fill
-                      className="pointer-events-none object-cover transition duration-700 group-hover:scale-[1.03]"
-                      sizes="280px"
-                      draggable={false}
-                    />
-                  ) : (
-                    <div className="flex h-full min-h-[240px] flex-col items-center justify-center bg-gradient-to-br from-bg/10 via-bg/5 to-accent/20">
-                      <span className="font-display text-5xl text-fg/25 md:text-6xl">
-                        ?
-                      </span>
-                      <span className="mt-2 text-xs uppercase tracking-[0.25em] text-fg/40">
-                        Em breve
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 space-y-1.5 p-3 md:p-4">
-                  <div>
-                    <h3 className="font-display text-xl text-white md:text-2xl">
-                      {a.name}
-                    </h3>
-                    {a.role && (
-                      <p className="mt-0.5 text-[10px] uppercase tracking-wider text-white/60 line-clamp-1">
-                        {a.role}
-                      </p>
-                    )}
-                    {a.bio && (
-                      <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-white/50 md:line-clamp-3">
-                        {a.bio}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </article>
-              );
-            })}
-          </div>
+          {loopItems.map((a, i) => (
+            <MemberCard
+              key={`${a.id}-${i}`}
+              member={a}
+              isFeatured={i % items.length === featuredIndex}
+              onClick={() => handleCardClick(a)}
+            />
+          ))}
         </div>
-
-        {/* Hint de scroll — só desktop */}
-        <p className="mt-2 hidden text-center text-[10px] uppercase tracking-[0.3em] text-muted/40 md:block">
-          Role para navegar
-        </p>
       </div>
 
       {/* Modal de detalhe do membro */}

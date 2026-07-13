@@ -212,6 +212,16 @@ button:hover {
   }
 }
 
+/* Roster — carrossel infinito */
+@keyframes rosterMarquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roster-marquee { animation: none !important; }
+}
+
 /* Esconde scrollbar nativa mantendo scroll por arraste */
 .scrollbar-hide {
   -ms-overflow-style: none;
