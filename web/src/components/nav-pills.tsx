@@ -46,66 +46,80 @@ export function NavPills() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Track underline position
+  // Track underline position relative to nav
   useEffect(() => {
     const el = activeRef.current;
     const nav = navRef.current;
     if (!el || !nav) return;
-    const navRect = nav.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-    setUnderline({
-      left: elRect.left - navRect.left,
-      width: elRect.width,
-    });
+
+    const update = () => {
+      const navRect = nav.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      setUnderline({
+        left: elRect.left - navRect.left + nav.scrollLeft,
+        width: elRect.width,
+      });
+    };
+
+    update();
+
+    // Recalculate when nav scrolls (mobile swipe)
+    nav.addEventListener("scroll", update, { passive: true });
+    return () => nav.removeEventListener("scroll", update);
+  }, [activeId]);
+
+  // Auto-scroll active pill into view on mobile
+  useEffect(() => {
+    const el = activeRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }, [activeId]);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top,0px)] transition-all duration-500 ${
         scrolled
-          ? "bg-bg/70 shadow-[0_1px_20px_rgba(0,0,0,0.3)] backdrop-blur-xl"
+          ? "bg-bg/80 shadow-[0_1px_20px_rgba(0,0,0,0.4)] backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-3 md:px-6">
+      <div className="flex items-center">
+        {/* Nav — full width no mobile, centered no desktop */}
         <nav
           ref={navRef}
-          className="scrollbar-hide relative flex min-w-0 flex-1 items-center gap-1 overflow-x-auto md:justify-center md:gap-2"
+          className="scrollbar-hide relative flex flex-1 items-center gap-0.5 overflow-x-auto px-3 py-2.5 md:justify-center md:gap-1 md:px-6 md:py-3"
           aria-label="Seções"
         >
           {navPills.map((item) => {
-          const id = item.href.replace("#", "");
-          const active = activeId === id;
-          return (
-            <a
-              key={item.id}
-              ref={active ? (el) => { activeRef.current = el; } : undefined}
-              href={item.href}
-              className={`relative shrink-0 px-3 py-2 text-[11px] font-medium uppercase tracking-wider transition-colors duration-300 md:px-4 ${
-                active
-                  ? "text-accent"
-                  : "text-fg/40 hover:text-fg/70"
-              }`}
-            >
-              {item.label}
-            </a>
-          );
-        })}
+            const id = item.href.replace("#", "");
+            const active = activeId === id;
+            return (
+              <a
+                key={item.id}
+                ref={active ? (el) => { activeRef.current = el; } : undefined}
+                href={item.href}
+                className={`relative shrink-0 rounded-md px-2.5 py-1.5 text-[10px] font-medium uppercase tracking-wider transition-colors duration-300 md:px-3.5 md:py-2 md:text-[11px] ${
+                  active
+                    ? "text-accent"
+                    : "text-fg/35 hover:text-fg/70"
+                }`}
+              >
+                {item.label}
+              </a>
+            );
+          })}
 
           {/* Underline animado */}
           <span
-            className="pointer-events-none absolute bottom-1.5 h-[2px] rounded-full bg-accent transition-all duration-300 ease-out"
-            style={{
-              left: underline.left,
-              width: underline.width,
-            }}
+            className="pointer-events-none absolute bottom-1 h-[2px] rounded-full bg-accent transition-all duration-300 ease-out md:bottom-1.5"
+            style={{ left: underline.left, width: underline.width }}
           />
         </nav>
 
-        {/* Botao Servicos persistente */}
+        {/* Botao Servicos — so desktop, aparece ao scrollar */}
         <a
           href="/servicos"
-          className={`shrink-0 rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-accent backdrop-blur-sm transition-all duration-300 hover:bg-accent hover:text-bg ${
+          className={`mr-4 hidden shrink-0 rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-accent backdrop-blur-sm transition-all duration-300 hover:bg-accent hover:text-bg md:inline-flex ${
             scrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
           }`}
         >

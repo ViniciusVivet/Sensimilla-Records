@@ -5,7 +5,6 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  navPills,
   socialLinks,
   heroTagline,
 } from "@/data/site";
@@ -142,7 +141,7 @@ export function HeroSection({
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[8] h-44 bg-gradient-to-b from-transparent via-black/25 via-55% to-sage"
       />
 
-      <header className="relative z-20 flex items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-8 md:pt-6">
+      <header className="relative z-20 flex items-start justify-between gap-3 px-4 pt-[max(3.5rem,calc(3rem+env(safe-area-inset-top)))] md:px-8 md:pt-16">
         <nav
           className="flex flex-col gap-3 text-muted"
           aria-label="Redes sociais"
@@ -228,20 +227,6 @@ export function HeroSection({
         </div>
       </div>
 
-      <nav
-        className="relative z-20 -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain px-4 pb-6 pt-1 scrollbar-hide [touch-action:pan-x] md:hidden"
-        aria-label="Seções"
-      >
-        {navPills.map((item) => (
-          <a
-            key={item.id}
-            href={item.href}
-            className="snap-start shrink-0 rounded-full border border-white/15 bg-black/60 px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-fg/90 backdrop-blur-sm min-h-[44px] flex items-center"
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
     </section>
   );
 }
