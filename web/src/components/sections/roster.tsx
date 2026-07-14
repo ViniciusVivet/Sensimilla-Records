@@ -6,8 +6,14 @@ import { roster, type Member } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
 
 function useTilt(ref: React.RefObject<HTMLElement | null>) {
+  const isFine = useRef(false);
+  useEffect(() => {
+    isFine.current = window.matchMedia("(pointer: fine)").matches;
+  }, []);
+
   const onMove = useCallback(
     (e: RPointerEvent) => {
+      if (!isFine.current) return;
       const el = ref.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();

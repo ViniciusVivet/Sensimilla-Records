@@ -87,7 +87,7 @@ export function NavPills() {
         {/* Nav — full width no mobile, centered no desktop */}
         <nav
           ref={navRef}
-          className="scrollbar-hide relative flex flex-1 items-center gap-0.5 overflow-x-auto px-3 py-2.5 md:justify-center md:gap-1 md:px-6 md:py-3"
+          className="scrollbar-hide relative flex flex-1 items-center gap-0.5 overflow-x-auto px-[max(0.75rem,env(safe-area-inset-left,0px))] py-2.5 md:justify-center md:gap-1 md:px-6 md:py-3"
           aria-label="Seções"
         >
           {navPills.map((item) => {

@@ -83,11 +83,12 @@ export function HeroSection({
       // Text split animation on title letters
       const letters = titleRef.current?.querySelectorAll<HTMLElement>(".sensi-letter");
       if (letters?.length) {
+        const isMobile = window.innerWidth < 640;
         gsap.from(letters, {
           opacity: 0,
-          y: 60,
-          rotateX: -90,
-          filter: "blur(12px)",
+          y: isMobile ? 30 : 60,
+          rotateX: isMobile ? -45 : -90,
+          filter: isMobile ? "blur(6px)" : "blur(12px)",
           duration: 0.9,
           stagger: 0.05,
           ease: "power3.out",

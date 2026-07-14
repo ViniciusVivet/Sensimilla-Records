@@ -56,7 +56,7 @@ function AnimatedStat({
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center rounded-2xl border border-bg/10 bg-bg/[0.06] px-4 py-5 backdrop-blur-sm transition-all duration-300 hover:border-bg/20 hover:bg-bg/[0.1]"
+      className="flex flex-col items-center rounded-2xl border border-bg/10 bg-bg/[0.06] px-2.5 py-4 backdrop-blur-sm transition-all duration-300 hover:border-bg/20 hover:bg-bg/[0.1] sm:px-4 sm:py-5"
     >
       <span className="font-display text-3xl tabular-nums text-bg md:text-4xl">
         {display}

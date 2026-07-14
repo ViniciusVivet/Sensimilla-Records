@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, type ReactNode, type PointerEvent } from "react";
+import { useRef, useCallback, useEffect, useState, type ReactNode, type PointerEvent } from "react";
 
 export function Magnetic({
   children,
@@ -12,9 +12,15 @@ export function Magnetic({
   strength?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [isFine, setIsFine] = useState(false);
+
+  useEffect(() => {
+    setIsFine(window.matchMedia("(pointer: fine)").matches);
+  }, []);
 
   const onMove = useCallback(
     (e: PointerEvent) => {
+      if (!isFine) return;
       const el = ref.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -22,7 +28,7 @@ export function Magnetic({
       const y = (e.clientY - rect.top - rect.height / 2) * strength;
       el.style.transform = `translate(${x}px, ${y}px)`;
     },
-    [strength],
+    [strength, isFine],
   );
 
   const onLeave = useCallback(() => {
