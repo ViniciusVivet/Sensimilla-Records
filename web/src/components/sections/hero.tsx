@@ -181,7 +181,7 @@ export function HeroSection({
           <Magnetic>
             <a
               href="/servicos"
-              className="inline-flex min-h-11 max-w-full items-center justify-center self-start rounded-full border border-accent/60 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-sm transition hover:bg-accent hover:text-bg"
+              className="cta-glow inline-flex min-h-11 max-w-full items-center justify-center self-start rounded-full bg-accent px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-bg transition hover:bg-fg hover:text-bg"
             >
               Serviços &amp; Preços →
             </a>

@@ -278,3 +278,50 @@ button:hover {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+/* CTA — brilho de borda percorrendo */
+.cta-glow {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 16px rgba(232, 232, 226, 0.08), 0 0 40px rgba(232, 232, 226, 0.04);
+  transition: all 0.3s ease;
+}
+
+.cta-glow:hover {
+  box-shadow: 0 0 20px rgba(232, 232, 226, 0.15), 0 0 60px rgba(232, 232, 226, 0.06);
+}
+
+.cta-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--cta-angle, 0deg),
+    transparent 30%,
+    rgba(232, 232, 226, 0.5) 50%,
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ctaSpin 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes ctaSpin {
+  to { --cta-angle: 360deg; }
+}
+
+@property --cta-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-glow::before { animation: none; opacity: 0; }
+  .cta-glow { box-shadow: none; }
+}

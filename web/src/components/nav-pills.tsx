@@ -119,7 +119,7 @@ export function NavPills() {
         {/* Botao Servicos — so desktop, aparece ao scrollar */}
         <a
           href="/servicos"
-          className={`mr-4 hidden shrink-0 rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-accent backdrop-blur-sm transition-all duration-300 hover:bg-accent hover:text-bg md:inline-flex ${
+          className={`cta-glow mr-4 hidden shrink-0 rounded-full bg-accent px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-bg transition-all duration-300 hover:bg-fg md:inline-flex ${
             scrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
           }`}
         >
