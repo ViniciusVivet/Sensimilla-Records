@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Reveal } from "@/components/reveal";
 import { manifesto, members, catalogReleases } from "@/data/site";
+import { useReducedMotion } from "@/components/reduced-motion-provider";
 
 const stats = [
   { value: members.length, suffix: "", label: "Artistas no selo" },
@@ -75,12 +76,26 @@ export function BrandStatementSection({
   manifestoLine?: string;
   manifestoStats?: string;
 }) {
+  const reducedMotion = useReducedMotion();
+
   return (
     <section
       id="manifesto"
-      className="relative min-h-[45dvh] bg-sage px-6 py-14 text-bg md:px-16 md:py-20"
+      className="relative min-h-[45dvh] overflow-hidden bg-sage px-6 py-14 text-bg md:px-16 md:py-20"
     >
-      <div className="mx-auto flex max-w-4xl flex-col items-center justify-center text-center">
+      {/* Background video — silhuetas */}
+      {!reducedMotion && (
+        <video
+          src="/videos/silhuetas.mp4"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.07]"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        />
+      )}
+      <div className="relative mx-auto flex max-w-4xl flex-col items-center justify-center text-center">
         <Reveal>
           <p className="font-display text-[clamp(3rem,12vw,8rem)] leading-[0.85] text-bg/15">
             SEN$I
