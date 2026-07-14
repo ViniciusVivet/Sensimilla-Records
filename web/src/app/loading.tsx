@@ -10,7 +10,7 @@ export default function Loading() {
         {/* Logo com animacao de respirar */}
         <div className="relative h-28 w-28 animate-pulse md:h-36 md:w-36">
           <Image
-            src="/logos/sensimilla-logo-white.png"
+            src="/logo-sensi.png"
             alt="Sensimilla Records"
             fill
             className="object-contain drop-shadow-[0_0_30px_rgba(200,242,74,0.15)]"

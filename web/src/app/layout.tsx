@@ -84,6 +84,11 @@ export const metadata: Metadata = {
     canonical: siteUrl,
   },
   category: "music",
+  appleWebApp: {
+    capable: true,
+    title: "Sensimilla",
+    statusBarStyle: "black-translucent",
+  },
   ...(siteVerificationGoogle
     ? {
         verification: {
@@ -139,6 +144,7 @@ export default function RootLayout({
       className={`${bebas.variable} ${dmSans.variable} relative h-full antialiased`}
     >
       <head>
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
