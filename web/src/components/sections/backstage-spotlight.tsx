@@ -138,11 +138,11 @@ export function BackstageSpotlightSection() {
               {/* Loading placeholder */}
               {!videoReady && (
                 <div className="absolute inset-0 z-[5] flex flex-col items-center justify-center bg-black">
-                  <div className="relative h-16 w-16 md:h-20 md:w-20">
+                  <div className="relative h-14 w-14 md:h-16 md:w-16">
                     <img
                       src="/logos/sensimilla-logo-white.png"
                       alt=""
-                      className="h-full w-full object-contain opacity-20 animate-pulse"
+                      className="h-full w-full object-contain opacity-15 animate-pulse"
                     />
                   </div>
                   <div className="mt-4 h-[2px] w-20 overflow-hidden rounded-full bg-white/10">

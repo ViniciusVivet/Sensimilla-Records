@@ -8,19 +8,19 @@ export default function Loading() {
     >
       <div className="relative flex flex-col items-center gap-6">
         {/* Logo com animacao de respirar */}
-        <div className="relative h-28 w-28 animate-pulse md:h-36 md:w-36">
+        <div className="relative h-20 w-20 animate-pulse md:h-28 md:w-28">
           <Image
-            src="/logo-sensi.png"
+            src="/logos/sensimilla-logo-white.png"
             alt="Sensimilla Records"
             fill
-            className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+            className="object-contain opacity-70"
             priority
           />
         </div>
 
         {/* Barra de loading sutil */}
-        <div className="h-[2px] w-24 overflow-hidden rounded-full bg-fg/10">
-          <div className="h-full w-full origin-left animate-[shimmer_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+        <div className="h-[2px] w-16 overflow-hidden rounded-full bg-fg/10">
+          <div className="h-full w-full origin-left animate-[shimmer_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-transparent via-fg/40 to-transparent" />
         </div>
       </div>
     </div>
