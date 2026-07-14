@@ -13,6 +13,7 @@ export function BackstageSpotlightSection() {
   const reducedMotion = useReducedMotion();
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   useLayoutEffect(() => {
     const section = root.current;
@@ -133,15 +134,36 @@ export function BackstageSpotlightSection() {
 
           <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_16px_80px_rgba(0,0,0,0.7)] md:rounded-3xl">
             {/* Video wrapper */}
-            <div className="relative aspect-video w-full">
+            <div className="relative aspect-video w-full bg-black">
+              {/* Loading placeholder */}
+              {!videoReady && (
+                <div className="absolute inset-0 z-[5] flex flex-col items-center justify-center bg-black">
+                  <div className="relative h-16 w-16 md:h-20 md:w-20">
+                    <img
+                      src="/logos/sensimilla-logo-white.png"
+                      alt=""
+                      className="h-full w-full object-contain opacity-20 animate-pulse"
+                    />
+                  </div>
+                  <div className="mt-4 h-[2px] w-20 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-full w-full animate-[shimmer_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                  </div>
+                  <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-white/25">
+                    Carregando vídeo
+                  </p>
+                </div>
+              )}
+
               <video
                 ref={videoRef}
                 src="/videos/derek-e-cogu.mp4"
-                className="h-full w-full object-cover"
+                className={`h-full w-full object-cover transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
                 muted={isMuted}
                 playsInline
                 loop
                 preload="metadata"
+                poster="/logo-sensi.png"
+                onCanPlay={() => setVideoReady(true)}
               />
 
               {/* Cinematic gradient overlays */}
