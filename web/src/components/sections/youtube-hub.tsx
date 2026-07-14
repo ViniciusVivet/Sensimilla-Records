@@ -56,8 +56,9 @@ export function YoutubeHubSection({ videos: cmsVideos }: { videos?: CmsVideo[] }
     <section
       ref={root}
       id="youtube"
-      className="bg-panel px-6 py-24 md:px-12 md:py-32"
+      className="relative bg-panel px-6 py-24 md:px-12 md:py-32"
     >
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-lime-field to-panel" />
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">

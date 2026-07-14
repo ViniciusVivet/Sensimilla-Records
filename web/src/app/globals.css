@@ -100,8 +100,19 @@ body::after {
 }
 
 .text-outline {
-  -webkit-text-stroke: 2px rgba(244, 244, 240, 0.35);
+  -webkit-text-stroke: 2px rgba(244, 244, 240, 0.2);
   color: transparent;
+  background: linear-gradient(
+    90deg,
+    rgba(244, 244, 240, 0.05) 0%,
+    rgba(244, 244, 240, 0.25) 45%,
+    rgba(244, 244, 240, 0.05) 55%,
+    rgba(244, 244, 240, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: textShimmer 6s ease-in-out infinite;
 }
 
 @media (min-width: 768px) {
@@ -148,6 +159,7 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .sensi-hero-grain  { animation: none; }
   .sensi-scroll-arrow { animation: none; opacity: 0.5; }
+  .text-outline { animation: none; }
 }
 
 /* Hero — fumaça de fundo */
@@ -253,6 +265,12 @@ button:hover {
     padding-left: max(2.5rem, env(safe-area-inset-left, 0px));
     padding-right: max(2.5rem, env(safe-area-inset-right, 0px));
   }
+}
+
+/* Text outline — shimmer sweep */
+@keyframes textShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Loading — barra shimmer */

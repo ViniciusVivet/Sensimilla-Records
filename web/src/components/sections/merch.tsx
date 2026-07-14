@@ -133,8 +133,9 @@ export function MerchSection({
     <>
       <section
         id="loja"
-        className="bg-lime-field px-6 py-24 text-fg md:px-12 md:py-32"
+        className="relative bg-lime-field px-6 py-24 text-fg md:px-12 md:py-32"
       >
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg to-lime-field" />
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>

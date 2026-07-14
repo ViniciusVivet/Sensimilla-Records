@@ -5,6 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import { Magnetic } from "@/components/magnetic";
 import { catalogReleases } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
 import { useMiniPlayer } from "@/components/mini-player-context";
@@ -179,20 +180,24 @@ export function OutNowSection({
             você. Gravação, mix & master, clipes e distribuição digital.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/servicos"
-              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(232,232,226,0.15)]"
-            >
-              Ver planos e preços
-            </Link>
-            <a
-              href={buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records e quero saber sobre gravar com vocês", whatsappNumber)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-white/15 px-8 py-3 text-sm text-fg/70 transition hover:border-accent/40 hover:text-accent"
-            >
-              Chamar no WhatsApp
-            </a>
+            <Magnetic>
+              <Link
+                href="/servicos"
+                className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(232,232,226,0.15)]"
+              >
+                Ver planos e preços
+              </Link>
+            </Magnetic>
+            <Magnetic>
+              <a
+                href={buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records e quero saber sobre gravar com vocês", whatsappNumber)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/15 px-8 py-3 text-sm text-fg/70 transition hover:border-accent/40 hover:text-accent"
+              >
+                Chamar no WhatsApp
+              </a>
+            </Magnetic>
           </div>
         </div>
       </div>

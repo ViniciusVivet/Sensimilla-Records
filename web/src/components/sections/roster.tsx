@@ -1,9 +1,28 @@
 "use client";
 
-import { useRef, useMemo, useState, useCallback, useEffect } from "react";
+import { useRef, useMemo, useState, useCallback, useEffect, type PointerEvent as RPointerEvent } from "react";
 import Image from "next/image";
 import { roster, type Member } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
+
+function useTilt(ref: React.RefObject<HTMLElement | null>) {
+  const onMove = useCallback(
+    (e: RPointerEvent) => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      el.style.transform = `perspective(600px) rotateY(${x * 10}deg) rotateX(${-y * 8}deg) scale(1.02)`;
+    },
+    [ref],
+  );
+  const onLeave = useCallback(() => {
+    const el = ref.current;
+    if (el) el.style.transform = "";
+  }, [ref]);
+  return { onMove, onLeave };
+}
 
 function MemberModal({
   member,
@@ -142,13 +161,19 @@ function MemberCard({
   isFeatured: boolean;
   onPointerUp: () => void;
 }) {
+  const cardRef = useRef<HTMLElement>(null);
+  const { onMove, onLeave } = useTilt(cardRef);
+
   return (
     <article
-      className={`group relative shrink-0 overflow-hidden rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer select-none ${
+      ref={cardRef}
+      className={`group relative shrink-0 overflow-hidden rounded-2xl border cursor-pointer select-none ${
         isFeatured ? "border-accent/40 ring-1 ring-accent/30" : "border-white/10"
       }`}
-      style={{ width: "min(280px, 72vw)" }}
+      style={{ width: "min(280px, 72vw)", transition: "transform 0.15s ease-out, border-color 0.5s" }}
       onPointerUp={onPointerUp}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
     >
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         {member.image ? (

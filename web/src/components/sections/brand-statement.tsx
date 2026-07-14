@@ -1,14 +1,72 @@
 "use client";
 
+import { useRef, useEffect, useState } from "react";
 import { Reveal } from "@/components/reveal";
 import { manifesto, members, catalogReleases } from "@/data/site";
 
 const stats = [
-  { value: `${members.length}`, label: "Artistas no selo" },
-  { value: `${catalogReleases.length}+`, label: "Releases" },
-  { value: "1M+", label: "Streams combinados" },
-  { value: "Estúdio", label: "Próprio · ZL SP" },
+  { value: members.length, suffix: "", label: "Artistas no selo" },
+  { value: catalogReleases.length, suffix: "+", label: "Releases" },
+  { value: 1, suffix: "M+", label: "Streams combinados" },
+  { value: 0, suffix: "Estúdio", label: "Próprio · ZL SP", isText: true },
 ];
+
+function AnimatedStat({
+  value,
+  suffix,
+  label,
+  isText,
+}: {
+  value: number;
+  suffix: string;
+  label: string;
+  isText?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [display, setDisplay] = useState(isText ? suffix : "0");
+  const counted = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || isText) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !counted.current) {
+          counted.current = true;
+          const dur = 1600;
+          const start = performance.now();
+          const tick = (now: number) => {
+            const t = Math.min((now - start) / dur, 1);
+            // ease-out cubic
+            const ease = 1 - Math.pow(1 - t, 3);
+            const current = Math.round(ease * value);
+            setDisplay(`${current}${suffix}`);
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.5 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [value, suffix, isText]);
+
+  return (
+    <div
+      ref={ref}
+      className="flex flex-col items-center rounded-2xl border border-bg/10 bg-bg/[0.06] px-4 py-5 backdrop-blur-sm transition-all duration-300 hover:border-bg/20 hover:bg-bg/[0.1]"
+    >
+      <span className="font-display text-3xl tabular-nums text-bg md:text-4xl">
+        {display}
+      </span>
+      <span className="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-bg/50">
+        {label}
+      </span>
+    </div>
+  );
+}
 
 export function BrandStatementSection({
   manifestoLine,
@@ -34,21 +92,20 @@ export function BrandStatementSection({
           </p>
         </Reveal>
 
-        {/* Social proof */}
-        <Reveal delay={0.2} className="mt-7 grid w-full max-w-lg grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-4 sm:gap-y-3">
+        {/* Stats animados com glass */}
+        <Reveal
+          delay={0.2}
+          className="mt-7 grid w-full max-w-lg grid-cols-2 gap-3 sm:grid-cols-4"
+        >
           {stats.map((s) => (
-            <div key={s.label} className="flex flex-col items-center">
-              <span className="font-display text-3xl text-bg md:text-4xl">
-                {s.value}
-              </span>
-              <span className="mt-1 text-[10px] uppercase tracking-[0.2em] text-bg/50">
-                {s.label}
-              </span>
-            </div>
+            <AnimatedStat key={s.label} {...s} />
           ))}
         </Reveal>
 
-        <Reveal delay={0.25} className="mt-5 max-w-lg text-sm leading-relaxed text-bg/55 md:text-base">
+        <Reveal
+          delay={0.25}
+          className="mt-5 max-w-lg text-sm leading-relaxed text-bg/55 md:text-base"
+        >
           {manifestoStats || manifesto.stats}
         </Reveal>
         <Reveal delay={0.3} className="mt-6">

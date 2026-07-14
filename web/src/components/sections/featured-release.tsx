@@ -15,8 +15,9 @@ export function FeaturedReleaseSection({
   return (
     <section
       id="destaque-release"
-      className="bg-sage px-6 py-24 text-bg md:px-16 md:py-32"
+      className="relative bg-sage px-6 py-24 text-bg md:px-16 md:py-32"
     >
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-bg to-sage" />
       <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-center md:gap-16">
         <Reveal className="relative aspect-square w-full max-w-md md:max-w-none">
           <div className="relative h-full min-h-[280px] w-full overflow-hidden rounded-3xl shadow-2xl shadow-black/15 md:min-h-[420px]">

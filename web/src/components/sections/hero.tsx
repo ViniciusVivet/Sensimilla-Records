@@ -9,6 +9,7 @@ import {
   heroTagline,
 } from "@/data/site";
 import { useReducedMotion } from "@/components/reduced-motion-provider";
+import { Magnetic } from "@/components/magnetic";
 import { parseCoverTransform } from "@/lib/banner-transform";
 import type { CmsMediaSettings, CmsSocialLink } from "@/lib/cms-types";
 
@@ -52,6 +53,7 @@ export function HeroSection({
 }) {
   const root = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const reducedMotion = useReducedMotion();
   const links = cmsSocialLinks.length ? cmsSocialLinks : socialLinks;
   const logoSrc = media.heroLogo || "/logo-sensi.png";
@@ -77,6 +79,21 @@ export function HeroSection({
         ease: "power3.out",
         delay: 0.2,
       });
+
+      // Text split animation on title letters
+      const letters = titleRef.current?.querySelectorAll<HTMLElement>(".sensi-letter");
+      if (letters?.length) {
+        gsap.from(letters, {
+          opacity: 0,
+          y: 60,
+          rotateX: -90,
+          filter: "blur(12px)",
+          duration: 0.9,
+          stagger: 0.05,
+          ease: "power3.out",
+          delay: 0.4,
+        });
+      }
 
       gsap.to(logo, {
         y: -24,
@@ -160,12 +177,14 @@ export function HeroSection({
               </a>
             ))}
           </div>
-          <a
-            href="/servicos"
-            className="inline-flex min-h-11 max-w-full items-center justify-center self-start rounded-full border border-accent/60 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-sm transition hover:bg-accent hover:text-bg"
-          >
-            Serviços &amp; Preços →
-          </a>
+          <Magnetic>
+            <a
+              href="/servicos"
+              className="inline-flex min-h-11 max-w-full items-center justify-center self-start rounded-full border border-accent/60 bg-accent/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-accent backdrop-blur-sm transition hover:bg-accent hover:text-bg"
+            >
+              Serviços &amp; Preços →
+            </a>
+          </Magnetic>
         </nav>
 
         <a
@@ -214,8 +233,20 @@ export function HeroSection({
         <p className="mb-3 text-center text-[9px] uppercase tracking-[0.45em] text-muted/60">
           {heroTagline} · Gravadora
         </p>
-        <h1 className="font-display text-center text-[18vw] leading-[0.85] text-accent drop-shadow-[0_0_60px_rgba(255,255,255,0.15)] sm:text-[17vw]">
-          SENSIMILLA
+        <h1
+          ref={titleRef}
+          className="font-display text-center text-[18vw] leading-[0.85] text-accent drop-shadow-[0_0_60px_rgba(255,255,255,0.15)] sm:text-[17vw]"
+          style={{ perspective: "800px" }}
+        >
+          {"SENSIMILLA".split("").map((ch, i) => (
+            <span
+              key={i}
+              className="sensi-letter inline-block"
+              style={{ willChange: "transform, opacity, filter" }}
+            >
+              {ch}
+            </span>
+          ))}
         </h1>
         <p className="font-display mt-1 text-center text-[6vw] tracking-[0.5em] text-fg/70 sm:text-[4vw]">
           RECORDS
