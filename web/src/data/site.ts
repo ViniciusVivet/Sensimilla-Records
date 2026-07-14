@@ -188,24 +188,30 @@ export const roster = {
 };
 
 export const featuredRelease = {
-  title: "LAMA NO COPO",
-  subtitle: "COGU · lançamento recente",
+  title: "CONEXÕES QUENTES",
+  subtitle: "THE BOX · Tata Mor · JGSoaress · COGU",
   description:
-    "Último lançamento em destaque no perfil oficial no Spotify — seguindo a linha de Crumble, LOUCURA e o trap pesado que puxa o movimento da casa.",
-  cover: RELEASE.lamaNoCopoCogu,
+    "Novo single pelo canal THE BOX — COGU representando a Sensimilla ao lado de Tata Mor e JGSoaress. Trap pesado direto da Zona Leste.",
+  cover: "https://i.scdn.co/image/ab67616d00001e0222be3d6d9a064384128feaf7",
   cta: "Ouvir no Spotify",
-  href: "https://open.spotify.com/track/2gU7GSDchp6imuWQNkFZkR",
-  /** "track/ID" ou "artist/ID" — embed Spotify inline. IDs verificados abr/2026. */
-  spotifyEmbed: "track/2gU7GSDchp6imuWQNkFZkR",
+  href: "https://open.spotify.com/track/4Cn4bIu2Osb2yuEl1FFG6u",
+  spotifyEmbed: "track/4Cn4bIu2Osb2yuEl1FFG6u",
   platforms: [
-    { name: "Spotify", href: "https://open.spotify.com/track/2gU7GSDchp6imuWQNkFZkR" },
-    { name: "Deezer", href: "https://www.deezer.com/search/COGU%20LAMA%20NO%20COPO" },
-    { name: "YouTube Music", href: "https://music.youtube.com/search?q=COGU+LAMA+NO+COPO" },
-    { name: "Apple Music", href: "https://music.apple.com/search?term=COGU+LAMA+NO+COPO" },
+    { name: "Spotify", href: "https://open.spotify.com/track/4Cn4bIu2Osb2yuEl1FFG6u" },
+    { name: "YouTube", href: "https://www.youtube.com/watch?v=NIpDcf8WdnY" },
+    { name: "Deezer", href: "https://www.deezer.com/search/COGU%20Conex%C3%B5es%20Quentes" },
+    { name: "Apple Music", href: "https://music.apple.com/search?term=THE+BOX+Conex%C3%B5es+Quentes+COGU" },
   ],
 };
 
 export const catalogReleases = [
+  {
+    title: "CONEXÕES QUENTES",
+    artist: "THE BOX · Tata Mor · JGSoaress · COGU",
+    meta: "Single · 2026",
+    cover: "https://i.scdn.co/image/ab67616d00001e0222be3d6d9a064384128feaf7",
+    spotifyEmbed: "track/4Cn4bIu2Osb2yuEl1FFG6u",
+  },
   {
     title: "Eu Fiz Um Desejo",
     artist: "Kon · COGU · Ryan Janooba · MIB77",
