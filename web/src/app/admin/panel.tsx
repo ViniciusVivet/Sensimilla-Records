@@ -4133,7 +4133,7 @@ export function AdminPanel() {
                 onClick={() => setActive(item.table)}
                 className={`relative min-w-[8.5rem] shrink-0 rounded-xl border px-3 py-2 text-left transition ${
                   active === item.table
-                    ? "border-accent bg-accent text-bg shadow-[0_0_0_1px_rgba(200,242,74,0.25)]"
+                    ? "border-accent bg-accent text-bg shadow-[0_0_0_1px_rgba(232,232,226,0.25)]"
                     : "border-white/10 bg-bg/70 text-fg hover:border-accent/70"
                 }`}
               >
@@ -4155,7 +4155,7 @@ export function AdminPanel() {
               onClick={() => setActive("settings")}
               className={`relative min-w-[8.5rem] shrink-0 rounded-xl border px-3 py-2 text-left transition ${
                 active === "settings"
-                  ? "border-accent bg-accent text-bg shadow-[0_0_0_1px_rgba(200,242,74,0.25)]"
+                  ? "border-accent bg-accent text-bg shadow-[0_0_0_1px_rgba(232,232,226,0.25)]"
                   : "border-white/10 bg-bg/70 text-fg hover:border-accent/70"
               }`}
             >

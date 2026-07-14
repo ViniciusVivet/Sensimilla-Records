@@ -16,7 +16,7 @@ export default function OpenGraphImage() {
           alignItems: "center",
           justifyContent: "center",
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 45%, #1a1f10 0%, #0a0a0a 70%)",
+            "radial-gradient(ellipse 80% 60% at 50% 45%, #1a1a18 0%, #0a0a0a 70%)",
           position: "relative",
           overflow: "hidden",
         }}
@@ -29,7 +29,7 @@ export default function OpenGraphImage() {
             width: 360,
             height: 360,
             borderRadius: "50%",
-            background: "rgba(200,242,74,0.06)",
+            background: "rgba(255,255,255,0.04)",
             filter: "blur(60px)",
           }}
         />
@@ -41,7 +41,7 @@ export default function OpenGraphImage() {
             width: 280,
             height: 280,
             borderRadius: "50%",
-            background: "rgba(200,242,74,0.04)",
+            background: "rgba(255,255,255,0.03)",
             filter: "blur(50px)",
           }}
         />
@@ -58,7 +58,7 @@ export default function OpenGraphImage() {
             style={{
               width: 60,
               height: 2,
-              background: "rgba(200,242,74,0.4)",
+              background: "rgba(232,232,226,0.4)",
             }}
           />
           <div
@@ -75,7 +75,7 @@ export default function OpenGraphImage() {
             style={{
               width: 60,
               height: 2,
-              background: "rgba(200,242,74,0.4)",
+              background: "rgba(232,232,226,0.4)",
             }}
           />
         </div>
@@ -85,7 +85,7 @@ export default function OpenGraphImage() {
             fontSize: 120,
             fontWeight: 400,
             letterSpacing: "0.06em",
-            color: "#c8f24a",
+            color: "#e8e8e2",
             lineHeight: 1,
           }}
         >
@@ -114,9 +114,9 @@ export default function OpenGraphImage() {
           }}
         >
           <span>RAP</span>
-          <span style={{ color: "rgba(200,242,74,0.5)" }}>·</span>
+          <span style={{ color: "rgba(232,232,226,0.5)" }}>·</span>
           <span>TRAP</span>
-          <span style={{ color: "rgba(200,242,74,0.5)" }}>·</span>
+          <span style={{ color: "rgba(232,232,226,0.5)" }}>·</span>
           <span>ZONA LESTE SP</span>
         </div>
       </div>

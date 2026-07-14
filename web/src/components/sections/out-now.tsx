@@ -181,7 +181,7 @@ export function OutNowSection({
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               href="/servicos"
-              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(200,242,74,0.15)]"
+              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(232,232,226,0.15)]"
             >
               Ver planos e preços
             </Link>

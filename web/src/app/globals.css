@@ -4,12 +4,12 @@
   --bg: #0a0a0a;
   --fg: #f4f4f0;
   --muted: #9a9a94;
-  --accent: #c8f24a;
-  --accent-dim: #8fb82a;
+  --accent: #e8e8e2;
+  --accent-dim: #b0b0a8;
   --panel: #141412;
-  --sage: #dce5d8;
-  --olive: #3d4534;
-  --lime-field: #4a5c3a;
+  --sage: #e2e2dc;
+  --olive: #3a3a34;
+  --lime-field: #4a4a40;
 }
 
 @theme inline {
@@ -30,7 +30,7 @@ html {
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(200, 242, 74, 0.07);
+  -webkit-tap-highlight-color: rgba(232, 232, 226, 0.07);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -134,8 +134,8 @@ body::after {
 .sensi-scroll-arrow {
   width: 20px;
   height: 20px;
-  border-right: 1.5px solid rgba(200, 242, 74, 0.5);
-  border-bottom: 1.5px solid rgba(200, 242, 74, 0.5);
+  border-right: 1.5px solid rgba(232, 232, 226, 0.5);
+  border-bottom: 1.5px solid rgba(232, 232, 226, 0.5);
   transform: rotate(45deg);
   animation: arrowBounce 1.4s ease-in-out infinite;
 }

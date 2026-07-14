@@ -94,7 +94,7 @@ export function BackstageSpotlightSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(200,242,74,0.06), transparent 70%)",
+            "radial-gradient(ellipse 60% 50% at 50% 60%, rgba(255,255,255,0.04), transparent 70%)",
         }}
       />
 

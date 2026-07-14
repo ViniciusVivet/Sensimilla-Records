@@ -177,7 +177,7 @@ function PlanCard({
     <div
       className={`group relative flex flex-col rounded-3xl border p-6 transition-all duration-500 hover:scale-[1.02] md:p-8 ${
         highlight
-          ? "border-accent/50 bg-accent/[0.06] shadow-[0_0_60px_rgba(200,242,74,0.08)]"
+          ? "border-accent/50 bg-accent/[0.06] shadow-[0_0_60px_rgba(232,232,226,0.08)]"
           : "border-white/10 bg-white/[0.02] hover:border-white/20"
       }`}
     >
@@ -208,7 +208,7 @@ function PlanCard({
         rel="noopener noreferrer"
         className={`mt-8 block rounded-full py-3 text-center text-sm font-semibold uppercase tracking-wider transition ${
           highlight
-            ? "bg-accent text-bg hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(200,242,74,0.2)]"
+            ? "bg-accent text-bg hover:bg-accent/90 hover:shadow-[0_0_20px_rgba(232,232,226,0.2)]"
             : "border border-white/20 text-fg hover:border-accent/50 hover:text-accent"
         }`}
       >
@@ -301,7 +301,7 @@ export default async function ServicosPage() {
               href={buildWhatsAppUrl("Oi, vim pelo site e quero saber sobre os servicos", waNumber)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(200,242,74,0.15)]"
+              className="rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(232,232,226,0.15)]"
             >
               Falar no WhatsApp
             </a>
@@ -476,7 +476,7 @@ export default async function ServicosPage() {
               href={buildWhatsAppUrl("Oi, vim pelo site da Sensimilla Records e quero saber mais sobre os servicos", waNumber)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-accent px-10 py-3.5 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(200,242,74,0.15)]"
+              className="rounded-full bg-accent px-10 py-3.5 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_30px_rgba(232,232,226,0.15)]"
             >
               WhatsApp · {formatPhoneDisplay(waNumber || WHATSAPP_NUMBER)}
             </a>

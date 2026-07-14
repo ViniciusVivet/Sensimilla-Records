@@ -13,7 +13,7 @@ export default function Loading() {
             src="/logo-sensi.png"
             alt="Sensimilla Records"
             fill
-            className="object-contain drop-shadow-[0_0_30px_rgba(200,242,74,0.15)]"
+            className="object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
             priority
           />
         </div>

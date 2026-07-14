@@ -214,7 +214,7 @@ export function HeroSection({
         <p className="mb-3 text-center text-[9px] uppercase tracking-[0.45em] text-muted/60">
           {heroTagline} · Gravadora
         </p>
-        <h1 className="font-display text-center text-[18vw] leading-[0.85] text-accent drop-shadow-[0_0_60px_rgba(200,242,74,0.3)] sm:text-[17vw]">
+        <h1 className="font-display text-center text-[18vw] leading-[0.85] text-accent drop-shadow-[0_0_60px_rgba(255,255,255,0.15)] sm:text-[17vw]">
           SENSIMILLA
         </h1>
         <p className="font-display mt-1 text-center text-[6vw] tracking-[0.5em] text-fg/70 sm:text-[4vw]">

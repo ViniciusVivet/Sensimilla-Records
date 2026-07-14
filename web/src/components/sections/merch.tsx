@@ -106,7 +106,7 @@ function MerchModal({
             href={buildMerchWhatsAppUrl(product.name, product.price, whatsappNumber)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-block rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_20px_rgba(200,242,74,0.2)]"
+            className="mt-5 inline-block rounded-full bg-accent px-8 py-3 text-sm font-bold uppercase tracking-widest text-bg transition hover:shadow-[0_0_20px_rgba(232,232,226,0.2)]"
           >
             Comprar →
           </a>
@@ -179,7 +179,7 @@ export function MerchSection({
                     {p.price}
                   </span>
                 </div>
-                <span className="mt-3 block rounded-full bg-accent py-2 text-center text-xs font-semibold uppercase tracking-widest text-bg transition group-hover:shadow-[0_0_15px_rgba(200,242,74,0.15)]">
+                <span className="mt-3 block rounded-full bg-accent py-2 text-center text-xs font-semibold uppercase tracking-widest text-bg transition group-hover:shadow-[0_0_15px_rgba(232,232,226,0.15)]">
                   Comprar
                 </span>
               </article>
