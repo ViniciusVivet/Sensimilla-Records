@@ -8,7 +8,7 @@ export default function Loading() {
     >
       <div className="relative flex flex-col items-center gap-6">
         {/* Logo com animacao de respirar */}
-        <div className="relative h-20 w-20 animate-pulse md:h-28 md:w-28">
+        <div className="relative h-40 w-40 animate-pulse md:h-56 md:w-56">
           <Image
             src="/logos/sensimilla-logo-white.png"
             alt="Sensimilla Records"
@@ -19,7 +19,7 @@ export default function Loading() {
         </div>
 
         {/* Barra de loading sutil */}
-        <div className="h-[2px] w-16 overflow-hidden rounded-full bg-fg/10">
+        <div className="h-[2px] w-32 overflow-hidden rounded-full bg-fg/10">
           <div className="h-full w-full origin-left animate-[shimmer_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-transparent via-fg/40 to-transparent" />
         </div>
       </div>

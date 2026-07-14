@@ -15,7 +15,6 @@ import { MerchSection } from "@/components/sections/merch";
 import { YoutubeHubSection } from "@/components/sections/youtube-hub";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { NavPills } from "@/components/nav-pills";
-import { ScrollBats } from "@/components/scroll-bats";
 import type { PublicCmsData } from "@/lib/cms-types";
 
 export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
@@ -23,7 +22,6 @@ export function HomeExperience({ cmsData }: { cmsData: PublicCmsData }) {
     <MiniPlayerProvider tracks={cmsData.releases}>
       <SmoothScroll>
         <NavPills />
-        <ScrollBats />
         <main
           id="main-content"
           className="bg-bg text-fg pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-0"
