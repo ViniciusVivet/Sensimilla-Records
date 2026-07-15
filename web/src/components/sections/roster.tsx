@@ -86,7 +86,7 @@ function MemberModal({
             <div className="flex min-w-0 flex-1 items-start gap-3">
               {len > 1 && (
                 <button type="button" aria-label="Artista anterior" onClick={() => go(-1)}
-                  className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg text-white/70 transition hover:border-accent/50 hover:text-accent">
+                  className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg text-white/70 transition hover:border-accent/50 hover:text-accent">
                   ‹
                 </button>
               )}
@@ -103,13 +103,13 @@ function MemberModal({
               </div>
               {len > 1 && (
                 <button type="button" aria-label="Proximo artista" onClick={() => go(1)}
-                  className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg text-white/70 transition hover:border-accent/50 hover:text-accent">
+                  className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg text-white/70 transition hover:border-accent/50 hover:text-accent">
                   ›
                 </button>
               )}
             </div>
             <button type="button" onClick={onClose} aria-label="Fechar"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm text-white/50 transition hover:border-white/40 hover:text-white">
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm text-white/50 transition hover:border-white/40 hover:text-white">
               ✕
             </button>
           </div>

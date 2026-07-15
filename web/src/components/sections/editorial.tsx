@@ -60,7 +60,7 @@ function Lightbox({
               onClick={() =>
                 setIdx((i) => (i - 1 + images.length) % images.length)
               }
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/60 transition hover:border-accent hover:text-accent"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/60 transition hover:border-accent hover:text-accent"
             >
               ‹
             </button>
@@ -70,7 +70,7 @@ function Lightbox({
             <button
               type="button"
               onClick={() => setIdx((i) => (i + 1) % images.length)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/60 transition hover:border-accent hover:text-accent"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/60 transition hover:border-accent hover:text-accent"
             >
               ›
             </button>
@@ -80,7 +80,7 @@ function Lightbox({
         <button
           type="button"
           onClick={onClose}
-          className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-sm text-white/60 transition hover:text-white"
+          className="absolute -right-2 -top-2 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-sm text-white/60 transition hover:text-white"
         >
           ✕
         </button>

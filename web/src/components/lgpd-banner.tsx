@@ -43,7 +43,7 @@ export function LgpdBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="Aviso de cookies"
-      className="fixed bottom-0 left-0 right-0 z-[150] border-t border-white/10 bg-panel/95 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 backdrop-blur-md md:bottom-6 md:left-6 md:right-auto md:max-w-sm md:rounded-2xl md:border md:pb-5"
+      className="fixed bottom-0 left-0 right-0 z-[150] border-t border-white/10 bg-panel/95 pb-[max(1.25rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] pt-5 backdrop-blur-md md:bottom-6 md:left-6 md:right-auto md:max-w-sm md:rounded-2xl md:border md:pb-5 md:pl-5 md:pr-5"
     >
       <p className="text-sm leading-relaxed text-fg/80">
         Usamos cookies para melhorar sua experiência. Confira nossa{" "}

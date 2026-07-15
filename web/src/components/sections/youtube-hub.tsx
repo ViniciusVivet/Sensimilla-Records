@@ -104,7 +104,7 @@ export function YoutubeHubSection({ videos: cmsVideos }: { videos?: CmsVideo[] }
         {/* Subscribe bar */}
         <div
           data-yt-card
-          className="mt-10 flex items-center justify-between rounded-2xl border border-white/10 bg-bg/40 px-6 py-5"
+          className="mt-10 flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-bg/40 px-6 py-5 sm:flex-row sm:justify-between"
         >
           <div>
             <p className="text-sm font-semibold text-fg">{selo.youtube.handle}</p>
