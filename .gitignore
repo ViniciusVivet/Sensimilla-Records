@@ -2,6 +2,13 @@
 Thumbs.db
 node_modules/
 
+# arquivos-fonte locais (originais de design, videos e documentos)
+# O site publica somente os assets otimizados em web/public/.
+/assets/source/
+
+# Gerado ao instalar pela raiz; CI e deploy usam web/package-lock.json.
+/package-lock.json
+
 # configuracoes locais de agentes de IA
 .claude/
 CLAUDE.md
